@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Grab Application</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="default_info_title">Default Location</string>
+    <string name="default_info_snippet">No places found, because location permission is disabled.</string>
+    <string name="maps_api_key">AIzaSyCzFv4J8WqEmHet8aTBF_vP2gSa9CC0DFo</string>
+    <string name="option_get_place">Get place</string>
+    <string name="pick_place">Choose a place</string>
+    <string name="title_activity_test_map">Map</string>
+    <string name="title_activity_test">Map</string>
+</resources>
