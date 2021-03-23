@@ -1,12 +1,9 @@
-package com.example.grabapplication.activitys
+package com.example.grabapplication.activities
 
 import android.Manifest
-import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.drawable.Drawable
-import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +11,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.grabapplication.R
 import com.example.grabapplication.common.Constants
+import com.example.grabapplication.googlemaps.MapsConnection
 import com.example.grabapplication.model.DriverInfo
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -37,20 +35,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     // The entry point to the Fused Location Provider.
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
-    // A default location (Sydney, Australia) and default zoom to use when location permission is
-    // not granted.
     private val defaultLocation = LatLng(-33.8523341, 151.2106085)
+    private var currentLocation: LatLng? = null
     private var locationPermissionGranted = false
-
-    // The geographical location where the device is currently located. That is, the last-known
-    // location retrieved by the Fused Location Provider.
-    private var lastKnownLocation: Location? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Retrieve location and camera position from saved instance state.
         if (savedInstanceState != null) {
-            lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION)
+            currentLocation = savedInstanceState.getParcelable(KEY_LOCATION)
             cameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION)
         }
 
@@ -81,7 +74,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         // Get the current location of the device and set the position of the map.
         getDeviceLocation()
 
+        // TODO: Debug code
         getDriverLocation()
+
     }
 
     /**
@@ -90,7 +85,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onSaveInstanceState(outState: Bundle) {
         map.let { map ->
             outState.putParcelable(KEY_CAMERA_POSITION, map?.cameraPosition)
-            outState.putParcelable(KEY_LOCATION, lastKnownLocation)
+            outState.putParcelable(KEY_LOCATION, currentLocation)
         }
         super.onSaveInstanceState(outState)
     }
@@ -119,34 +114,31 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
      * Gets the current location of the device, and positions the map's camera.
      */
     private fun getDeviceLocation() {
-        /*
-         * Get the best and most recent location of the device, which may be null in rare
-         * cases when a location is not available.
-         */
         try {
             if (locationPermissionGranted) {
                 val locationResult = fusedLocationProviderClient.lastLocation
                 locationResult.addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
                         // Set the map's camera position to the current location of the device.
-                        lastKnownLocation = task.result
+                        val lastKnownLocation = task.result
                         if (lastKnownLocation != null) {
-                            Log.d("NamTV", "lastKnownLocation = ${lastKnownLocation?.latitude} ${lastKnownLocation?.longitude}")
+                            currentLocation = LatLng(lastKnownLocation.latitude, lastKnownLocation.longitude)
                             map?.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                LatLng(lastKnownLocation!!.latitude,
-                                    lastKnownLocation!!.longitude), DEFAULT_ZOOM.toFloat()))
+                                currentLocation, Constants.DEFAULT_ZOOM_MAPS.toFloat()))
                         }
                     } else {
-                        Log.d("NamTV", "Current location is null. Using defaults.")
-                        Log.e("NamTV", "Exception: %s", task.exception)
+                        currentLocation = defaultLocation
                         map?.moveCamera(CameraUpdateFactory
-                            .newLatLngZoom(defaultLocation, DEFAULT_ZOOM.toFloat()))
+                            .newLatLngZoom(currentLocation, Constants.DEFAULT_ZOOM_MAPS.toFloat()))
                         map?.uiSettings?.isMyLocationButtonEnabled = false
                     }
+
+                    // TODO: Debug code
+                    MapsConnection.getInstance().drawShortestWay(map!!, currentLocation!!, Constants.defaultLocation1)
                 }
             }
         } catch (e: SecurityException) {
-            Log.e("Exception: %s", e.message, e)
+            Log.e("NamTV", "MainActivity::getDeviceLocation: SecurityException: $e")
         }
     }
 
@@ -159,17 +151,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         listDriver.add(DriverInfo(Constants.defaultLocation5.latitude, Constants.defaultLocation5.longitude, null, null, null))
 
         for(i in listDriver) {
-            val marker = MarkerOptions().position(LatLng(i.latitude, i.longitude)).icon(bitmapFromVector(R.drawable.motocross))
-            map?.addMarker(marker)
+            addMarker(LatLng(i.latitude, i.longitude))
         }
     }
 
+    private fun addMarker(latLng: LatLng) {
+        val marker = MarkerOptions().position(latLng).icon(bitmapFromVector(R.drawable.motocross))
+        map?.addMarker(marker)
+    }
+
     private fun getLocationPermission() {
-        /*
-         * Request location permission, so that we can get the location of the
-         * device. The result of the permission request is handled by a callback,
-         * onRequestPermissionsResult.
-         */
         if (ContextCompat.checkSelfPermission(this.applicationContext,
                 Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED) {
@@ -186,11 +177,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val vectorDrawable = ContextCompat.getDrawable(this, vectorResId)
 
         // below line is use to set bounds to our vector drawable.
-        vectorDrawable!!.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight())
+        vectorDrawable!!.setBounds(0, 0, vectorDrawable.intrinsicWidth, vectorDrawable.intrinsicHeight)
 
         // below line is use to create a bitmap for our
         // drawable which we have added.
-        val bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888)
+        val bitmap = Bitmap.createBitmap(vectorDrawable.intrinsicWidth, vectorDrawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
 
         // below line is use to add bitmap in our canvas.
         val canvas = Canvas(bitmap)
@@ -217,21 +208,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             } else {
                 map?.isMyLocationEnabled = false
                 map?.uiSettings?.isMyLocationButtonEnabled = false
-                lastKnownLocation = null
+                currentLocation = null
                 getLocationPermission()
             }
         } catch (e: SecurityException) {
-            Log.e("Exception: %s", e.message, e)
+            Log.e("NamTV", "MainActivity::updateLocationUI: SecurityException: $e")
         }
     }
 
     companion object {
         const val KEY_LOCATION = "key_location"
         const val KEY_CAMERA_POSITION = "key_camera_position"
-        private const val DEFAULT_ZOOM = 15
         private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
-
-        // Used for selecting the current place.
-        private const val M_MAX_ENTRIES = 5
     }
 }

@@ -9,5 +9,8 @@ class Constants {
         val defaultLocation3 = LatLng(20.9940, 105.8060)
         val defaultLocation4 = LatLng(20.9906, 105.8006)
         val defaultLocation5 = LatLng(20.9881, 105.8022)
+
+
+        const val DEFAULT_ZOOM_MAPS = 15
     }
 }
