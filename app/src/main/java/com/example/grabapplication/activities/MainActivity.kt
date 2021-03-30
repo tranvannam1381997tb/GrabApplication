@@ -24,8 +24,7 @@ import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.net.PlacesClient
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
-
-
+    
     private var map: GoogleMap? = null
     private var cameraPosition: CameraPosition? = null
 
@@ -151,11 +150,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         listDriver.add(DriverInfo(Constants.defaultLocation5.latitude, Constants.defaultLocation5.longitude, null, null, null))
 
         for(i in listDriver) {
-            addMarker(LatLng(i.latitude, i.longitude))
+            addMarkerDriver(LatLng(i.latitude, i.longitude))
         }
     }
 
-    private fun addMarker(latLng: LatLng) {
+    private fun addMarkerDriver(latLng: LatLng) {
         val marker = MarkerOptions().position(latLng).icon(bitmapFromVector(R.drawable.motocross))
         map?.addMarker(marker)
     }

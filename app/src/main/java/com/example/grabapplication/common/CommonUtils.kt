@@ -14,6 +14,32 @@ class CommonUtils {
             }
         }
 
+        fun getJsonObjectFromJsonObject(jsonObject: JSONObject, key: String): JSONObject {
+            return if (jsonObject.has(key)) {
+                jsonObject.getJSONObject(key)
+            } else {
+                JSONObject()
+            }
+        }
 
+        fun getStringFromJsonObject(jsonObject: JSONObject, key: String): String {
+            return if (jsonObject.has(key)) {
+                jsonObject.getString(key)
+            } else {
+                ""
+            }
+        }
+
+        fun getFloatFromJsonObject(jsonObject: JSONObject, key: String): Float {
+            var data: Float? = null
+            if (jsonObject.has(key)) {
+                data = jsonObject.getString(key).toFloatOrNull()
+            }
+            if (data == null) {
+
+                data = 0F
+            }
+            return data
+        }
     }
 }
