@@ -11,6 +11,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.grabapplication.R
 import com.example.grabapplication.common.Constants
+import com.example.grabapplication.connecttion.HttpConnection
 import com.example.grabapplication.googlemaps.MapsConnection
 import com.example.grabapplication.model.DriverInfo
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -22,6 +23,8 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.net.PlacesClient
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     
@@ -59,6 +62,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
+
+        GlobalScope.launch {
+            HttpConnection.getInstance().startURLConnection("116 Lương Thế Vinh", "200 Trường Chinh", 1012)
+        }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -133,7 +140,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     }
 
                     // TODO: Debug code
-                    MapsConnection.getInstance().drawShortestWay(map!!, currentLocation!!, Constants.defaultLocation1)
+                    MapsConnection.getInstance().drawShortestWay(map!!, "116 Lương Thế Vinh", "200 Trường Chinh")
                 }
             }
         } catch (e: SecurityException) {

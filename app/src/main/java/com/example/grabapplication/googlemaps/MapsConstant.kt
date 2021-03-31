@@ -5,6 +5,7 @@ class MapsConstant {
         const val URL_DIRECTION = "https://maps.googleapis.com/maps/api/directions/json?origin=%s&destination=%s&key=%s"
         const val URL_FIND_PLACE = "https://maps.googleapis.com/maps/api/geocode/json?address=%s&key=%s"
         const val URL_ENCODE_CHARSETS = "UTF-8"
+        const val BASE_URL_GOOGLE_MAP = "https://maps.googleapis.com"
 
         // google directions api key
         const val DIRECTION_ROUTES = "routes"
