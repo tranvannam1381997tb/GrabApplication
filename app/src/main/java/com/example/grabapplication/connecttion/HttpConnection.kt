@@ -10,44 +10,80 @@ import java.io.InputStream
 import java.io.InputStreamReader
 import java.lang.Exception
 import java.net.HttpURLConnection
+import java.net.MalformedURLException
 import java.net.URL
 
 class HttpConnection private constructor() {
 
-    fun startURLConnection(startAddress : String, endAddress : String, distance: Int) {
-        val url = URL("http://192.168.1.105:3000/hello-post")
-        val http = url.openConnection() as HttpURLConnection
-        http.connectTimeout = 30000
-        http.requestMethod = "POST"
+    fun startLogin(username: String, password: String): CompletionHandler {
 
-        // set body data
-//        val body = StringBuilder()
-//        body.append("{\n")
-//        body.append("\"startAddress\" : \"$startAddress\",\n")
-//        body.append("\"endAddress\" : \"$endAddress\",\n")
-//        body.append("\"distance\" : \"$distance\"\n")
-//        body.append("}")
+        try {
+            val url = URL(String.format(URL_LOGIN_FORMAT, HOST))
+            val http = url.openConnection() as HttpURLConnection
+            http.connectTimeout = CONNECTION_TIMEOUT
+            http.requestMethod = POST
 
-        val jsonBody = JSONObject()
-        jsonBody.put("startAddress", startAddress)
-        jsonBody.put("endAddress", endAddress)
-        jsonBody.put("distance", distance)
+            http.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
+            http.setRequestProperty("Accept", "application/json")
 
-        val outputInBytes = jsonBody.toString().toByteArray(Charsets.UTF_8)
-        val os = http.outputStream
-        os.write(outputInBytes)
-        os.close()
+            val jsonBody = JSONObject()
+            jsonBody.put("username", username)
+            jsonBody.put("password", password)
 
-        requestHttps(http)
+            val outputInBytes = jsonBody.toString().toByteArray(Charsets.UTF_8)
+            val os = http.outputStream
+            os.write(outputInBytes)
+            os.close()
+
+            return requestHttps(http)
+        } catch (e: MalformedURLException) {
+            Log.d(" NamTV","HttpConnection::startLogin::MalformedURLException: $e")
+            return CompletionHandler(null, e.toString(), 1)
+        } catch (e: Exception) {
+            Log.d("NamTV", "HttpConnection::startLogin:exception: $e")
+            return CompletionHandler(null, e.toString(), 1)
+        }
     }
 
-    private fun requestHttps(http: HttpURLConnection) {
+    fun startGetPrice(startAddress : String, endAddress : String, distance: Int): CompletionHandler {
+        try {
+            val url = URL("http://192.168.1.105:3000/get-price")
+            val http = url.openConnection() as HttpURLConnection
+            http.connectTimeout = 30000
+            http.requestMethod = "POST"
+
+            http.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
+            http.setRequestProperty("Accept", "application/json")
+
+            val jsonBody = JSONObject()
+            jsonBody.put("startAddress", startAddress)
+            jsonBody.put("endAddress", endAddress)
+            jsonBody.put("distance", distance)
+
+            val outputInBytes = jsonBody.toString().toByteArray(Charsets.UTF_8)
+            val os = http.outputStream
+            os.write(outputInBytes)
+            os.close()
+
+            return requestHttps(http)
+        } catch (e: MalformedURLException) {
+            Log.d("NamTV", "HttpConnection::startURLConnection: MalformedURLException: $e")
+            return CompletionHandler(null, e.toString(), 0)
+        } catch (e: Exception) {
+            Log.d("NamTV", "HttpConnection::startURLConnection: Exception: $e")
+            return CompletionHandler(null, e.toString(), 0)
+        }
+
+    }
+
+    private fun requestHttps(http: HttpURLConnection): CompletionHandler {
         var inputStream: InputStream? = null
         var inputStreamReader: InputStreamReader? = null
         var buffer: BufferedReader? = null
         try {
             http.connect()
             val responseCode = http.responseCode
+            val completionHandler = CompletionHandler(null, null, responseCode)
             when (responseCode) {
                 HttpURLConnection.HTTP_OK -> {
                     inputStream = http.inputStream
@@ -55,6 +91,7 @@ class HttpConnection private constructor() {
                     buffer = BufferedReader(inputStreamReader)
                     val data = getByteArrayFromStream(buffer)
                     Log.d("NamTV", "connect success: $data")
+                    completionHandler.data = data
                 }
 
                 else -> {
@@ -63,10 +100,13 @@ class HttpConnection private constructor() {
                     buffer = BufferedReader(inputStreamReader)
                     val error = getByteArrayFromStream(buffer)
                     Log.d("NamTV", "connect error: $error")
+                    completionHandler.error = error
                 }
             }
+            return completionHandler
         } catch (e: Exception) {
             Log.d("NamTV", "startURLConnection::exception: $e")
+            return CompletionHandler(null, e.toString(), 1)
         }
     }
 
@@ -83,6 +123,11 @@ class HttpConnection private constructor() {
     }
 
     companion object {
+        private const val URL_LOGIN_FORMAT = "http://%s/login/driver"
+        private const val HOST = "192.168.1.105:3000"
+        private const val POST = "POST"
+        private const val CONNECTION_TIMEOUT = 30000
+
         private var instance: HttpConnection? = null
         fun getInstance(): HttpConnection {
             if (instance == null) {
@@ -96,3 +141,5 @@ class HttpConnection private constructor() {
         }
     }
 }
+
+class CompletionHandler(var data: String?, var error: String?, var responseCode: Int?)

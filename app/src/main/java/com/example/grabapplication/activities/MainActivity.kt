@@ -41,6 +41,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private var currentLocation: LatLng? = null
     private var locationPermissionGranted = false
 
+    private val httpConnection: HttpConnection
+        by lazy {
+            HttpConnection.getInstance()
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Retrieve location and camera position from saved instance state.
@@ -62,13 +67,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
-
-        GlobalScope.launch {
-            HttpConnection.getInstance().startURLConnection("116 Lương Thế Vinh", "200 Trường Chinh", 1012)
-        }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
+        Log.d("NamTV", "onMapReady")
         this.map = googleMap
 
         // Prompt the user for permission.
@@ -140,7 +142,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     }
 
                     // TODO: Debug code
-                    MapsConnection.getInstance().drawShortestWay(map!!, "116 Lương Thế Vinh", "200 Trường Chinh")
+                    MapsConnection.getInstance().drawShortestWay(map!!, "116 Luong The Vinh", "200 Truong Chinh")
+
+                    MapsConnection.getInstance().findPlace("194 Nguyen Trai")
                 }
             }
         } catch (e: SecurityException) {

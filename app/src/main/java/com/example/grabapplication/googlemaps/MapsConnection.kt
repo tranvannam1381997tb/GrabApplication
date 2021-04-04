@@ -2,6 +2,7 @@ package com.example.grabapplication.googlemaps
 
 import android.content.Context
 import android.graphics.Color
+import android.util.Log
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
@@ -20,6 +21,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
+import java.lang.Exception
 import java.net.URLEncoder
 
 class MapsConnection private constructor() {
@@ -75,6 +77,9 @@ class MapsConnection private constructor() {
             }
         }, Response.ErrorListener {
         }){}
+
+        val requestQueue = Volley.newRequestQueue(GrapApplication.getAppContext())
+        requestQueue.add(geocodingRequest)
 
         return listPlace
     }
