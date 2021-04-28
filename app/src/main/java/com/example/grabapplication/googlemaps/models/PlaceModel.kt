@@ -1,3 +1,3 @@
 package com.example.grabapplication.googlemaps.models
 
-class PlaceModel(lat: Float, lng: Float, address: String)
+data class PlaceModel(var lat: Double, var lng: Double, var formattedAddress: String, var name: String)

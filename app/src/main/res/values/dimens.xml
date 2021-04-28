@@ -7,4 +7,9 @@
     <dimen name="text_size_title_dialog_confirm">20sp</dimen>
     <dimen name="text_size_message_dialog_confirm">14sp</dimen>
     <dimen name="text_size_button_dialog_confirm">20sp</dimen>
+
+    //Info driver fragment
+    <dimen name="text_size_name">20sp</dimen>
+    <dimen name="text_size_info">16sp</dimen>
+    <dimen name="margin_start_with_info">8dp</dimen>
 </resources>

@@ -1,15 +1,35 @@
 <resources>
     <string name="app_name">Grab Application</string>
-    <string name="title_activity_login">LoginActivity</string>
-    <string name="prompt_username">Username</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign inr</string>
-    <string name="welcome">"Welcome !"</string>
+    <string name="prompt_username">Nhập tài khoản</string>
+    <string name="prompt_password">Nhâp mật khẩu</string>
+    <string name="action_sign_in">Đăng nhập</string>
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
 
     <string name="label_ok">OK</string>
-    <string name="label_cancel">Cancel</string>
-    <string name="error">Error</string>
+    <string name="label_cancel">Hủy</string>
+    <string name="error">Lỗi</string>
+
+    <string name="channel_id">channel1</string>
+
+    <string name="description_map_screen">Đặt xe</string>
+    <string name="prompt_start_address">Gặp tôi ở…</string>
+    <string name="prompt_end_address">Bạn đến đâu?</string>
+
+    //Info driver fragment
+    <string name="start_date">Gia nhập </string>
+    <string name="grab_bike">GrabBike</string>
+    <string name="grab_car">GrabCar</string>
+    <string name="book_vehicle">Đặt xe</string>
+    <string name="distance_to_you">Khoảng cách đến chỗ bạn: </string>
+    <string name="time_to_you">Thời gian đến chỗ bạn: </string>
+
+    //Find place fragment
+    <string name="time_to_move">Thời gian di chuyển: </string>
+    <string name="distance_length">Khoảng cách: </string>
+    <string name="confirm_book_driver">Bạn có muốn đặt cuốc xe này chứ?</string>
+
+    //Login Activity
+    <string name="sign_up"><u>Đăng ký</u></string>
 </resources>

@@ -9,4 +9,9 @@
     <color name="color_black">#202020</color>
     <color name="text_child_setting">#3C3C3C</color>
     <color name="color_text_button_setting_activity">#0077F5</color>
+    <color name="color_line_end_item_place">#D8D6D6</color>
+
+    <color name="color_child_info_driver">#5A5A5A</color>
+    <color name="color_border_edit_text">#D8D6D6</color>
+    <color name="color_sign_up">#0077F5</color>
 </resources>

@@ -13,27 +13,53 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <EditText
+        <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/username"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_marginStart="24dp"
             android:layout_marginTop="96dp"
             android:layout_marginEnd="24dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="20dp"
             android:hint="@string/prompt_username"
+            android:singleLine="true"
+            android:maxLines="1"
+            android:inputType="textNoSuggestions"
+            android:background="@drawable/edit_text_style"
+            android:imeOptions="actionNext"
+            android:focusableInTouchMode="true"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <EditText
+        <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/password"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="20dp"
             android:hint="@string/prompt_password"
+            android:singleLine="true"
+            android:maxLines="1"
+            android:background="@drawable/edit_text_style"
+            android:focusableInTouchMode="true"
             android:imeOptions="actionDone"
             android:inputType="textPassword"
             app:layout_constraintTop_toBottomOf="@+id/username" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textSize="18sp"
+            android:text="@string/sign_up"
+            android:textColor="@color/color_sign_up"
+            app:layout_constraintTop_toBottomOf="@id/password"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:onSingleClick="@{() -> viewModel.startSignUp()}"/>
 
         <Button
             android:id="@+id/login"

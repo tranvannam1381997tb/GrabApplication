@@ -4,13 +4,11 @@ import com.google.android.gms.maps.model.LatLng
 
 class Constants {
     companion object {
-        val defaultLocation1 = LatLng(20.9913, 105.8030)
-        val defaultLocation2 = LatLng(20.9929, 105.8018)
-        val defaultLocation3 = LatLng(20.9940, 105.8060)
-        val defaultLocation4 = LatLng(20.9906, 105.8006)
-        val defaultLocation5 = LatLng(20.9881, 105.8022)
-
-
         const val DEFAULT_ZOOM_MAPS = 15
+
+        const val DATE_FORMAT_FOR_FIREBASE = "dd/MM/yyyy"
+        const val DATE_FORMAT_APP = "dd, MMM yyyy"
+
+        val DEFAULT_LOCATION = LatLng(-33.8523341, 151.2106085)
     }
 }

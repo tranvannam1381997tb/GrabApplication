@@ -1,24 +1,18 @@
 package com.example.grabapplication.activities
 
-import android.app.Activity
 import android.content.Intent
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.annotation.StringRes
-import androidx.appcompat.app.AppCompatActivity
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ProgressBar
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import com.example.grabapplication.R
+import com.example.grabapplication.common.afterTextChanged
+import com.example.grabapplication.common.onEditorActionDone
+import com.example.grabapplication.common.onEditorActionNext
 import com.example.grabapplication.connecttion.HttpConnection
-import com.example.grabapplication.customviews.DialogApplyConfirm
+import com.example.grabapplication.customviews.ConfirmDialog
 import com.example.grabapplication.databinding.ActivityLoginBinding
 import com.example.grabapplication.viewmodel.BaseViewModelFactory
 import com.example.grabapplication.viewmodel.LoginViewModel
@@ -28,7 +22,7 @@ class LoginActivity : AppCompatActivity() {
 
     private val loginViewModel: LoginViewModel
         by lazy {
-            ViewModelProvider(this, BaseViewModelFactory(this, this)).get(LoginViewModel::class.java)
+            ViewModelProvider(this, BaseViewModelFactory(this)).get(LoginViewModel::class.java)
         }
 
     private lateinit var binding: ActivityLoginBinding
@@ -40,30 +34,41 @@ class LoginActivity : AppCompatActivity() {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
         binding.viewModel = loginViewModel
+        setEventView()
+    }
 
-        binding.username.afterTextChanged {
-            loginViewModel.validateDataLogin(binding.username.text.toString(), binding.password.text.toString())
+    private fun setEventView() {
+        binding.username.apply {
+            afterTextChanged {
+                loginViewModel.validateDataLogin(
+                    binding.username.text.toString(),
+                    binding.password.text.toString()
+                )
+            }
+
+            onEditorActionNext {
+                binding.password.requestFocus()
+            }
         }
 
         binding.password.apply {
             afterTextChanged {
-                loginViewModel.validateDataLogin(binding.username.text.toString(), binding.password.text.toString())
+                loginViewModel.validateDataLogin(
+                    binding.username.text.toString(),
+                    binding.password.text.toString()
+                )
             }
 
-            setOnEditorActionListener { _, actionId, _ ->
-                when (actionId) {
-                    EditorInfo.IME_ACTION_DONE ->
-                        if (loginViewModel.isEnableBtnLogin.get()!!) {
-                            startLogin()
-                        }
+            onEditorActionDone {
+                if (loginViewModel.isEnableBtnLogin.get()!!) {
+                    startLogin()
                 }
-                false
             }
+        }
 
-            binding.login.setOnClickListener {
-                binding.loading.visibility = View.VISIBLE
-                startLogin()
-            }
+        binding.login.setOnClickListener {
+            binding.loading.visibility = View.VISIBLE
+            startLogin()
         }
     }
 
@@ -92,7 +97,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun showDialogError(message: String?) {
         if (!message.isNullOrEmpty()) {
-            val dialogError = DialogApplyConfirm(this)
+            val dialogError = ConfirmDialog(this)
             dialogError.setTextDisplay(getString(R.string.error), message, null, getString(R.string.label_ok))
             dialogError.setOnClickOK(View.OnClickListener {
                 dialogError.dismiss()
@@ -101,19 +106,4 @@ class LoginActivity : AppCompatActivity() {
             dialogError.show()
         }
     }
-}
-
-/**
- * Extension function to simplify setting an afterTextChanged action to EditText components.
- */
-fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
-    this.addTextChangedListener(object : TextWatcher {
-        override fun afterTextChanged(editable: Editable?) {
-            afterTextChanged.invoke(editable.toString())
-        }
-
-        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-
-        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-    })
 }

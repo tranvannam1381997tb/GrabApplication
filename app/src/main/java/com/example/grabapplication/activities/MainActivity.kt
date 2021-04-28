@@ -1,77 +1,124 @@
 package com.example.grabapplication.activities
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.ViewModelProvider
 import com.example.grabapplication.R
-import com.example.grabapplication.common.Constants
-import com.example.grabapplication.connecttion.HttpConnection
-import com.example.grabapplication.googlemaps.MapsConnection
+import com.example.grabapplication.common.*
+import com.example.grabapplication.customviews.ConfirmDialog
+import com.example.grabapplication.databinding.ActivityMainBinding
+import com.example.grabapplication.firebase.FirebaseManager
+import com.example.grabapplication.fragments.FindPlaceFragment
+import com.example.grabapplication.fragments.InfoDriverFragment
 import com.example.grabapplication.model.DriverInfo
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import com.example.grabapplication.viewmodel.BaseViewModelFactory
+import com.example.grabapplication.viewmodel.MainViewModel
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
-import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.net.PlacesClient
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import com.google.firebase.database.*
+import kotlin.collections.HashMap
 
-class MainActivity : AppCompatActivity(), OnMapReadyCallback {
+class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener{
     
     private var map: GoogleMap? = null
-    private var cameraPosition: CameraPosition? = null
 
-    // The entry point to the Places API.
-    private lateinit var placesClient: PlacesClient
+    private lateinit var binding: ActivityMainBinding
+
+    private val mainViewModel: MainViewModel
+            by lazy {
+                ViewModelProvider(this, BaseViewModelFactory(this)).get(
+                    MainViewModel::class.java
+                )
+            }
+
+
+
+    private val driverManager: DriverManager
+            by lazy {
+                DriverManager.getInstance()
+            }
+
+    private val accountManager: AccountManager
+            by lazy {
+                AccountManager.getInstance()
+            }
+
+    private lateinit var transaction: FragmentTransaction
 
     // The entry point to the Fused Location Provider.
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private var fusedLocationProviderClient: FusedLocationProviderClient? = null
+    private var locationCallback: LocationCallback? = null
 
-    private val defaultLocation = LatLng(-33.8523341, 151.2106085)
-    private var currentLocation: LatLng? = null
     private var locationPermissionGranted = false
 
-    private val httpConnection: HttpConnection
-        by lazy {
-            HttpConnection.getInstance()
-        }
+    private var currentFragment : Fragment? = null
+
+    private var driverHashMap: HashMap<String, Marker> = HashMap()
+    private var listDriver: HashMap<String, DriverInfo> = HashMap()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Retrieve location and camera position from saved instance state.
-        if (savedInstanceState != null) {
-            currentLocation = savedInstanceState.getParcelable(KEY_LOCATION)
-            cameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION)
-        }
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.viewModel = mainViewModel
 
-        setContentView(R.layout.activity_main)
+        initDataMap()
+        initView()
 
-        // Construct a PlacesClient
-        Places.initialize(applicationContext, getString(R.string.maps_api_key))
-        placesClient = Places.createClient(this)
+        // TODO debug code
 
+        driverManager.addListIdDriver()
+        getInfoDriver(FirebaseManager.getInstance().databaseDrivers)
+
+    }
+
+    private fun initDataMap() {
         // Construct a FusedLocationProviderClient.
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+    }
 
+    private fun initView() {
         // Build the map.
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
+
+        transaction = supportFragmentManager.beginTransaction()
+
+        binding.imgBack.setOnClickListener {
+            onBackPressed()
+        }
+        mainViewModel.onItemClickListener = object : MainViewModel.OnItemClickListener {
+            override fun openFindPlaceFragment() {
+                gotoFindPlaceFragment()
+            }
+
+            override fun bookDriver() {
+                showDialogConfirmBookDriver()
+            }
+
+        }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         Log.d("NamTV", "onMapReady")
-        this.map = googleMap
+        map = googleMap
+        map!!.setOnMarkerClickListener(this)
 
         // Prompt the user for permission.
         getLocationPermission()
@@ -79,23 +126,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         // Turn on the My Location layer and the related control on the map.
         updateLocationUI()
 
-        // Get the current location of the device and set the position of the map.
-        getDeviceLocation()
-
-        // TODO: Debug code
-        getDriverLocation()
-
+        if (locationPermissionGranted) {
+            // Get the current location of the device and set the position of the map.
+            getDeviceLocation()
+        }
     }
 
-    /**
-     * Saves the state of the map when the activity is paused.
-     */
-    override fun onSaveInstanceState(outState: Bundle) {
-        map.let { map ->
-            outState.putParcelable(KEY_CAMERA_POSITION, map?.cameraPosition)
-            outState.putParcelable(KEY_LOCATION, currentLocation)
+    override fun onMarkerClick(marker: Marker?): Boolean{
+        val idDriver = marker?.tag
+        if (idDriver != null && listDriver.containsKey(idDriver)) {
+            val driverInfo = listDriver[idDriver]
+            selectDriver(driverInfo!!)
         }
-        super.onSaveInstanceState(outState)
+        return true
     }
 
     override fun onRequestPermissionsResult(
@@ -109,42 +152,71 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.isNotEmpty() &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED
+                ) {
                     locationPermissionGranted = true
+                    getDeviceLocation()
+                    updateLocationUI()
                 }
             }
         }
-        updateLocationUI()
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    override fun onBackPressed() {
+        if (currentFragment is InfoDriverFragment) {
+            mainViewModel.isShowMapLayout.set(true)
+            removeInfoDriverFragment()
+            return
+        }
+
+        super.onBackPressed()
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 
     /**
      * Gets the current location of the device, and positions the map's camera.
      */
+    @SuppressLint("MissingPermission")
     private fun getDeviceLocation() {
         try {
             if (locationPermissionGranted) {
-                val locationResult = fusedLocationProviderClient.lastLocation
-                locationResult.addOnCompleteListener(this) { task ->
-                    if (task.isSuccessful) {
-                        // Set the map's camera position to the current location of the device.
-                        val lastKnownLocation = task.result
-                        if (lastKnownLocation != null) {
-                            currentLocation = LatLng(lastKnownLocation.latitude, lastKnownLocation.longitude)
-                            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                currentLocation, Constants.DEFAULT_ZOOM_MAPS.toFloat()))
+                val locationRequest = LocationRequest.create()
+                locationRequest.priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
+                locationRequest.interval = (30*1000).toLong()
+                locationRequest.fastestInterval = (30*1000).toLong()
+                locationCallback = object : LocationCallback() {
+                    override fun onLocationResult(locationResult: LocationResult?) {
+                        super.onLocationResult(locationResult)
+                        if (locationResult == null) {
+                            return
                         }
-                    } else {
-                        currentLocation = defaultLocation
-                        map?.moveCamera(CameraUpdateFactory
-                            .newLatLngZoom(currentLocation, Constants.DEFAULT_ZOOM_MAPS.toFloat()))
-                        map?.uiSettings?.isMyLocationButtonEnabled = false
+                        for (location in locationResult.locations) {
+                            if (location != null) {
+                                val currentLocation = LatLng(location.latitude, location.longitude)
+                                accountManager.setLocationUser(currentLocation)
+                                map?.moveCamera(
+                                    CameraUpdateFactory.newLatLng(currentLocation)
+                                )
+                            }
+                        }
                     }
+                }
 
-                    // TODO: Debug code
-                    MapsConnection.getInstance().drawShortestWay(map!!, "116 Luong The Vinh", "200 Truong Chinh")
-
-                    MapsConnection.getInstance().findPlace("194 Nguyen Trai")
+                fusedLocationProviderClient?.lastLocation?.addOnSuccessListener(this) { location ->
+                    if (location != null) {
+                        val currentLocation = LatLng(location.latitude, location.longitude)
+                        accountManager.setLocationUser(currentLocation)
+                        map?.moveCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                currentLocation, Constants.DEFAULT_ZOOM_MAPS.toFloat()
+                            )
+                        )
+                        fusedLocationProviderClient?.requestLocationUpdates(locationRequest, locationCallback, null)
+                    }
                 }
             }
         } catch (e: SecurityException) {
@@ -152,33 +224,32 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun getDriverLocation() {
-        val listDriver = ArrayList<DriverInfo>()
-        listDriver.add(DriverInfo(Constants.defaultLocation1.latitude, Constants.defaultLocation1.longitude, null, null, null))
-        listDriver.add(DriverInfo(Constants.defaultLocation2.latitude, Constants.defaultLocation2.longitude, null, null, null))
-        listDriver.add(DriverInfo(Constants.defaultLocation3.latitude, Constants.defaultLocation3.longitude, null, null, null))
-        listDriver.add(DriverInfo(Constants.defaultLocation4.latitude, Constants.defaultLocation4.longitude, null, null, null))
-        listDriver.add(DriverInfo(Constants.defaultLocation5.latitude, Constants.defaultLocation5.longitude, null, null, null))
-
-        for(i in listDriver) {
-            addMarkerDriver(LatLng(i.latitude, i.longitude))
+    private fun addOrUpdateMarkerDriver(driverInfo: DriverInfo) {
+        if (driverHashMap.containsKey(driverInfo.idDriver)) {
+            val marker = driverHashMap[driverInfo.idDriver]
+            marker?.position = LatLng(driverInfo.latitude, driverInfo.longitude)
+        } else {
+            val markerOption = MarkerOptions().apply {
+                position(LatLng(driverInfo.latitude, driverInfo.longitude))
+                icon(bitmapFromVector(R.drawable.motocross))
+                title(driverInfo.name)
+                snippet(driverInfo.rate.toString())
+            }
+            val marker = map!!.addMarker(markerOption)
+            marker.tag = driverInfo.idDriver
+            driverHashMap[driverInfo.idDriver] = marker
         }
     }
 
-    private fun addMarkerDriver(latLng: LatLng) {
-        val marker = MarkerOptions().position(latLng).icon(bitmapFromVector(R.drawable.motocross))
-        map?.addMarker(marker)
-    }
-
     private fun getLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this.applicationContext,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-            == PackageManager.PERMISSION_GRANTED) {
-            locationPermissionGranted = true
-        } else {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+        if (ContextCompat.checkSelfPermission(this.applicationContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this.applicationContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
                 PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
             )
+        } else {
+            locationPermissionGranted = true
         }
     }
 
@@ -187,11 +258,20 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val vectorDrawable = ContextCompat.getDrawable(this, vectorResId)
 
         // below line is use to set bounds to our vector drawable.
-        vectorDrawable!!.setBounds(0, 0, vectorDrawable.intrinsicWidth, vectorDrawable.intrinsicHeight)
+        vectorDrawable!!.setBounds(
+            0,
+            0,
+            vectorDrawable.intrinsicWidth,
+            vectorDrawable.intrinsicHeight
+        )
 
         // below line is use to create a bitmap for our
         // drawable which we have added.
-        val bitmap = Bitmap.createBitmap(vectorDrawable.intrinsicWidth, vectorDrawable.intrinsicHeight, Bitmap.Config.ARGB_8888)
+        val bitmap = Bitmap.createBitmap(
+            vectorDrawable.intrinsicWidth,
+            vectorDrawable.intrinsicHeight,
+            Bitmap.Config.ARGB_8888
+        )
 
         // below line is use to add bitmap in our canvas.
         val canvas = Canvas(bitmap)
@@ -218,7 +298,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             } else {
                 map?.isMyLocationEnabled = false
                 map?.uiSettings?.isMyLocationButtonEnabled = false
-                currentLocation = null
+                accountManager.setLocationUser(Constants.DEFAULT_LOCATION)
                 getLocationPermission()
             }
         } catch (e: SecurityException) {
@@ -226,9 +306,85 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    private fun getInfoDriver(database: DatabaseReference) {
+        for (id in driverManager.listIdDriver) {
+            database.child(id).addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val driverInfo = driverManager.getInfoDriverFromDataSnapshot(snapshot)
+                    listDriver[driverInfo.idDriver] = driverInfo
+                    addOrUpdateMarkerDriver(driverInfo)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
+        }
+    }
+
+    private fun selectDriver(driverInfo: DriverInfo) {
+        mainViewModel.selectDriver(driverInfo) {
+            currentFragment = InfoDriverFragment()
+            val transaction = supportFragmentManager.beginTransaction()
+            transaction.setCustomAnimations(
+                R.anim.slide_in_bottom,
+                R.anim.slide_out_top,
+                R.anim.pop_in_bottom,
+                R.anim.pop_out_top
+            )
+            transaction.addToBackStack(null)
+            transaction.replace(R.id.fragmentBook, currentFragment as InfoDriverFragment).commit()
+            mainViewModel.isShowMapLayout.set(false)
+        }
+    }
+
+    private fun removeInfoDriverFragment() {
+        if (currentFragment !is InfoDriverFragment) {
+            return
+        }
+        mainViewModel.driverInfoSelect = null
+
+        transaction.setCustomAnimations(
+            R.anim.slide_in_bottom,
+            R.anim.slide_out_top,
+            R.anim.pop_in_bottom,
+            R.anim.pop_out_top
+        )
+        transaction.remove(currentFragment as InfoDriverFragment).commit()
+        currentFragment = null
+    }
+
+    private fun gotoFindPlaceFragment() {
+        currentFragment = FindPlaceFragment()
+
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.setCustomAnimations(
+            R.anim.slide_in_bottom,
+            R.anim.slide_out_top,
+            R.anim.pop_in_bottom,
+            R.anim.pop_out_top
+        )
+        transaction.addToBackStack(null)
+        transaction.add(R.id.fragmentBook, currentFragment as FindPlaceFragment).commit()
+        mainViewModel.isShowMapLayout.set(false)
+    }
+
+    private fun showDialogConfirmBookDriver() {
+        val dialogConfirm = ConfirmDialog(this)
+        dialogConfirm.setTextDisplay(
+            getString(R.string.confirm_book_driver),
+            null,
+            getString(R.string.label_cancel),
+            getString(R.string.label_ok)
+        )
+        dialogConfirm.setOnClickOK(View.OnClickListener {
+            Log.d("NamTV", "clickOK")
+            dialogConfirm.dismiss()
+        })
+        dialogConfirm.setTextTypeBoldBtnOK()
+        dialogConfirm.show()
+    }
+
     companion object {
-        const val KEY_LOCATION = "key_location"
-        const val KEY_CAMERA_POSITION = "key_camera_position"
         private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
     }
 }

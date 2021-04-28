@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModel
 import com.example.grabapplication.activities.MainActivity
+import com.example.grabapplication.activities.SignUpActivity
 
 class LoginViewModel(var context: Context): ViewModel() {
 
@@ -21,6 +22,10 @@ class LoginViewModel(var context: Context): ViewModel() {
     fun startLogin(username: String, password: String) {
         val intent = Intent(context, MainActivity::class.java)
         context.startActivity(intent)
+    }
 
+    fun startSignUp() {
+        val intent = Intent(context, SignUpActivity::class.java)
+        context.startActivity(intent)
     }
 }

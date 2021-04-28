@@ -5,7 +5,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
-class BaseViewModelFactory(private var activity: FragmentActivity, private var context: Context) :
+class BaseViewModelFactory(private var context: Context) :
     ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
@@ -14,9 +14,7 @@ class BaseViewModelFactory(private var activity: FragmentActivity, private var c
                 context
             ) as T
 
-            modelClass.isAssignableFrom(MainViewModel::class.java) -> return MainViewModel(
-                context
-            ) as T
+            modelClass.isAssignableFrom(MainViewModel::class.java) -> return MainViewModel() as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
