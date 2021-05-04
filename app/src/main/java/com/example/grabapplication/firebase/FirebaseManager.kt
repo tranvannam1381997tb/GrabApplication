@@ -44,4 +44,11 @@ class FirebaseManager private constructor() {
             databaseUsers.child(idUser).child(FirebaseConstants.KEY_LONGITUDE).setValue(location.longitude)
         }
     }
+
+    fun updateTokenIdToFirebase(tokenId: String) {
+        val idUser = AccountManager.getInstance().getIdUser()
+        if (idUser.isNullOrEmpty()) {
+            databaseUsers.child(idUser).child(FirebaseConstants.KEY_TOKEN_ID).setValue(tokenId)
+        }
+    }
 }

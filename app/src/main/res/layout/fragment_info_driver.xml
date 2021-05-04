@@ -23,7 +23,6 @@
             android:orientation="vertical"
             app:layout_constraintTop_toTopOf="parent">
 
-
             <LinearLayout
                 android:id="@+id/layout_name_driver"
                 android:layout_width="match_parent"

@@ -47,8 +47,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 )
             }
 
-
-
     private val driverManager: DriverManager
             by lazy {
                 DriverManager.getInstance()
@@ -84,7 +82,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
         driverManager.addListIdDriver()
         getInfoDriver(FirebaseManager.getInstance().databaseDrivers)
-
     }
 
     private fun initDataMap() {
@@ -171,10 +168,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         }
 
         super.onBackPressed()
-    }
-
-    override fun onResume() {
-        super.onResume()
     }
 
     /**
