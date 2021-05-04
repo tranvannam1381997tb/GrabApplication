@@ -47,7 +47,7 @@ class FirebaseManager private constructor() {
 
     fun updateTokenIdToFirebase(tokenId: String) {
         val idUser = AccountManager.getInstance().getIdUser()
-        if (idUser.isNullOrEmpty()) {
+        if (idUser.isNotEmpty()) {
             databaseUsers.child(idUser).child(FirebaseConstants.KEY_TOKEN_ID).setValue(tokenId)
         }
     }
