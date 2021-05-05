@@ -123,7 +123,20 @@ class MapsConnection private constructor() {
         requestQueue.add(directionsRequest)
     }
 
-    fun findPlace(place: String, callback: (ArrayList<PlaceModel>) -> Unit): ArrayList<PlaceModel> {
+    private fun getMapsApiDirectionsUrl(startLatitude: Double, startLongitude: Double, endLatitude: Double, endLongitude: Double): String {
+        val originLocation = "$startLatitude,$startLongitude"
+        val destinationLocation = "$endLatitude,$endLongitude"
+        return String.format(
+            MapsConstant.URL_DIRECTION,
+            originLocation,
+            destinationLocation,
+            GrabApplication.getAppContext().getString(
+                R.string.directions_api_key
+            )
+        )
+    }
+
+    fun findPlace(place: String, callback: (ArrayList<PlaceModel>) -> Unit) {
         val listPlace = ArrayList<PlaceModel>()
         val urlString = getMapsApiPlaceUrl(place)
         val placeRequest =
@@ -174,21 +187,6 @@ class MapsConnection private constructor() {
 
         val requestQueue = Volley.newRequestQueue(GrabApplication.getAppContext())
         requestQueue.add(placeRequest)
-
-        return listPlace
-    }
-
-    private fun getMapsApiDirectionsUrl(startLatitude: Double, startLongitude: Double, endLatitude: Double, endLongitude: Double): String {
-        val originLocation = "$startLatitude,$startLongitude"
-        val destinationLocation = "$endLatitude,$endLongitude"
-        return String.format(
-            MapsConstant.URL_DIRECTION,
-            originLocation,
-            destinationLocation,
-            GrabApplication.getAppContext().getString(
-                R.string.directions_api_key
-            )
-        )
     }
 
     private fun getMapsApiPlaceUrl(place: String): String {
@@ -197,6 +195,43 @@ class MapsConnection private constructor() {
             MapsConstant.URL_FIND_PLACE, placeEncode, GrabApplication.getAppContext().getString(
                 R.string.directions_api_key
             )
+        )
+    }
+
+    fun getCurrentPlace(callback: (PlaceModel) -> Unit) {
+        val currentPlace = AccountManager.getInstance().getLocationUser()
+        val urlString = getMapsApiCurrentPlaceUrl(currentPlace)
+        val placeRequest =
+            object : StringRequest(Method.GET, urlString, Response.Listener<String> { response ->
+                val jsonResponse = JSONObject(response)
+                val status =
+                    CommonUtils.getStringFromJsonObject(jsonResponse, MapsConstant.GEOCODE_STATUS)
+                if (status == MapsConstant.STATUS_OK) {
+                    val result = CommonUtils.getJsonArrayFromJsonObject(
+                        jsonResponse,
+                        MapsConstant.GEOCODE_RESULTS
+                    )
+                    for (i in 0 until result.length()) {
+                        val formattedAddress = CommonUtils.getStringFromJsonObject(
+                            result.getJSONObject(i),
+                            MapsConstant.GEOCODE_FORMATTED_ADDRESS
+                        )
+                        val placeModel = PlaceModel(currentPlace.latitude, currentPlace.longitude, formattedAddress, "")
+                        callback.invoke(placeModel)
+                    }
+                }
+            },
+                Response.ErrorListener {
+                }) {}
+
+        val requestQueue = Volley.newRequestQueue(GrabApplication.getAppContext())
+        requestQueue.add(placeRequest)
+    }
+
+    private fun getMapsApiCurrentPlaceUrl(currentPlace: LatLng): String {
+        val placeString = "${currentPlace.latitude},${currentPlace.longitude}"
+        val placeEncode = encodeURL(placeString)
+        return String.format(MapsConstant.URL_GEOCODE_PLACE, placeEncode, GrabApplication.getAppContext().getString(R.string.directions_api_key)
         )
     }
 
@@ -222,8 +257,4 @@ class MapsConnection private constructor() {
             return instance!!
         }
     }
-}
-
-interface GetDistanceListener {
-    fun getDistance()
 }

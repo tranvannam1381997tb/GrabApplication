@@ -1,8 +1,13 @@
 package com.example.grabapplication.viewmodel
 
+import androidx.databinding.ObservableField
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 
 class SignUpViewModel: ViewModel() {
+
+    var isCheckMale: ObservableField<Boolean> = ObservableField(true)
+
     var onClickSignUpScreenListener: OnClickSignUpScreenListener? = null
 
     fun clickBtnNextInputPhoneNumber() {
@@ -13,6 +18,13 @@ class SignUpViewModel: ViewModel() {
         onClickSignUpScreenListener?.clickBtnNextInputPassword()
     }
 
+    fun checkRadioMale() {
+        isCheckMale.set(true)
+    }
+
+    fun checkRadioFemale() {
+        isCheckMale.set(false)
+    }
 }
 
 interface OnClickSignUpScreenListener {

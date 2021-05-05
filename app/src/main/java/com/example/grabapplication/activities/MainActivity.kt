@@ -22,6 +22,7 @@ import com.example.grabapplication.databinding.ActivityMainBinding
 import com.example.grabapplication.firebase.FirebaseManager
 import com.example.grabapplication.fragments.FindPlaceFragment
 import com.example.grabapplication.fragments.InfoDriverFragment
+import com.example.grabapplication.googlemaps.MapsConnection
 import com.example.grabapplication.model.DriverInfo
 import com.example.grabapplication.viewmodel.BaseViewModelFactory
 import com.example.grabapplication.viewmodel.MainViewModel
@@ -380,6 +381,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         })
         dialogConfirm.setTextTypeBoldBtnOK()
         dialogConfirm.show()
+    }
+
+    fun pushNotifyToDriver() {
+        MapsConnection.getInstance().getCurrentPlace {
+            Log.d("NamTV", "")
+        }
     }
 
     companion object {

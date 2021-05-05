@@ -39,6 +39,14 @@
     <string name="next">Tiếp</string>
     <string name="description_input_phone_number">Nhập số di động của bạn</string>
     <string name="description_input_password">Nhập mật khẩu</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="description_input_info">Nhập thông tin khác</string>
+    <string name="input_name">Nhập họ và tên của bạn</string>
+    <string name="hint_input_name">Trần Văn Nam</string>
+    <string name="sex">Chọn giới tính</string>
+    <string name="male">Nam</string>
+    <string name="female">Nữ</string>
+    <string name="input_age">Nhập tuổi</string>
+    <string name="hint_input_age">24</string>
+    <string name="error_input_name">Bạn chưa nhập họ và tên</string>
+    <string name="error_input_age">Bạn chưa nhập tuổi</string>
 </resources>

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.example.grabapplication.R
+import com.example.grabapplication.databinding.FragmentInputPasswordBinding
 import com.example.grabapplication.databinding.FragmentInputPhoneNumberBinding
 import com.example.grabapplication.viewmodel.BaseViewModelFactory
 import com.example.grabapplication.viewmodel.SignUpViewModel
@@ -20,7 +21,7 @@ class InputPasswordFragment : Fragment() {
                     SignUpViewModel::class.java)
             }
 
-    private lateinit var binding: FragmentInputPhoneNumberBinding
+    private lateinit var binding: FragmentInputPasswordBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

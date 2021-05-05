@@ -68,7 +68,6 @@ class HttpConnection private constructor() {
             Log.d("NamTV", "HttpConnection::startURLConnection: Exception: $e")
             return CompletionHandler(null, e.toString(), 0)
         }
-
     }
 
     private fun requestHttps(http: HttpURLConnection): CompletionHandler {
@@ -118,7 +117,7 @@ class HttpConnection private constructor() {
     }
 
     companion object {
-        private const val URL_LOGIN_FORMAT = "http://%s/login/driver"
+        private const val URL_LOGIN_FORMAT = "http://%s/login/user"
         private const val HOST = "192.168.1.105:3000"
         private const val POST = "POST"
         private const val CONNECTION_TIMEOUT = 30000

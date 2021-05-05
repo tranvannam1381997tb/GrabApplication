@@ -8,10 +8,12 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.grabapplication.R
 import com.example.grabapplication.databinding.ActivityLoginBinding
 import com.example.grabapplication.databinding.ActivitySignUpBinding
+import com.example.grabapplication.fragments.InputInfoFragment
 import com.example.grabapplication.fragments.InputPasswordFragment
 import com.example.grabapplication.fragments.InputPhoneNumberFragment
 import com.example.grabapplication.viewmodel.BaseViewModelFactory
 import com.example.grabapplication.viewmodel.LoginViewModel
+import com.example.grabapplication.viewmodel.OnClickSignUpScreenListener
 import com.example.grabapplication.viewmodel.SignUpViewModel
 
 class SignUpActivity : AppCompatActivity() {
@@ -28,6 +30,20 @@ class SignUpActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_sign_up)
         binding.viewModel = signUpViewModel
         gotoInputPhoneNumberFragment()
+        setupEvent()
+    }
+
+    private fun setupEvent() {
+        signUpViewModel.onClickSignUpScreenListener = object : OnClickSignUpScreenListener {
+            override fun clickBtnNextInputPhoneNumber() {
+                gotoInputPasswordFragment()
+            }
+
+            override fun clickBtnNextInputPassword() {
+                gotoInputInfoFragment()
+            }
+
+        }
     }
 
     private fun gotoInputPhoneNumberFragment() {
@@ -45,6 +61,20 @@ class SignUpActivity : AppCompatActivity() {
             R.anim.pop_enter,
             R.anim.pop_exit
         )
-        transaction.replace(R.id.fragmentContent, fragmentContent as InputPasswordFragment).commit()
+        transaction.addToBackStack(null)
+        transaction.add(R.id.fragmentContent, fragmentContent as InputPasswordFragment).commit()
+    }
+
+    private fun gotoInputInfoFragment() {
+        fragmentContent = InputInfoFragment()
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.setCustomAnimations(
+            R.anim.enter,
+            R.anim.exit,
+            R.anim.pop_enter,
+            R.anim.pop_exit
+        )
+        transaction.addToBackStack(null)
+        transaction.add(R.id.fragmentContent, fragmentContent as InputInfoFragment).commit()
     }
 }
