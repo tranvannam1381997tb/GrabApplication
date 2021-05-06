@@ -31,9 +31,6 @@ class DriverManager private constructor() {
     fun addListIdDriver() {
         listIdDriver.add("idDriver_1")
         listIdDriver.add("idDriver_2")
-        listIdDriver.add("idDriver_3")
-        listIdDriver.add("idDriver_4")
-        listIdDriver.add("idDriver_5")
     }
 
     fun getInfoDriverFromDataSnapshot(snapshot: DataSnapshot): DriverInfo {

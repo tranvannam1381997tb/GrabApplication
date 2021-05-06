@@ -19,6 +19,7 @@ import com.example.grabapplication.R
 import com.example.grabapplication.common.*
 import com.example.grabapplication.customviews.ConfirmDialog
 import com.example.grabapplication.databinding.ActivityMainBinding
+import com.example.grabapplication.firebase.FirebaseConnection
 import com.example.grabapplication.firebase.FirebaseManager
 import com.example.grabapplication.fragments.FindPlaceFragment
 import com.example.grabapplication.fragments.InfoDriverFragment
@@ -88,6 +89,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
         driverManager.addListIdDriver()
         getInfoDriver(FirebaseManager.getInstance().databaseDrivers)
+
     }
 
     private fun initDataMap() {
@@ -309,12 +311,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         for (id in driverManager.listIdDriver) {
             database.child(id).addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
+                    Log.d("NamTV", "onDataChange")
                     val driverInfo = driverManager.getInfoDriverFromDataSnapshot(snapshot)
                     listDriver[driverInfo.idDriver] = driverInfo
                     addOrUpdateMarkerDriver(driverInfo)
                 }
 
                 override fun onCancelled(error: DatabaseError) {
+                    Log.d("NamTV", "onCancelled")
                 }
             })
         }
@@ -376,17 +380,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             getString(R.string.label_ok)
         )
         dialogConfirm.setOnClickOK(View.OnClickListener {
-            Log.d("NamTV", "clickOK")
+            mainViewModel.distancePlaceChoose.get()?.let { distance ->
+                FirebaseConnection.getInstance().pushNotifyToDriver(distance, mainViewModel.driverInfoSelect!!.tokenId)
+            }
+
             dialogConfirm.dismiss()
         })
         dialogConfirm.setTextTypeBoldBtnOK()
         dialogConfirm.show()
-    }
-
-    fun pushNotifyToDriver() {
-        MapsConnection.getInstance().getCurrentPlace {
-            Log.d("NamTV", "")
-        }
     }
 
     companion object {

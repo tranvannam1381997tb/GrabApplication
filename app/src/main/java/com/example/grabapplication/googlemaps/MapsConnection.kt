@@ -100,16 +100,22 @@ class MapsConnection private constructor() {
                             val leg = legs.getJSONObject(j)
 
                             val distance = CommonUtils.getJsonObjectFromJsonObject(leg, MapsConstant.DIRECTION_DISTANCE)
-                            val distanceText = CommonUtils.getStringFromJsonObject(distance, MapsConstant.DIRECTION_TEXT)
                             val distanceValue = CommonUtils.getIntFromJsonObject(distance, MapsConstant.DIRECTION_VALUE)
 
-                            val duration = CommonUtils.getJsonObjectFromJsonObject(leg, MapsConstant.DIRECTION_DURATION)
-                            val durationText = CommonUtils.getStringFromJsonObject(duration, MapsConstant.DIRECTION_TEXT)
-                            val durationValue = CommonUtils.getIntFromJsonObject(duration, MapsConstant.DIRECTION_VALUE)
 
                             if ((min == 0) || (min != 0 && distanceValue < min)) {
                                 min = distanceValue
-                                minDistance = Distance(distanceText, distanceValue, durationText, durationValue)
+
+                                val distanceText = CommonUtils.getStringFromJsonObject(distance, MapsConstant.DIRECTION_TEXT)
+
+                                val duration = CommonUtils.getJsonObjectFromJsonObject(leg, MapsConstant.DIRECTION_DURATION)
+                                val durationText = CommonUtils.getStringFromJsonObject(duration, MapsConstant.DIRECTION_TEXT)
+                                val durationValue = CommonUtils.getIntFromJsonObject(duration, MapsConstant.DIRECTION_VALUE)
+
+                                val startAddress = CommonUtils.getStringFromJsonObject(leg, MapsConstant.DIRECTION_START_ADDRESS)
+                                val endAddress = CommonUtils.getStringFromJsonObject(leg, MapsConstant.DIRECTION_END_ADDRESS)
+
+                                minDistance = Distance(distanceText, distanceValue, durationText, durationValue, startAddress, endAddress)
                             }
                         }
                     }
@@ -195,43 +201,6 @@ class MapsConnection private constructor() {
             MapsConstant.URL_FIND_PLACE, placeEncode, GrabApplication.getAppContext().getString(
                 R.string.directions_api_key
             )
-        )
-    }
-
-    fun getCurrentPlace(callback: (PlaceModel) -> Unit) {
-        val currentPlace = AccountManager.getInstance().getLocationUser()
-        val urlString = getMapsApiCurrentPlaceUrl(currentPlace)
-        val placeRequest =
-            object : StringRequest(Method.GET, urlString, Response.Listener<String> { response ->
-                val jsonResponse = JSONObject(response)
-                val status =
-                    CommonUtils.getStringFromJsonObject(jsonResponse, MapsConstant.GEOCODE_STATUS)
-                if (status == MapsConstant.STATUS_OK) {
-                    val result = CommonUtils.getJsonArrayFromJsonObject(
-                        jsonResponse,
-                        MapsConstant.GEOCODE_RESULTS
-                    )
-                    for (i in 0 until result.length()) {
-                        val formattedAddress = CommonUtils.getStringFromJsonObject(
-                            result.getJSONObject(i),
-                            MapsConstant.GEOCODE_FORMATTED_ADDRESS
-                        )
-                        val placeModel = PlaceModel(currentPlace.latitude, currentPlace.longitude, formattedAddress, "")
-                        callback.invoke(placeModel)
-                    }
-                }
-            },
-                Response.ErrorListener {
-                }) {}
-
-        val requestQueue = Volley.newRequestQueue(GrabApplication.getAppContext())
-        requestQueue.add(placeRequest)
-    }
-
-    private fun getMapsApiCurrentPlaceUrl(currentPlace: LatLng): String {
-        val placeString = "${currentPlace.latitude},${currentPlace.longitude}"
-        val placeEncode = encodeURL(placeString)
-        return String.format(MapsConstant.URL_GEOCODE_PLACE, placeEncode, GrabApplication.getAppContext().getString(R.string.directions_api_key)
         )
     }
 

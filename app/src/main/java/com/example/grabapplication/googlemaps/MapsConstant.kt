@@ -19,6 +19,8 @@ class MapsConstant {
         const val DIRECTION_DURATION = "duration"
         const val DIRECTION_TEXT = "text"
         const val DIRECTION_VALUE = "value"
+        const val DIRECTION_START_ADDRESS = "start_address"
+        const val DIRECTION_END_ADDRESS = "end_address"
 
         // google geocoding api key
         const val GEOCODE_STATUS = "status"
@@ -35,6 +37,6 @@ class MapsConstant {
         const val PLACE_FORMATTED_ADDRESS = "formatted_address"
         const val PLACE_NAME = "name"
 
-        val DEFAULT_DISTANCE = Distance("1km", 1000, "10 phút", 600)
+        val DEFAULT_DISTANCE = Distance("1km", 1000, "10 phút", 600, "106 Hoàng Quốc Việt", "10 Nguyễn Văn Huyên")
     }
 }
