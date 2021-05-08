@@ -71,4 +71,17 @@ class AccountManager private constructor() {
     fun getLocationUser(): LatLng {
         return currentLocation ?: Constants.DEFAULT_LOCATION
     }
+
+    fun setUserInfo(name: String, age: Int, sex: Int, phoneNumber: String, status: Int) {
+        this.name = name
+        this.age = age
+        this.sex = sex
+        this.phoneNumber = phoneNumber
+        this.status = status
+    }
+}
+
+enum class SexValue(val rawValue: Int) {
+    MALE(0),
+    FEMALE(1)
 }

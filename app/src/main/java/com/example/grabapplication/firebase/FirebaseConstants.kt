@@ -11,6 +11,9 @@ class FirebaseConstants {
         // Firebase Cloud Message
         const val KEY_START_ADDRESS = "startAddress"
         const val KEY_END_ADDRESS = "endAddress"
+        const val KEY_USER_ID = "userId"
+        const val KEY_PRICE = "price"
+        const val KEY_DISTANCE = "distance"
         const val KEY_TO = "to"
         const val KEY_DATA = "data"
         const val KEY_AUTHORIZATION = "Authorization"

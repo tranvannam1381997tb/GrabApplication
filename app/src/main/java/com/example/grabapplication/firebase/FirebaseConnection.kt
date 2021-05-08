@@ -5,6 +5,7 @@ import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.example.grabapplication.GrabApplication
+import com.example.grabapplication.common.AccountManager
 import com.example.grabapplication.connecttion.HttpConnection
 import com.example.grabapplication.googlemaps.models.Distance
 import com.google.firebase.messaging.FirebaseMessaging
@@ -56,6 +57,9 @@ class FirebaseConnection private constructor() {
         try {
             notificationBody.put(FirebaseConstants.KEY_START_ADDRESS, distancePlaceChoose.startAddress)
             notificationBody.put(FirebaseConstants.KEY_END_ADDRESS, distancePlaceChoose.endAddress)
+            notificationBody.put(FirebaseConstants.KEY_USER_ID, AccountManager.getInstance().getIdUser())
+            notificationBody.put(FirebaseConstants.KEY_PRICE, "10000")
+            notificationBody.put(FirebaseConstants.KEY_DISTANCE, distancePlaceChoose.distanceText)
             notification.put(FirebaseConstants.KEY_TO, idDriver)
             notification.put(FirebaseConstants.KEY_DATA, notificationBody)
         } catch (e: JSONException) {

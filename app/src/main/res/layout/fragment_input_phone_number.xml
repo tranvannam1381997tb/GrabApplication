@@ -46,6 +46,7 @@
             android:paddingBottom="8dp"
             android:singleLine="true"
             android:textSize="@dimen/text_size_name"
+            android:text="0976356353"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/description" />
 
@@ -62,8 +63,7 @@
             android:text="@string/next"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:onSingleClick="@{ () -> viewModel.clickBtnNextInputPhoneNumber()}" />
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

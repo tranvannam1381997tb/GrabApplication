@@ -17,59 +17,6 @@ import kotlin.collections.ArrayList
 
 class MapsConnection private constructor() {
 
-//    fun drawShortestWay(googleMap: GoogleMap, latitude: Double, longitude: Double) {
-//        var maxDistance = 0
-//        val currentLocation = MainActivity.currentLocation
-//        val urlDirections = getMapsApiDirectionsUrl(currentLocation.latitude, currentLocation.longitude, latitude, longitude)
-//        val path: MutableList<List<LatLng>> = ArrayList()
-//        val directionsRequest = object : StringRequest(
-//            Method.GET,
-//            urlDirections,
-//            Response.Listener<String> { response ->
-//                val jsonResponse = JSONObject(response)
-//                // Get routes
-//                val routes = CommonUtils.getJsonArrayFromJsonObject(
-//                    jsonResponse,
-//                    MapsConstant.DIRECTION_ROUTES
-//                )
-//                val legs = CommonUtils.getJsonArrayFromJsonObject(
-//                    routes.getJSONObject(0),
-//                    MapsConstant.DIRECTION_LEGS
-//                )
-//                val step = CommonUtils.getJsonArrayFromJsonObject(
-//                    legs.getJSONObject(0),
-//                    MapsConstant.DIRECTION_STEPS
-//                )
-//                for (i in 0 until step.length()) {
-//                    val polyline = CommonUtils.getJsonObjectFromJsonObject(
-//                        step.getJSONObject(i),
-//                        MapsConstant.DIRECTION_POLYLINE
-//                    )
-//                    val points = CommonUtils.getStringFromJsonObject(
-//                        polyline,
-//                        MapsConstant.DIRECTION_POINTS
-//                    )
-//                    path.add(PolyUtil.decode(points))
-//
-//                    val distance = CommonUtils.getJsonObjectFromJsonObject(
-//                        step.getJSONObject(i),
-//                        "distance"
-//                    )
-//                    val value = CommonUtils.getFloatFromJsonObject(distance, "value")
-//                    if (maxDistance < value) {
-//                        maxDistance = value.toInt()
-//                    }
-//                }
-//                for (i in 0 until path.size) {
-//                    googleMap.addPolyline(PolylineOptions().addAll(path[i]).color(Color.RED))
-//                }
-//            },
-//            Response.ErrorListener {
-//            }){}
-//        val requestQueue = Volley.newRequestQueue(GrabApplication.getAppContext())
-//        requestQueue.add(directionsRequest)
-//    }
-
     fun getShortestWay(latitude: Double, longitude: Double, callback: (Distance) -> Unit) {
         var min = 0
         var minDistance = MapsConstant.DEFAULT_DISTANCE

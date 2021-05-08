@@ -8,6 +8,7 @@ class Constants {
 
         const val DATE_FORMAT_FOR_FIREBASE = "dd/MM/yyyy"
         const val DATE_FORMAT_APP = "dd, MMM yyyy"
+        const val KEY_SUCCESS = "success"
 
         val DEFAULT_LOCATION = LatLng(-33.8523341, 151.2106085)
     }

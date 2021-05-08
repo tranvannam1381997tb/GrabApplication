@@ -16,3 +16,18 @@ data class UserInfo(
     var longitude: Double,
     var status: Int
 ): Parcelable
+
+enum class UserInfoKey(val rawValue: String) {
+    KeyUser("user"),
+    KeyUserId("userId"),
+    KeyTokenId("tokenId"),
+    KeyName("name"),
+    KeyAge("age"),
+    KeySex("sex"),
+    KeyPhoneNumber("phoneNumber"),
+    KeyPassword("password"),
+    KeyLatitude("latitude"),
+    KeyLongitude("longitude"),
+    KeyStatus("status"),
+    KeyStartDate("startDate")
+}

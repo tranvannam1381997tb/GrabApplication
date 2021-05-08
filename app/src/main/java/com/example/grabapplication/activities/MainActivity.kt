@@ -77,10 +77,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.viewModel = mainViewModel
 
-
-        // TODO debug code
-        accountManager.saveIdUser("idUser_1")
-
         initDataMap()
         initView()
         accountManager.getTokenIdDevice {  }

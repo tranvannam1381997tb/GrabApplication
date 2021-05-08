@@ -1,6 +1,13 @@
 package com.example.grabapplication.connecttion
 
 import android.util.Log
+import com.android.volley.DefaultRetryPolicy
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
+import com.example.grabapplication.GrabApplication
+import com.example.grabapplication.R
+import com.example.grabapplication.common.Constants
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStream
@@ -11,33 +18,37 @@ import java.net.URL
 
 class HttpConnection private constructor() {
 
-    fun startLogin(username: String, password: String): CompletionHandler {
-        try {
-            val url = URL(String.format(URL_LOGIN_FORMAT, HOST))
-            val http = url.openConnection() as HttpURLConnection
-            http.connectTimeout = CONNECTION_TIMEOUT
-            http.requestMethod = POST
+    fun startLogin(jsonBody: JSONObject, callback:(Boolean, String) -> Unit) {
+        val url = String.format(URL_LOGIN_FORMAT, HOST)
+        val jsonObjectRequest = object : JsonObjectRequest(Method.POST, url, jsonBody, Response.Listener<JSONObject> {
+            if (it != null && it.has(Constants.KEY_SUCCESS)) {
+                callback.invoke(true, it.toString())
+            }
+        }, Response.ErrorListener {
+            if (it.networkResponse != null) {
+                val statusCode = it.networkResponse.statusCode
+                if (statusCode == 400) {
+                    val dataError = JSONObject(it.networkResponse.data.toString(Charsets.UTF_8))
+                    val error = dataError.getString("error")
+                    callback.invoke(false, error)
+                }
+            }
 
-            http.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
-            http.setRequestProperty("Accept", "application/json")
-
-            val jsonBody = JSONObject()
-            jsonBody.put("username", username)
-            jsonBody.put("password", password)
-
-            val outputInBytes = jsonBody.toString().toByteArray(Charsets.UTF_8)
-            val os = http.outputStream
-            os.write(outputInBytes)
-            os.close()
-
-            return requestHttps(http)
-        } catch (e: MalformedURLException) {
-            Log.d(" NamTV","HttpConnection::startLogin::MalformedURLException: $e")
-            return CompletionHandler(null, e.toString(), 1)
-        } catch (e: Exception) {
-            Log.d("NamTV", "HttpConnection::startLogin:exception: $e")
-            return CompletionHandler(null, e.toString(), 1)
+            callback.invoke(false, GrabApplication.getAppContext().getString(R.string.connect_server_error))
+        }) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val params = HashMap<String, String>()
+                params["Content-Type"] = "application/json; charset=utf-8"
+                params["Accept"] = "application/json"
+                return params
+            }
         }
+        jsonObjectRequest.retryPolicy = DefaultRetryPolicy(
+                CONNECTION_TIMEOUT,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        val requestQueue = Volley.newRequestQueue(GrabApplication.getAppContext())
+        requestQueue.add(jsonObjectRequest)
     }
 
     fun startGetPrice(startAddress : String, endAddress : String, distance: Int): CompletionHandler {
@@ -68,6 +79,39 @@ class HttpConnection private constructor() {
             Log.d("NamTV", "HttpConnection::startURLConnection: Exception: $e")
             return CompletionHandler(null, e.toString(), 0)
         }
+    }
+
+    fun startSignUp(jsonBody: JSONObject, callback:(Boolean, String) -> Unit) {
+        val url = String.format(URL_SIGN_UP, HOST)
+        val jsonObjectRequest = object : JsonObjectRequest(Method.POST, url, jsonBody, Response.Listener<JSONObject> {
+            if (it != null && it.has(Constants.KEY_SUCCESS)) {
+                callback.invoke(true, it.toString())
+            }
+        }, Response.ErrorListener {
+            if (it.networkResponse != null) {
+                val statusCode = it.networkResponse.statusCode
+                if (statusCode == 400) {
+                    val dataError = JSONObject(it.networkResponse.data.toString(Charsets.UTF_8))
+                    val error = dataError.getString("error")
+                    callback.invoke(false, error)
+                }
+            }
+
+            callback.invoke(false, GrabApplication.getAppContext().getString(R.string.connect_server_error))
+        }) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val params = HashMap<String, String>()
+                params["Content-Type"] = "application/json; charset=utf-8"
+                params["Accept"] = "application/json"
+                return params
+            }
+        }
+        jsonObjectRequest.retryPolicy = DefaultRetryPolicy(
+                CONNECTION_TIMEOUT,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        val requestQueue = Volley.newRequestQueue(GrabApplication.getAppContext())
+        requestQueue.add(jsonObjectRequest)
     }
 
     private fun requestHttps(http: HttpURLConnection): CompletionHandler {
@@ -117,9 +161,9 @@ class HttpConnection private constructor() {
     }
 
     companion object {
-        private const val URL_LOGIN_FORMAT = "http://%s/login/user"
-        private const val HOST = "192.168.1.105:3000"
-        private const val POST = "POST"
+        private const val URL_LOGIN_FORMAT = "http://%s/api/user/login"
+        private const val URL_SIGN_UP = "http://%s/api/user/create"
+        private const val HOST = "192.168.1.215:3000"
         private const val CONNECTION_TIMEOUT = 30000
 
         private var instance: HttpConnection? = null

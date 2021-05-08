@@ -23,7 +23,7 @@ data class DriverInfo(
 ) : Parcelable
 
 enum class DriverInfoKey(val rawValue: String) {
-    KeyIdDriver("idDriver"),
+    KeyDriverId("driverId"),
     KeyTokenId("tokenId"),
     KeyName("name"),
     KeyAge("age"),
