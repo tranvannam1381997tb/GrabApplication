@@ -18,7 +18,7 @@ class FirebaseConnection private constructor() {
         private var instance: FirebaseConnection? = null
         fun getInstance(): FirebaseConnection {
             if (instance == null) {
-                synchronized(HttpConnection::class.java) {
+                synchronized(FirebaseConnection::class.java) {
                     if (instance == null) {
                         instance = FirebaseConnection()
                     }
@@ -55,13 +55,22 @@ class FirebaseConnection private constructor() {
         val notificationBody = JSONObject()
 
         try {
+            val accountManager = AccountManager.getInstance()
             notificationBody.put(FirebaseConstants.KEY_START_ADDRESS, distancePlaceChoose.startAddress)
             notificationBody.put(FirebaseConstants.KEY_END_ADDRESS, distancePlaceChoose.endAddress)
-            notificationBody.put(FirebaseConstants.KEY_USER_ID, AccountManager.getInstance().getIdUser())
+            notificationBody.put(FirebaseConstants.KEY_USER_ID, accountManager.getIdUser())
             notificationBody.put(FirebaseConstants.KEY_PRICE, "10000")
             notificationBody.put(FirebaseConstants.KEY_DISTANCE, distancePlaceChoose.distanceText)
+            notificationBody.put(FirebaseConstants.KEY_TOKEN_ID, accountManager.getTokenId())
+            Log.d("NamTV", "token = ${accountManager.getTokenId()}")
+            notificationBody.put(FirebaseConstants.KEY_NAME, accountManager.getName())
+            notificationBody.put(FirebaseConstants.KEY_SEX, accountManager.getSex())
+            notificationBody.put(FirebaseConstants.KEY_AGE, accountManager.getAge())
+            notificationBody.put(FirebaseConstants.KEY_PHONE_NUMBER, accountManager.getPhoneNumber())
             notification.put(FirebaseConstants.KEY_TO, idDriver)
             notification.put(FirebaseConstants.KEY_DATA, notificationBody)
+            Log.d("NamTV", "notify = $notificationBody")
+
         } catch (e: JSONException) {
             Log.e("NamTV", "FirebaseConnection::pushNotifyToDriver: $e")
         } finally {

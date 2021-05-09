@@ -92,6 +92,7 @@ class FindPlaceFragment : Fragment() {
         }
     }
 
+
     private fun findPlaceFromStringEditText(edtString: String) {
         if (edtString.isNotEmpty()) {
             Log.d("NamTV", "findPlaceFromStringEditText: $edtString")

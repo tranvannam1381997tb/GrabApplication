@@ -79,6 +79,30 @@ class AccountManager private constructor() {
         this.phoneNumber = phoneNumber
         this.status = status
     }
+
+    fun getTokenId(): String {
+        if (tokenId == null) {
+            getTokenIdDevice { tokenId = it }
+            return ""
+        }
+        return tokenId!!
+    }
+
+    fun getName(): String {
+        return name!!
+    }
+
+    fun getSex(): Int {
+        return sex!!
+    }
+
+    fun getAge(): Int {
+        return age!!
+    }
+
+    fun getPhoneNumber(): String {
+        return phoneNumber!!
+    }
 }
 
 enum class SexValue(val rawValue: Int) {
