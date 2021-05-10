@@ -21,6 +21,9 @@ class MainViewModel: ViewModel() {
     var onItemClickListener: OnItemClickListener? = null
     var distancePlaceChoose: ObservableField<Distance> = ObservableField(MapsConstant.DEFAULT_DISTANCE)
 
+    var isShowingProgress = ObservableField(false)
+    var countDownTimer = ObservableField(60)
+
     fun openFindPlaceFragment() {
         onItemClickListener?.openFindPlaceFragment()
     }

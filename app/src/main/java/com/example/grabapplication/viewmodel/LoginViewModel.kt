@@ -19,11 +19,6 @@ class LoginViewModel(var context: Context): ViewModel() {
         isEnableBtnLogin.set(false)
     }
 
-    fun startLogin(username: String, password: String) {
-        val intent = Intent(context, MainActivity::class.java)
-        context.startActivity(intent)
-    }
-
     fun startSignUp() {
         val intent = Intent(context, SignUpActivity::class.java)
         context.startActivity(intent)

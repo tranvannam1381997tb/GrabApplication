@@ -13,6 +13,9 @@
     <dimen name="text_size_info">16sp</dimen>
     <dimen name="margin_start_with_info">8dp</dimen>
 
+    //Wait driver fragment
+    <dimen name="text_size_countdown">40sp</dimen>
+
     //SignUp Activity
     <dimen name="text_size_description">22sp</dimen>
     <dimen name="text_size_button">20sp</dimen>

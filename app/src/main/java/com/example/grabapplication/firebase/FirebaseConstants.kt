@@ -18,8 +18,11 @@ class FirebaseConstants {
         const val KEY_SEX = "sex"
         const val KEY_AGE = "age"
         const val KEY_PHONE_NUMBER = "phoneNumber"
+        const val KEY_BOOK_DRIVER = "bookDriver"
+
         const val KEY_TO = "to"
         const val KEY_DATA = "data"
+        const val KEY_SUCCESS = "success"
         const val KEY_AUTHORIZATION = "Authorization"
         const val KEY_CONTENT_TYPE = "Content-Type"
         const val FCM_API = "https://fcm.googleapis.com/fcm/send"

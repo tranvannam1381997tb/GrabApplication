@@ -23,7 +23,7 @@ import com.example.grabapplication.firebase.FirebaseConnection
 import com.example.grabapplication.firebase.FirebaseManager
 import com.example.grabapplication.fragments.FindPlaceFragment
 import com.example.grabapplication.fragments.InfoDriverFragment
-import com.example.grabapplication.googlemaps.MapsConnection
+import com.example.grabapplication.fragments.WaitDriverFragment
 import com.example.grabapplication.model.DriverInfo
 import com.example.grabapplication.viewmodel.BaseViewModelFactory
 import com.example.grabapplication.viewmodel.MainViewModel
@@ -67,7 +67,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
     private var locationPermissionGranted = false
 
-    private var currentFragment : Fragment? = null
+    private var fragmentBook : Fragment? = null
+    private var currentFragment = Constants.FRAGMENT_MAP
+
 
     private var driverHashMap: HashMap<String, Marker> = HashMap()
     private var listDriver: HashMap<String, DriverInfo> = HashMap()
@@ -165,10 +167,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     }
 
     override fun onBackPressed() {
-        if (currentFragment is InfoDriverFragment) {
+        if (currentFragment == Constants.FRAGMENT_INFO_DRIVER) {
+            currentFragment = Constants.FRAGMENT_MAP
             mainViewModel.isShowMapLayout.set(true)
             removeInfoDriverFragment()
             return
+        }
+        if (currentFragment == Constants.FRAGMENT_FIND_PLACE) {
+            currentFragment = Constants.FRAGMENT_INFO_DRIVER
         }
 
         super.onBackPressed()
@@ -322,7 +328,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
     private fun selectDriver(driverInfo: DriverInfo) {
         mainViewModel.selectDriver(driverInfo) {
-            currentFragment = InfoDriverFragment()
+            fragmentBook = InfoDriverFragment()
+            currentFragment = Constants.FRAGMENT_INFO_DRIVER
             val transaction = supportFragmentManager.beginTransaction()
             transaction.setCustomAnimations(
                 R.anim.slide_in_bottom,
@@ -331,13 +338,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 R.anim.pop_out_top
             )
             transaction.addToBackStack(null)
-            transaction.replace(R.id.fragmentBook, currentFragment as InfoDriverFragment).commit()
+            transaction.replace(R.id.fragmentBook, fragmentBook as InfoDriverFragment).commit()
             mainViewModel.isShowMapLayout.set(false)
         }
     }
 
     private fun removeInfoDriverFragment() {
-        if (currentFragment !is InfoDriverFragment) {
+        if (currentFragment != Constants.FRAGMENT_INFO_DRIVER) {
             return
         }
         mainViewModel.driverInfoSelect = null
@@ -348,13 +355,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             R.anim.pop_in_bottom,
             R.anim.pop_out_top
         )
-        transaction.remove(currentFragment as InfoDriverFragment).commit()
-        currentFragment = null
+        transaction.remove(fragmentBook as InfoDriverFragment).commit()
+        fragmentBook = null
     }
 
     private fun gotoFindPlaceFragment() {
-        currentFragment = FindPlaceFragment()
-
+        fragmentBook = FindPlaceFragment()
+        currentFragment = Constants.FRAGMENT_FIND_PLACE
         val transaction = supportFragmentManager.beginTransaction()
         transaction.setCustomAnimations(
             R.anim.slide_in_bottom,
@@ -363,7 +370,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             R.anim.pop_out_top
         )
         transaction.addToBackStack(null)
-        transaction.add(R.id.fragmentBook, currentFragment as FindPlaceFragment).commit()
+        transaction.add(R.id.fragmentBook, fragmentBook as FindPlaceFragment).commit()
         mainViewModel.isShowMapLayout.set(false)
     }
 
@@ -377,13 +384,54 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         )
         dialogConfirm.setOnClickOK(View.OnClickListener {
             mainViewModel.distancePlaceChoose.get()?.let { distance ->
-                FirebaseConnection.getInstance().pushNotifyToDriver(distance, mainViewModel.driverInfoSelect!!.tokenId)
+                FirebaseConnection.getInstance().pushNotifyToDriver(distance, mainViewModel.driverInfoSelect!!.tokenId) { isSuccess ->
+                    mainViewModel.isShowingProgress.set(false)
+                    if (isSuccess) {
+                        gotoWaitDriverFragment()
+                    } else {
+                        showDialogError(getString(R.string.error_connect_to_driver))
+                    }
+                }
+                mainViewModel.isShowingProgress.set(true)
             }
 
             dialogConfirm.dismiss()
         })
         dialogConfirm.setTextTypeBoldBtnOK()
         dialogConfirm.show()
+    }
+
+    private fun showDialogError(error: String) {
+        val dialogError = ConfirmDialog(this)
+        dialogError.setTextDisplay(
+            error,
+            null,
+            getString(R.string.back),
+            getString(R.string.try_again)
+        )
+        dialogError.setOnClickOK(View.OnClickListener {
+            dialogError.dismiss()
+        })
+        dialogError.setOnClickCancel(View.OnClickListener {
+            dialogError.dismiss()
+            mainViewModel.isShowMapLayout.set(true)
+        })
+        dialogError.show()
+    }
+
+    private fun gotoWaitDriverFragment() {
+        fragmentBook = WaitDriverFragment()
+        currentFragment = Constants.FRAGMENT_WAIT_DRIVER
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.setCustomAnimations(
+            R.anim.slide_in_bottom,
+            R.anim.slide_out_top,
+            R.anim.pop_in_bottom,
+            R.anim.pop_out_top
+        )
+        transaction.addToBackStack(null)
+        transaction.add(R.id.fragmentBook, fragmentBook as WaitDriverFragment).commit()
+        mainViewModel.isShowMapLayout.set(false)
     }
 
     companion object {

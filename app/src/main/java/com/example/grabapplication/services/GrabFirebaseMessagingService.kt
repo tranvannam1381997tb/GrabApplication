@@ -8,8 +8,10 @@ class GrabFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun handleIntent(intent: Intent?) {
         val action = intent?.action
-        if("com.google.android.c2dm.intent.RECEIVE" == action || "com.google.firebase.messaging.RECEIVE_DIRECT_BOOT" == action) {
+        if ("com.google.android.c2dm.intent.RECEIVE" == action || "com.google.firebase.messaging.RECEIVE_DIRECT_BOOT" == action) {
             Log.d("NamTV", "handleIntent")
+            val bundle = intent.extras
+
         } else {
             super.handleIntent(intent)
         }

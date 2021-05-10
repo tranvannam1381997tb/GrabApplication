@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.example.grabapplication.viewmodel.MainViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+		android:background="@color/white"
+		android:clickable="true"
+		android:focusable="true"
+        android:padding="20dp">
+
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="80dp"
+            android:gravity="center"
+            android:text="@string/description_wait_driver"
+            android:textColor="@color/color_black"
+            android:textSize="@dimen/text_size_description"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{viewModel.countDownTimer.toString()}"
+            android:textColor="@color/color_text_button_setting_activity"
+            android:textSize="@dimen/text_size_countdown"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@+id/description"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="80dp"
+            tools:text="60" />
+
+	    <Button
+		    android:id="@+id/btnCancel"
+		    style="@style/Widget.Button.Simple"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_marginBottom="30dp"
+		    android:background="@drawable/button_style"
+		    android:paddingStart="16dp"
+		    android:paddingEnd="16dp"
+		    android:text="@string/cancel_book"
+		    app:layout_constraintBottom_toBottomOf="parent"
+		    app:layout_constraintEnd_toEndOf="parent"
+		    app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

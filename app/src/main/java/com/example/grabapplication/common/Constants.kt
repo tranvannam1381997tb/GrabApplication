@@ -11,5 +11,13 @@ class Constants {
         const val KEY_SUCCESS = "success"
 
         val DEFAULT_LOCATION = LatLng(-33.8523341, 151.2106085)
+
+        const val FRAGMENT_MAP = 0
+        const val FRAGMENT_INFO_DRIVER = 1
+        const val FRAGMENT_FIND_PLACE = 2
+        const val FRAGMENT_WAIT_DRIVER = 3
+
+        const val TIME_WAIT_DRIVER: Long = 60 * 1000
+        const val COUNT_DOWN_INTERVAL: Long = 1 * 1000
     }
 }
