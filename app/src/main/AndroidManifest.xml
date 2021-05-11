@@ -60,7 +60,8 @@
 
         <service
             android:name=".services.GrabFirebaseMessagingService"
-            android:exported="false">
+            android:exported="false"
+            android:stopWithTask="false" >
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

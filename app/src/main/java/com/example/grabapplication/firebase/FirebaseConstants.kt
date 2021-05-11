@@ -28,5 +28,10 @@ class FirebaseConstants {
         const val FCM_API = "https://fcm.googleapis.com/fcm/send"
         const val SERVER_KEY = "key=AAAATeiFcyw:APA91bG8McERiKb8mFwJvV337r3U5Z46ARLINXd5tgWbmWe-P4nHB_d3V5HvzugjmHgTo87KtMWev30APVmGCaPG2Npm9eq0BExRZKU0HvqpeeSnEF2BNp7ptlq5IBHKeBa6FQ65cgaI"
         const val CONTENT_TYPE = "application/json"
+
+        // Key driver response
+        const val KEY_DRIVER_RESPONSE = "driverResponse"
+        const val KEY_DRIVER_GOING = "driverGoing"
+        const val KEY_DRIVER_REJECT = "driverReject"
     }
 }

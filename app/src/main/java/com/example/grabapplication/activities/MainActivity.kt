@@ -16,7 +16,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import com.example.grabapplication.R
-import com.example.grabapplication.common.*
+import com.example.grabapplication.common.AccountManager
+import com.example.grabapplication.common.Constants
+import com.example.grabapplication.common.DriverManager
 import com.example.grabapplication.customviews.ConfirmDialog
 import com.example.grabapplication.databinding.ActivityMainBinding
 import com.example.grabapplication.firebase.FirebaseConnection
@@ -25,6 +27,8 @@ import com.example.grabapplication.fragments.FindPlaceFragment
 import com.example.grabapplication.fragments.InfoDriverFragment
 import com.example.grabapplication.fragments.WaitDriverFragment
 import com.example.grabapplication.model.DriverInfo
+import com.example.grabapplication.services.BookListener
+import com.example.grabapplication.services.GrabFirebaseMessagingService
 import com.example.grabapplication.viewmodel.BaseViewModelFactory
 import com.example.grabapplication.viewmodel.MainViewModel
 import com.google.android.gms.location.*
@@ -33,8 +37,10 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
-import com.google.firebase.database.*
-import kotlin.collections.HashMap
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ValueEventListener
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener{
     
@@ -68,7 +74,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     private var locationPermissionGranted = false
 
     private var fragmentBook : Fragment? = null
-    private var currentFragment = Constants.FRAGMENT_MAP
+    var currentFragment = Constants.FRAGMENT_MAP
 
 
     private var driverHashMap: HashMap<String, Marker> = HashMap()
@@ -81,6 +87,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
         initDataMap()
         initView()
+        setupEvent()
         accountManager.getTokenIdDevice {  }
 
         // TODO debug code
@@ -113,6 +120,23 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
             override fun bookDriver() {
                 showDialogConfirmBookDriver()
+            }
+
+        }
+    }
+
+    private fun setupEvent() {
+        GrabFirebaseMessagingService.bookListener = object : BookListener {
+            override fun handleDriverGoing() {
+                if (currentFragment == Constants.FRAGMENT_WAIT_DRIVER && fragmentBook is WaitDriverFragment) {
+                    Log.d("NamTV", "handleDriverGoing")
+                }
+            }
+
+            override fun handleDriverReject() {
+                if (currentFragment == Constants.FRAGMENT_WAIT_DRIVER && fragmentBook is WaitDriverFragment) {
+                    (fragmentBook as WaitDriverFragment).showDialogBookNew()
+                }
             }
 
         }
@@ -170,7 +194,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         if (currentFragment == Constants.FRAGMENT_INFO_DRIVER) {
             currentFragment = Constants.FRAGMENT_MAP
             mainViewModel.isShowMapLayout.set(true)
-            removeInfoDriverFragment()
+            gotoMapFragment()
+            return
+        }
+        if (currentFragment == Constants.FRAGMENT_WAIT_DRIVER && fragmentBook is WaitDriverFragment) {
+            (fragmentBook as WaitDriverFragment).showDialogConfirmCancelBook()
             return
         }
         if (currentFragment == Constants.FRAGMENT_FIND_PLACE) {
@@ -218,7 +246,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                                 currentLocation, Constants.DEFAULT_ZOOM_MAPS.toFloat()
                             )
                         )
-                        fusedLocationProviderClient?.requestLocationUpdates(locationRequest, locationCallback, null)
+                        fusedLocationProviderClient?.requestLocationUpdates(
+                            locationRequest,
+                            locationCallback,
+                            null
+                        )
                     }
                 }
             }
@@ -245,10 +277,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     }
 
     private fun getLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this.applicationContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(this.applicationContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                this.applicationContext,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(
+                    this.applicationContext,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
-                this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+                this, arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ),
                 PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
             )
         } else {
@@ -343,20 +384,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         }
     }
 
-    private fun removeInfoDriverFragment() {
-        if (currentFragment != Constants.FRAGMENT_INFO_DRIVER) {
-            return
-        }
-        mainViewModel.driverInfoSelect = null
-
-        transaction.setCustomAnimations(
-            R.anim.slide_in_bottom,
-            R.anim.slide_out_top,
-            R.anim.pop_in_bottom,
-            R.anim.pop_out_top
-        )
-        transaction.remove(fragmentBook as InfoDriverFragment).commit()
+    fun gotoMapFragment() {
+        currentFragment = Constants.FRAGMENT_MAP
         fragmentBook = null
+        for (fragment in supportFragmentManager.fragments) {
+            if (fragment !is SupportMapFragment) {
+                supportFragmentManager.beginTransaction().remove(fragment).commit()
+            }
+        }
     }
 
     private fun gotoFindPlaceFragment() {
@@ -384,7 +419,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         )
         dialogConfirm.setOnClickOK(View.OnClickListener {
             mainViewModel.distancePlaceChoose.get()?.let { distance ->
-                FirebaseConnection.getInstance().pushNotifyToDriver(distance, mainViewModel.driverInfoSelect!!.tokenId) { isSuccess ->
+                FirebaseConnection.getInstance().pushNotifyToDriver(
+                    distance,
+                    mainViewModel.driverInfoSelect!!.tokenId
+                ) { isSuccess ->
                     mainViewModel.isShowingProgress.set(false)
                     if (isSuccess) {
                         gotoWaitDriverFragment()

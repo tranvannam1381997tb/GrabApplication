@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.grabapplication.R
+import com.example.grabapplication.activities.MainActivity
 import com.example.grabapplication.common.Constants
 import com.example.grabapplication.common.setOnSingleClickListener
 import com.example.grabapplication.customviews.ConfirmDialog
@@ -29,6 +30,7 @@ class WaitDriverFragment : Fragment() {
 
     private lateinit var binding: FragmentWaitDriverBinding
     private var countDownTimer: CountDownTimer? = null
+    private var isDialogShowing = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -68,7 +70,7 @@ class WaitDriverFragment : Fragment() {
         }
     }
 
-    private fun showDialogConfirmCancelBook() {
+    fun showDialogConfirmCancelBook() {
         val dialogConfirm = ConfirmDialog(requireContext())
         dialogConfirm.setTextDisplay(
             getString(R.string.confirm_cancel_book),
@@ -77,23 +79,31 @@ class WaitDriverFragment : Fragment() {
             getString(R.string.cancel_book)
         )
         dialogConfirm.setOnClickOK(View.OnClickListener {
+            isDialogShowing = false
             dialogConfirm.dismiss()
             gotoMapFragment()
 
             // TODO
         })
         dialogConfirm.setOnClickCancel(View.OnClickListener {
+            isDialogShowing = false
             dialogConfirm.dismiss()
         })
         dialogConfirm.setTextTypeBoldBtnOK()
         dialogConfirm.show()
+        isDialogShowing = true
     }
 
     private fun gotoMapFragment() {
+        countDownTimer?.cancel()
         waitDriverViewModel.isShowMapLayout.set(true)
+        if (activity is MainActivity) {
+            (activity as MainActivity).gotoMapFragment()
+        }
+
     }
 
-    private fun showDialogBookNew() {
+    fun showDialogBookNew() {
         val dialogConfirm = ConfirmDialog(requireContext())
         dialogConfirm.setTextDisplay(
             getString(R.string.driver_cancel),
@@ -102,12 +112,14 @@ class WaitDriverFragment : Fragment() {
             getString(R.string.label_ok)
         )
         dialogConfirm.setOnClickOK(View.OnClickListener {
+            isDialogShowing = false
             dialogConfirm.dismiss()
             gotoMapFragment()
             // TODO
         })
 
         dialogConfirm.setTextTypeBoldBtnOK()
+        isDialogShowing = true
         dialogConfirm.show()
     }
 }

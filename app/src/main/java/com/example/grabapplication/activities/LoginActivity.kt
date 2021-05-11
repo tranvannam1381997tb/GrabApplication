@@ -104,15 +104,16 @@ class LoginActivity : AppCompatActivity() {
         val intent = Intent(this, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         startActivity(intent)
+        finish()
     }
 
     private fun saveUserInfo(jsonObject: JSONObject) {
-//        val userId = CommonUtils.getStringFromJsonObject(jsonObject, UserInfoKey.KeyUserId.rawValue)
         val userInfo = CommonUtils.getJsonObjectFromJsonObject(jsonObject, UserInfoKey.KeyUser.rawValue)
-        val userId = CommonUtils.getStringFromJsonObject(userInfo, "_id")
 
+        val userId = CommonUtils.getStringFromJsonObject(userInfo, UserInfoKey.KeyUserId.rawValue)
         val accountManager = AccountManager.getInstance()
         accountManager.saveIdUser(userId)
+
         val name = CommonUtils.getStringFromJsonObject(userInfo, UserInfoKey.KeyName.rawValue)
         val age = CommonUtils.getIntFromJsonObject(userInfo, UserInfoKey.KeyAge.rawValue)
         val sex = CommonUtils.getIntFromJsonObject(userInfo, UserInfoKey.KeySex.rawValue)

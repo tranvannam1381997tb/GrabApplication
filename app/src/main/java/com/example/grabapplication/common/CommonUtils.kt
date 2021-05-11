@@ -63,6 +63,14 @@ class CommonUtils {
             }
         }
 
+        fun getBooleanFromJsonObject(jsonObject: JSONObject, key: String) : Boolean {
+            return if (jsonObject.has(key)) {
+                jsonObject.getBoolean(key)
+            } else {
+                false
+            }
+        }
+
         fun clearFocusEditText(activity: Activity) {
             val view = activity.currentFocus
             if (view != null && view is EditText) {
