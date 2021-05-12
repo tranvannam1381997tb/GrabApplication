@@ -19,6 +19,7 @@ import com.example.grabapplication.R
 import com.example.grabapplication.common.AccountManager
 import com.example.grabapplication.common.Constants
 import com.example.grabapplication.common.DriverManager
+import com.example.grabapplication.common.setOnSingleClickListener
 import com.example.grabapplication.customviews.ConfirmDialog
 import com.example.grabapplication.databinding.ActivityMainBinding
 import com.example.grabapplication.firebase.FirebaseConnection
@@ -41,6 +42,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener{
     
@@ -129,7 +131,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         GrabFirebaseMessagingService.bookListener = object : BookListener {
             override fun handleDriverGoing() {
                 if (currentFragment == Constants.FRAGMENT_WAIT_DRIVER && fragmentBook is WaitDriverFragment) {
-                    Log.d("NamTV", "handleDriverGoing")
+                    (fragmentBook as WaitDriverFragment).gotoMapFragment()
+                    mainViewModel.description.set(getString(R.string.driver_going))
+                    mainViewModel.isShowingLayoutBottom.set(true)
                 }
             }
 
@@ -140,6 +144,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             }
 
         }
+
+        btnCancel.setOnSingleClickListener(View.OnClickListener {
+            showDialogConfirmCancelBook()
+        })
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -385,6 +393,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     }
 
     fun gotoMapFragment() {
+        mainViewModel.isShowMapLayout.set(true)
         currentFragment = Constants.FRAGMENT_MAP
         fragmentBook = null
         for (fragment in supportFragmentManager.fragments) {
@@ -470,6 +479,27 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         transaction.addToBackStack(null)
         transaction.add(R.id.fragmentBook, fragmentBook as WaitDriverFragment).commit()
         mainViewModel.isShowMapLayout.set(false)
+    }
+
+    fun showDialogConfirmCancelBook() {
+        val dialogConfirm = ConfirmDialog(this)
+        dialogConfirm.setTextDisplay(
+                getString(R.string.confirm_cancel_book),
+                null,
+                getString(R.string.no),
+                getString(R.string.cancel_book)
+        )
+        dialogConfirm.setOnClickOK(View.OnClickListener {
+            dialogConfirm.dismiss()
+            mainViewModel.isShowingLayoutBottom.set(false)
+
+            // TODO
+        })
+        dialogConfirm.setOnClickCancel(View.OnClickListener {
+            dialogConfirm.dismiss()
+        })
+        dialogConfirm.setTextTypeBoldBtnOK()
+        dialogConfirm.show()
     }
 
     companion object {

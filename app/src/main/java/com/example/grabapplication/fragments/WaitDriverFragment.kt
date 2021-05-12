@@ -58,8 +58,10 @@ class WaitDriverFragment : Fragment() {
         if (countDownTimer == null) {
             countDownTimer = object : CountDownTimer(Constants.TIME_WAIT_DRIVER, Constants.COUNT_DOWN_INTERVAL) {
                 override fun onFinish() {
-                    showDialogBookNew()
-                    Log.d("NamTV", "onFinish")
+                    if (activity is MainActivity) {
+                        showDialogBookNew()
+                        Log.d("NamTV", "onFinish")
+                    }
                 }
 
                 override fun onTick(millisUntilFinished: Long) {
@@ -94,9 +96,8 @@ class WaitDriverFragment : Fragment() {
         isDialogShowing = true
     }
 
-    private fun gotoMapFragment() {
+    fun gotoMapFragment() {
         countDownTimer?.cancel()
-        waitDriverViewModel.isShowMapLayout.set(true)
         if (activity is MainActivity) {
             (activity as MainActivity).gotoMapFragment()
         }
@@ -121,5 +122,10 @@ class WaitDriverFragment : Fragment() {
         dialogConfirm.setTextTypeBoldBtnOK()
         isDialogShowing = true
         dialogConfirm.show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        countDownTimer?.cancel()
     }
 }

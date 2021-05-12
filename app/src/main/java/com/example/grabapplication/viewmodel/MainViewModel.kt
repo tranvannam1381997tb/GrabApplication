@@ -14,6 +14,10 @@ import com.example.grabapplication.model.DriverInfo
 class MainViewModel: ViewModel() {
     var isShowMapLayout = ObservableField(true)
     var isShowingListPlace = ObservableField(true)
+    var isShowingProgress = ObservableField(false)
+    var isShowingLayoutBottom = ObservableField(false)
+    var description = ObservableField("")
+
     var driverInfoSelect: DriverInfo? = null
     var distanceDriver: Distance? = null
     var listPlace = MutableLiveData<ArrayList<PlaceModel>>()
@@ -21,7 +25,6 @@ class MainViewModel: ViewModel() {
     var onItemClickListener: OnItemClickListener? = null
     var distancePlaceChoose: ObservableField<Distance> = ObservableField(MapsConstant.DEFAULT_DISTANCE)
 
-    var isShowingProgress = ObservableField(false)
     var countDownTimer = ObservableField(60)
 
     fun openFindPlaceFragment() {

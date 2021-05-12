@@ -25,14 +25,19 @@ class HttpConnection private constructor() {
                 callback.invoke(true, it.toString())
             }
         }, Response.ErrorListener {
-            if (it.networkResponse != null) {
-                val statusCode = it.networkResponse.statusCode
-                if (statusCode == 400) {
-                    val dataError = JSONObject(it.networkResponse.data.toString(Charsets.UTF_8))
-                    val error = dataError.getString("error")
-                    callback.invoke(false, error)
+            try {
+                if (it.networkResponse != null) {
+                    val statusCode = it.networkResponse.statusCode
+                    if (statusCode == 400) {
+                        val dataError = JSONObject(it.networkResponse.data.toString(Charsets.UTF_8))
+                        val error = dataError.getString("error")
+                        callback.invoke(false, error)
+                    }
                 }
+            } catch (e: Exception) {
+                Log.d("NamTV", "HttpConnection::startLogin: exception = $e")
             }
+
 
             callback.invoke(false, GrabApplication.getAppContext().getString(R.string.connect_server_error))
         }) {
