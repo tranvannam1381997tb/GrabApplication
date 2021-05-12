@@ -8,6 +8,7 @@ import android.graphics.Canvas
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -144,10 +145,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             }
 
         }
-
-        btnCancel.setOnSingleClickListener(View.OnClickListener {
-            showDialogConfirmCancelBook()
-        })
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
@@ -377,17 +374,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
     private fun selectDriver(driverInfo: DriverInfo) {
         mainViewModel.selectDriver(driverInfo) {
-            fragmentBook = InfoDriverFragment()
-            currentFragment = Constants.FRAGMENT_INFO_DRIVER
-            val transaction = supportFragmentManager.beginTransaction()
-            transaction.setCustomAnimations(
-                R.anim.slide_in_bottom,
-                R.anim.slide_out_top,
-                R.anim.pop_in_bottom,
-                R.anim.pop_out_top
-            )
-            transaction.addToBackStack(null)
-            transaction.replace(R.id.fragmentBook, fragmentBook as InfoDriverFragment).commit()
+            mainViewModel.isShowingLayoutBottom.set(true)
+            gotoInfoDriverFragment()
             mainViewModel.isShowMapLayout.set(false)
         }
     }
@@ -403,6 +391,22 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         }
     }
 
+    private fun gotoInfoDriverFragment() {
+        fragmentBook = InfoDriverFragment()
+        currentFragment = Constants.FRAGMENT_INFO_DRIVER
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.setCustomAnimations(
+                R.anim.slide_in_bottom,
+                R.anim.slide_out_top,
+                R.anim.pop_in_bottom,
+                R.anim.pop_out_top
+        )
+        transaction.addToBackStack(null)
+        transaction.replace(R.id.fragmentBook, fragmentBook as InfoDriverFragment).commit()
+        updateSizeFragmentBook()
+
+    }
+
     private fun gotoFindPlaceFragment() {
         fragmentBook = FindPlaceFragment()
         currentFragment = Constants.FRAGMENT_FIND_PLACE
@@ -416,6 +420,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         transaction.addToBackStack(null)
         transaction.add(R.id.fragmentBook, fragmentBook as FindPlaceFragment).commit()
         mainViewModel.isShowMapLayout.set(false)
+
+        updateSizeFragmentBook()
     }
 
     private fun showDialogConfirmBookDriver() {
@@ -479,6 +485,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         transaction.addToBackStack(null)
         transaction.add(R.id.fragmentBook, fragmentBook as WaitDriverFragment).commit()
         mainViewModel.isShowMapLayout.set(false)
+        updateSizeFragmentBook()
+    }
+
+    private fun updateSizeFragmentBook() {
+        val layoutParams = binding.fragmentBook.layoutParams
+        layoutParams.height = FrameLayout.LayoutParams.WRAP_CONTENT
+        layoutParams.width = FrameLayout.LayoutParams.MATCH_PARENT
+        binding.fragmentBook.layoutParams = layoutParams
     }
 
     fun showDialogConfirmCancelBook() {

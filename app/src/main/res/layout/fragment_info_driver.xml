@@ -13,7 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+	    android:background="@drawable/fragment_book_border"
         android:padding="20dp">
 
         <LinearLayout
@@ -28,7 +28,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="10dp"
                 android:gravity="start"
                 android:orientation="horizontal">
 
@@ -200,14 +199,13 @@
 		    style="@style/Widget.Button.Simple"
 		    android:layout_width="match_parent"
 		    android:layout_height="wrap_content"
-		    android:layout_marginBottom="30dp"
+		    android:layout_marginTop="30dp"
 		    android:background="@drawable/button_style"
 		    android:paddingStart="16dp"
 		    android:paddingEnd="16dp"
 		    android:text="@string/book_vehicle"
+		    app:layout_constraintTop_toBottomOf="@+id/layout_info_driver"
 		    app:layout_constraintBottom_toBottomOf="parent"
-		    app:layout_constraintEnd_toEndOf="parent"
-		    app:layout_constraintStart_toStartOf="parent"
 		    app:onSingleClick="@{() -> viewModel.openFindPlaceFragment()}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

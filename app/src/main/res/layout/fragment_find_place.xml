@@ -20,7 +20,7 @@
         android:id="@+id/layoutView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+	    android:background="@drawable/fragment_book_border"
         android:clickable="true"
         android:focusable="true"
         android:padding="20dp">
@@ -29,7 +29,6 @@
             android:id="@+id/edtEndAddress"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginTop="16dp"
             android:hint="@string/prompt_end_address"
             android:imeOptions="actionDone"
             android:inputType="textNoSuggestions"
@@ -46,7 +45,7 @@
             app:setAdapter="@{adapter}"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:layout_marginTop="20dp"
-            android:visibility="@{viewModel.isShowingListPlace ? View.VISIBLE : View.GONE}"
+            android:visibility="@{viewModel.isShowingListPlace ? View.VISIBLE : View.INVISIBLE}"
             tools:visibility="gone"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -55,7 +54,7 @@
             android:layout_height="0dp"
             app:layout_constraintTop_toBottomOf="@id/edtEndAddress"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:visibility="@{viewModel.isShowingListPlace ? View.GONE : View.VISIBLE}">
+            android:visibility="@{viewModel.isShowingListPlace ? View.INVISIBLE : View.VISIBLE}">
 
             <LinearLayout
                 android:id="@+id/layout_distance"
@@ -114,20 +113,17 @@
 		        style="@style/Widget.Button.Simple"
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
-		        android:layout_marginBottom="30dp"
 		        android:background="@drawable/button_style"
 		        android:paddingStart="16dp"
 		        android:paddingEnd="16dp"
+		        android:layout_marginTop="30dp"
 		        android:text="@string/book_vehicle"
+		        app:layout_constraintTop_toBottomOf="@id/layout_duration"
 		        app:layout_constraintBottom_toBottomOf="parent"
 		        app:layout_constraintEnd_toEndOf="parent"
 		        app:layout_constraintStart_toStartOf="parent"
 		        app:onSingleClick="@{() -> viewModel.bookDriver()}" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

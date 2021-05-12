@@ -1,117 +1,76 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+	xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <data>
+	<data>
 
-        <import type="android.view.View" />
+		<import type="android.view.View" />
 
-        <variable
-            name="viewModel"
-            type="com.example.grabapplication.viewmodel.MainViewModel" />
-    </data>
+		<variable
+			name="viewModel"
+			type="com.example.grabapplication.viewmodel.MainViewModel" />
+	</data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+	<androidx.constraintlayout.widget.ConstraintLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layout_header"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent">
+		<androidx.constraintlayout.widget.ConstraintLayout
+			android:id="@+id/layout_header"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:id="@+id/imgBack"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:padding="10dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/back"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+			<ImageView
+				android:id="@+id/imgBack"
+				android:layout_width="40dp"
+				android:layout_height="40dp"
+				android:padding="10dp"
+				android:scaleType="fitXY"
+				android:src="@drawable/back"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/description_map_screen"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+			<TextView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="@string/description_map_screen"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintTop_toTopOf="parent" />
 
-            <ProgressBar
-                android:id="@+id/loading"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_gravity="center"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:visibility="@{viewModel.isShowingProgress ? View.VISIBLE : View.GONE}"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+			<ProgressBar
+				android:id="@+id/loading"
+				android:layout_width="50dp"
+				android:layout_height="50dp"
+				android:layout_gravity="center"
+				android:visibility="@{viewModel.isShowingProgress ? View.VISIBLE : View.GONE}"
+				app:layout_constraintBottom_toBottomOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintTop_toTopOf="parent" />
+		</androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layoutMain"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layout_header"
-            android:visibility="@{viewModel.isShowMapLayout ? View.VISIBLE : View.GONE}">
+		<androidx.constraintlayout.widget.ConstraintLayout
+			android:id="@+id/layoutMain"
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			app:layout_constraintBottom_toTopOf="@id/fragmentBook"
+			app:layout_constraintTop_toBottomOf="@+id/layout_header">
 
-            <fragment
-                android:id="@+id/map"
-                android:name="com.google.android.gms.maps.SupportMapFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+			<fragment
+				android:id="@+id/map"
+				android:name="com.google.android.gms.maps.SupportMapFragment"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				app:layout_constraintTop_toTopOf="parent" />
+		</androidx.constraintlayout.widget.ConstraintLayout>
 
-        <FrameLayout
-            android:id="@+id/fragmentBook"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layout_header"
-            android:visibility="@{viewModel.isShowMapLayout ? View.GONE : View.VISIBLE}"/>
-
-	    <androidx.constraintlayout.widget.ConstraintLayout
-		    android:id="@+id/layoutBottom"
-		    android:layout_width="match_parent"
-		    android:layout_height="wrap_content"
-		    app:layout_constraintBottom_toBottomOf="parent"
-		    android:visibility="@{viewModel.isShowingLayoutBottom ? View.VISIBLE : View.GONE}"
-		    android:padding="20dp">
-
-
-		    <TextView
-			    android:id="@+id/description"
-			    android:layout_width="match_parent"
-			    android:layout_height="wrap_content"
-			    android:layout_marginTop="20dp"
-			    android:gravity="center"
-			    android:text="@string/driver_going"
-			    android:textColor="@color/color_black"
-			    android:textSize="@dimen/text_size_description"
-			    android:textStyle="bold"
-			    app:layout_constraintBottom_toTopOf="@+id/btnCancel"
-			    app:layout_constraintTop_toTopOf="parent"
-			    android:layout_marginBottom="20dp"/>
-
-
-		    <Button
-			    android:id="@+id/btnCancel"
-			    style="@style/Widget.Button.Simple"
-			    android:layout_width="match_parent"
-			    android:layout_height="wrap_content"
-			    android:layout_marginBottom="30dp"
-			    android:background="@drawable/button_style"
-			    android:paddingStart="16dp"
-			    android:paddingEnd="16dp"
-			    android:text="@string/cancel_book"
-			    app:layout_constraintBottom_toBottomOf="parent"
-			    app:layout_constraintEnd_toEndOf="parent"
-			    app:layout_constraintStart_toStartOf="parent" />
-	    </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+		<FrameLayout
+			android:id="@+id/fragmentBook"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:visibility="@{viewModel.isShowingLayoutBottom ? View.VISIBLE : View.GONE}"
+			app:layout_constraintBottom_toBottomOf="parent"/>
+	</androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
