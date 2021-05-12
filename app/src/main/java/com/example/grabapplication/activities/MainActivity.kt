@@ -25,6 +25,7 @@ import com.example.grabapplication.customviews.ConfirmDialog
 import com.example.grabapplication.databinding.ActivityMainBinding
 import com.example.grabapplication.firebase.FirebaseConnection
 import com.example.grabapplication.firebase.FirebaseManager
+import com.example.grabapplication.fragments.DriverGoingFragment
 import com.example.grabapplication.fragments.FindPlaceFragment
 import com.example.grabapplication.fragments.InfoDriverFragment
 import com.example.grabapplication.fragments.WaitDriverFragment
@@ -132,9 +133,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         GrabFirebaseMessagingService.bookListener = object : BookListener {
             override fun handleDriverGoing() {
                 if (currentFragment == Constants.FRAGMENT_WAIT_DRIVER && fragmentBook is WaitDriverFragment) {
-                    (fragmentBook as WaitDriverFragment).gotoMapFragment()
-                    mainViewModel.description.set(getString(R.string.driver_going))
-                    mainViewModel.isShowingLayoutBottom.set(true)
+                    (fragmentBook as WaitDriverFragment).countDownTimer?.cancel()
+                    this@MainActivity.runOnUiThread {
+                        gotoDriverGoingFragment()
+                    }
                 }
             }
 
@@ -198,12 +200,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     override fun onBackPressed() {
         if (currentFragment == Constants.FRAGMENT_INFO_DRIVER) {
             currentFragment = Constants.FRAGMENT_MAP
-            mainViewModel.isShowMapLayout.set(true)
             gotoMapFragment()
             return
         }
         if (currentFragment == Constants.FRAGMENT_WAIT_DRIVER && fragmentBook is WaitDriverFragment) {
             (fragmentBook as WaitDriverFragment).showDialogConfirmCancelBook()
+            return
+        }
+        if (currentFragment == Constants.FRAGMENT_DRIVER_GOING && fragmentBook is DriverGoingFragment) {
+            showDialogConfirmCancelBook()
             return
         }
         if (currentFragment == Constants.FRAGMENT_FIND_PLACE) {
@@ -376,14 +381,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         mainViewModel.selectDriver(driverInfo) {
             mainViewModel.isShowingLayoutBottom.set(true)
             gotoInfoDriverFragment()
-            mainViewModel.isShowMapLayout.set(false)
         }
     }
 
     fun gotoMapFragment() {
-        mainViewModel.isShowMapLayout.set(true)
         currentFragment = Constants.FRAGMENT_MAP
         fragmentBook = null
+        mainViewModel.isShowingLayoutBottom.set(false)
         for (fragment in supportFragmentManager.fragments) {
             if (fragment !is SupportMapFragment) {
                 supportFragmentManager.beginTransaction().remove(fragment).commit()
@@ -419,7 +423,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         )
         transaction.addToBackStack(null)
         transaction.add(R.id.fragmentBook, fragmentBook as FindPlaceFragment).commit()
-        mainViewModel.isShowMapLayout.set(false)
 
         updateSizeFragmentBook()
     }
@@ -467,7 +470,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         })
         dialogError.setOnClickCancel(View.OnClickListener {
             dialogError.dismiss()
-            mainViewModel.isShowMapLayout.set(true)
+            gotoMapFragment()
         })
         dialogError.show()
     }
@@ -482,9 +485,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             R.anim.pop_in_bottom,
             R.anim.pop_out_top
         )
-        transaction.addToBackStack(null)
-        transaction.add(R.id.fragmentBook, fragmentBook as WaitDriverFragment).commit()
-        mainViewModel.isShowMapLayout.set(false)
+        transaction.replace(R.id.fragmentBook, fragmentBook as WaitDriverFragment).commit()
         updateSizeFragmentBook()
     }
 
@@ -495,17 +496,31 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         binding.fragmentBook.layoutParams = layoutParams
     }
 
+    fun gotoDriverGoingFragment() {
+        fragmentBook = DriverGoingFragment()
+        currentFragment = Constants.FRAGMENT_DRIVER_GOING
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.setCustomAnimations(
+            R.anim.slide_in_bottom,
+            R.anim.slide_out_top,
+            R.anim.pop_in_bottom,
+            R.anim.pop_out_top
+        )
+        transaction.replace(R.id.fragmentBook, fragmentBook as DriverGoingFragment).commit()
+        updateSizeFragmentBook()
+    }
+
     fun showDialogConfirmCancelBook() {
         val dialogConfirm = ConfirmDialog(this)
         dialogConfirm.setTextDisplay(
-                getString(R.string.confirm_cancel_book),
-                null,
-                getString(R.string.no),
-                getString(R.string.cancel_book)
+            getString(R.string.confirm_cancel_book),
+            null,
+            getString(R.string.no),
+            getString(R.string.cancel_book)
         )
         dialogConfirm.setOnClickOK(View.OnClickListener {
             dialogConfirm.dismiss()
-            mainViewModel.isShowingLayoutBottom.set(false)
+            gotoMapFragment()
 
             // TODO
         })

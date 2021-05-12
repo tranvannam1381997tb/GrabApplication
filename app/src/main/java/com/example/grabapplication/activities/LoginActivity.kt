@@ -79,8 +79,11 @@ class LoginActivity : AppCompatActivity() {
         HttpConnection.getInstance().startLogin(getJSONLogin()) { isSuccess, dataResponse ->
             if (isSuccess) {
                 val jsonObject = JSONObject(dataResponse)
-                saveUserInfo(jsonObject)
-                startMainActivity()
+                if (saveUserInfo(jsonObject)) {
+                    startMainActivity()
+                } else {
+                    showDialogError(getString(R.string.login_false))
+                }
             } else {
                 showDialogError(dataResponse)
             }
@@ -107,10 +110,13 @@ class LoginActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun saveUserInfo(jsonObject: JSONObject) {
+    private fun saveUserInfo(jsonObject: JSONObject): Boolean {
         val userInfo = CommonUtils.getJsonObjectFromJsonObject(jsonObject, UserInfoKey.KeyUser.rawValue)
 
         val userId = CommonUtils.getStringFromJsonObject(userInfo, UserInfoKey.KeyUserId.rawValue)
+        if (userId.isEmpty()) {
+            return false
+        }
         val accountManager = AccountManager.getInstance()
         accountManager.saveIdUser(userId)
 
@@ -120,6 +126,7 @@ class LoginActivity : AppCompatActivity() {
         val phoneNumber = CommonUtils.getStringFromJsonObject(userInfo, UserInfoKey.KeyPhoneNumber.rawValue)
         val status = CommonUtils.getIntFromJsonObject(userInfo, UserInfoKey.KeyStatus.rawValue)
         accountManager.setUserInfo(name, age, sex, phoneNumber, status)
+        return true
     }
 
     private fun showDialogError(message: String?) {

@@ -16,6 +16,7 @@ class Constants {
         const val FRAGMENT_INFO_DRIVER = 1
         const val FRAGMENT_FIND_PLACE = 2
         const val FRAGMENT_WAIT_DRIVER = 3
+        const val FRAGMENT_DRIVER_GOING = 4
 
         const val TIME_WAIT_DRIVER: Long = 60 * 1000
         const val COUNT_DOWN_INTERVAL: Long = 1 * 1000

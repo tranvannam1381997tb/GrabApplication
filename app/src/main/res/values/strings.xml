@@ -42,6 +42,7 @@
 
     //Login Activity
     <string name="sign_up"><u>Đăng ký</u></string>
+    <string name="login_false">Lỗi đăng nhập</string>
 
     //SignUp Activity
     <string name="country_code_default">+84</string>

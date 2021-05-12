@@ -12,11 +12,9 @@ import com.example.grabapplication.googlemaps.models.PlaceModel
 import com.example.grabapplication.model.DriverInfo
 
 class MainViewModel: ViewModel() {
-    var isShowMapLayout = ObservableField(true)
     var isShowingListPlace = ObservableField(true)
     var isShowingProgress = ObservableField(false)
     var isShowingLayoutBottom = ObservableField(false)
-    var description = ObservableField("")
 
     var driverInfoSelect: DriverInfo? = null
     var distanceDriver: Distance? = null

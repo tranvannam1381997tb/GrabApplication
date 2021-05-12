@@ -29,7 +29,7 @@ class WaitDriverFragment : Fragment() {
             }
 
     private lateinit var binding: FragmentWaitDriverBinding
-    private var countDownTimer: CountDownTimer? = null
+    var countDownTimer: CountDownTimer? = null
     private var isDialogShowing = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -92,8 +92,10 @@ class WaitDriverFragment : Fragment() {
             dialogConfirm.dismiss()
         })
         dialogConfirm.setTextTypeBoldBtnOK()
-        dialogConfirm.show()
-        isDialogShowing = true
+        if (isDialogShowing) {
+            dialogConfirm.show()
+            isDialogShowing = true
+        }
     }
 
     fun gotoMapFragment() {
@@ -101,7 +103,6 @@ class WaitDriverFragment : Fragment() {
         if (activity is MainActivity) {
             (activity as MainActivity).gotoMapFragment()
         }
-
     }
 
     fun showDialogBookNew() {
@@ -120,8 +121,10 @@ class WaitDriverFragment : Fragment() {
         })
 
         dialogConfirm.setTextTypeBoldBtnOK()
-        isDialogShowing = true
-        dialogConfirm.show()
+        if (isDialogShowing) {
+            dialogConfirm.show()
+            isDialogShowing = true
+        }
     }
 
     override fun onDestroy() {
