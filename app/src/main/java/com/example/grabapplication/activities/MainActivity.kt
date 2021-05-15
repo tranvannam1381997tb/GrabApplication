@@ -20,7 +20,6 @@ import com.example.grabapplication.R
 import com.example.grabapplication.common.AccountManager
 import com.example.grabapplication.common.Constants
 import com.example.grabapplication.common.DriverManager
-import com.example.grabapplication.common.setOnSingleClickListener
 import com.example.grabapplication.customviews.ConfirmDialog
 import com.example.grabapplication.databinding.ActivityMainBinding
 import com.example.grabapplication.firebase.FirebaseConnection
@@ -77,7 +76,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
     private var locationPermissionGranted = false
 
-    private var fragmentBook : Fragment? = null
+    private var fragmentBottom : Fragment? = null
     var currentFragment = Constants.FRAGMENT_MAP
 
 
@@ -114,9 +113,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
         transaction = supportFragmentManager.beginTransaction()
 
-        binding.imgBack.setOnClickListener {
-            onBackPressed()
-        }
         mainViewModel.onItemClickListener = object : MainViewModel.OnItemClickListener {
             override fun openFindPlaceFragment() {
                 gotoFindPlaceFragment()
@@ -131,9 +127,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
     private fun setupEvent() {
         GrabFirebaseMessagingService.bookListener = object : BookListener {
-            override fun handleDriverGoing() {
-                if (currentFragment == Constants.FRAGMENT_WAIT_DRIVER && fragmentBook is WaitDriverFragment) {
-                    (fragmentBook as WaitDriverFragment).countDownTimer?.cancel()
+            override fun handleDriverGoingBook() {
+                if (currentFragment == Constants.FRAGMENT_WAIT_DRIVER && fragmentBottom is WaitDriverFragment) {
+                    (fragmentBottom as WaitDriverFragment).countDownTimer?.cancel()
                     this@MainActivity.runOnUiThread {
                         gotoDriverGoingFragment()
                     }
@@ -141,8 +137,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             }
 
             override fun handleDriverReject() {
-                if (currentFragment == Constants.FRAGMENT_WAIT_DRIVER && fragmentBook is WaitDriverFragment) {
-                    (fragmentBook as WaitDriverFragment).showDialogBookNew()
+                if (currentFragment == Constants.FRAGMENT_WAIT_DRIVER && fragmentBottom is WaitDriverFragment) {
+                    (fragmentBottom as WaitDriverFragment).showDialogBookNew()
+                }
+            }
+
+            override fun handleDriverArrived() {
+                if (currentFragment == Constants.FRAGMENT_DRIVER_GOING && fragmentBottom is DriverGoingFragment) {
+                    this@MainActivity.runOnUiThread {
+                        // TODO
+                    }
                 }
             }
 
@@ -203,11 +207,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             gotoMapFragment()
             return
         }
-        if (currentFragment == Constants.FRAGMENT_WAIT_DRIVER && fragmentBook is WaitDriverFragment) {
-            (fragmentBook as WaitDriverFragment).showDialogConfirmCancelBook()
+        if (currentFragment == Constants.FRAGMENT_WAIT_DRIVER && fragmentBottom is WaitDriverFragment) {
+            (fragmentBottom as WaitDriverFragment).showDialogConfirmCancelBook()
             return
         }
-        if (currentFragment == Constants.FRAGMENT_DRIVER_GOING && fragmentBook is DriverGoingFragment) {
+        if (currentFragment == Constants.FRAGMENT_DRIVER_GOING && fragmentBottom is DriverGoingFragment) {
             showDialogConfirmCancelBook()
             return
         }
@@ -386,7 +390,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
     fun gotoMapFragment() {
         currentFragment = Constants.FRAGMENT_MAP
-        fragmentBook = null
+        fragmentBottom = null
         mainViewModel.isShowingLayoutBottom.set(false)
         for (fragment in supportFragmentManager.fragments) {
             if (fragment !is SupportMapFragment) {
@@ -396,7 +400,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     }
 
     private fun gotoInfoDriverFragment() {
-        fragmentBook = InfoDriverFragment()
+        fragmentBottom = InfoDriverFragment()
         currentFragment = Constants.FRAGMENT_INFO_DRIVER
         val transaction = supportFragmentManager.beginTransaction()
         transaction.setCustomAnimations(
@@ -406,13 +410,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 R.anim.pop_out_top
         )
         transaction.addToBackStack(null)
-        transaction.replace(R.id.fragmentBook, fragmentBook as InfoDriverFragment).commit()
+        transaction.replace(R.id.fragmentBottom, fragmentBottom as InfoDriverFragment).commit()
         updateSizeFragmentBook()
 
     }
 
     private fun gotoFindPlaceFragment() {
-        fragmentBook = FindPlaceFragment()
+        fragmentBottom = FindPlaceFragment()
         currentFragment = Constants.FRAGMENT_FIND_PLACE
         val transaction = supportFragmentManager.beginTransaction()
         transaction.setCustomAnimations(
@@ -422,7 +426,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             R.anim.pop_out_top
         )
         transaction.addToBackStack(null)
-        transaction.add(R.id.fragmentBook, fragmentBook as FindPlaceFragment).commit()
+        transaction.add(R.id.fragmentBottom, fragmentBottom as FindPlaceFragment).commit()
 
         updateSizeFragmentBook()
     }
@@ -476,7 +480,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     }
 
     private fun gotoWaitDriverFragment() {
-        fragmentBook = WaitDriverFragment()
+        fragmentBottom = WaitDriverFragment()
         currentFragment = Constants.FRAGMENT_WAIT_DRIVER
         val transaction = supportFragmentManager.beginTransaction()
         transaction.setCustomAnimations(
@@ -485,19 +489,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             R.anim.pop_in_bottom,
             R.anim.pop_out_top
         )
-        transaction.replace(R.id.fragmentBook, fragmentBook as WaitDriverFragment).commit()
+        transaction.replace(R.id.fragmentBottom, fragmentBottom as WaitDriverFragment).commit()
         updateSizeFragmentBook()
     }
 
     private fun updateSizeFragmentBook() {
-        val layoutParams = binding.fragmentBook.layoutParams
+        val layoutParams = binding.fragmentBottom.layoutParams
         layoutParams.height = FrameLayout.LayoutParams.WRAP_CONTENT
         layoutParams.width = FrameLayout.LayoutParams.MATCH_PARENT
-        binding.fragmentBook.layoutParams = layoutParams
+        binding.fragmentBottom.layoutParams = layoutParams
     }
 
     fun gotoDriverGoingFragment() {
-        fragmentBook = DriverGoingFragment()
+        fragmentBottom = DriverGoingFragment()
         currentFragment = Constants.FRAGMENT_DRIVER_GOING
         val transaction = supportFragmentManager.beginTransaction()
         transaction.setCustomAnimations(
@@ -506,7 +510,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             R.anim.pop_in_bottom,
             R.anim.pop_out_top
         )
-        transaction.replace(R.id.fragmentBook, fragmentBook as DriverGoingFragment).commit()
+        transaction.replace(R.id.fragmentBottom, fragmentBottom as DriverGoingFragment).commit()
         updateSizeFragmentBook()
     }
 

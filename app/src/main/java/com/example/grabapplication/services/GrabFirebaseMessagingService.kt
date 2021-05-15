@@ -4,7 +4,6 @@ import android.content.Intent
 import android.util.Log
 import com.example.grabapplication.common.CommonUtils
 import com.example.grabapplication.firebase.FirebaseConstants
-import com.example.grabapplication.firebase.FirebaseUtils
 import com.google.firebase.messaging.FirebaseMessagingService
 import org.json.JSONException
 import org.json.JSONObject
@@ -19,11 +18,17 @@ class GrabFirebaseMessagingService : FirebaseMessagingService() {
             if (intent.hasExtra(FirebaseConstants.KEY_DRIVER_RESPONSE)) {
                 try {
                     val jsonData = JSONObject(intent.getStringExtra(FirebaseConstants.KEY_DRIVER_RESPONSE)!!)
-                    if (CommonUtils.getBooleanFromJsonObject(jsonData, FirebaseConstants.KEY_DRIVER_GOING)) {
+                    Log.d("NamTV", "jsonData = $jsonData")
+                    if (CommonUtils.getBooleanFromJsonObject(jsonData, FirebaseConstants.KEY_DRIVER_GOING_BOOK)) {
+                        // Driver going to pick you up
                         // TODO
-                        bookListener?.handleDriverGoing()
+                        bookListener?.handleDriverGoingBook()
                     } else if (CommonUtils.getBooleanFromJsonObject(jsonData, FirebaseConstants.KEY_DRIVER_REJECT)) {
+                        // Driver reject book
                         bookListener?.handleDriverReject()
+                    } else if (CommonUtils.getBooleanFromJsonObject(jsonData, FirebaseConstants.KEY_DRIVER_ARRIVED)) {
+                        // Driver arrived
+                        bookListener?.handleDriverArrived()
                     }
                 } catch (e: JSONException) {
                     // Do nothing
@@ -50,7 +55,9 @@ class GrabFirebaseMessagingService : FirebaseMessagingService() {
 }
 
 interface BookListener {
-    fun handleDriverGoing()
+    fun handleDriverGoingBook()
 
     fun handleDriverReject()
+
+    fun handleDriverArrived()
 }

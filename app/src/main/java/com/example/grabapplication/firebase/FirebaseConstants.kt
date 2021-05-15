@@ -31,7 +31,8 @@ class FirebaseConstants {
 
         // Key driver response
         const val KEY_DRIVER_RESPONSE = "driverResponse"
-        const val KEY_DRIVER_GOING = "driverGoing"
+        const val KEY_DRIVER_GOING_BOOK = "driverGoingBook"
         const val KEY_DRIVER_REJECT = "driverReject"
+        const val KEY_DRIVER_ARRIVED = "driverArrived"
     }
 }

@@ -92,7 +92,7 @@ class WaitDriverFragment : Fragment() {
             dialogConfirm.dismiss()
         })
         dialogConfirm.setTextTypeBoldBtnOK()
-        if (isDialogShowing) {
+        if (!isDialogShowing) {
             dialogConfirm.show()
             isDialogShowing = true
         }

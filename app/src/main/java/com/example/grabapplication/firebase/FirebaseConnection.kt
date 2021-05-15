@@ -6,8 +6,6 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.example.grabapplication.GrabApplication
 import com.example.grabapplication.common.AccountManager
-import com.example.grabapplication.common.Constants
-import com.example.grabapplication.connecttion.HttpConnection
 import com.example.grabapplication.googlemaps.models.Distance
 import com.google.firebase.messaging.FirebaseMessaging
 import org.json.JSONException

@@ -15,48 +15,11 @@
 		android:layout_height="match_parent">
 
 		<androidx.constraintlayout.widget.ConstraintLayout
-			android:id="@+id/layout_header"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			app:layout_constraintTop_toTopOf="parent">
-
-			<ImageView
-				android:id="@+id/imgBack"
-				android:layout_width="40dp"
-				android:layout_height="40dp"
-				android:padding="10dp"
-				android:scaleType="fitXY"
-				android:src="@drawable/back"
-				app:layout_constraintBottom_toBottomOf="parent"
-				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toTopOf="parent" />
-
-			<TextView
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:text="@string/description_map_screen"
-				app:layout_constraintBottom_toBottomOf="parent"
-				app:layout_constraintEnd_toEndOf="parent"
-				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toTopOf="parent" />
-
-			<ProgressBar
-				android:id="@+id/loading"
-				android:layout_width="50dp"
-				android:layout_height="50dp"
-				android:layout_gravity="center"
-				android:visibility="@{viewModel.isShowingProgress ? View.VISIBLE : View.GONE}"
-				app:layout_constraintBottom_toBottomOf="parent"
-				app:layout_constraintEnd_toEndOf="parent"
-				app:layout_constraintTop_toTopOf="parent" />
-		</androidx.constraintlayout.widget.ConstraintLayout>
-
-		<androidx.constraintlayout.widget.ConstraintLayout
 			android:id="@+id/layoutMain"
 			android:layout_width="match_parent"
 			android:layout_height="0dp"
-			app:layout_constraintBottom_toTopOf="@id/fragmentBook"
-			app:layout_constraintTop_toBottomOf="@+id/layout_header">
+			app:layout_constraintBottom_toTopOf="@id/fragmentBottom"
+			app:layout_constraintTop_toTopOf="parent">
 
 			<fragment
 				android:id="@+id/map"
@@ -67,7 +30,7 @@
 		</androidx.constraintlayout.widget.ConstraintLayout>
 
 		<FrameLayout
-			android:id="@+id/fragmentBook"
+			android:id="@+id/fragmentBottom"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:visibility="@{viewModel.isShowingLayoutBottom ? View.VISIBLE : View.GONE}"
