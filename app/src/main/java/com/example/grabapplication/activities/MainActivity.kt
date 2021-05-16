@@ -28,6 +28,7 @@ import com.example.grabapplication.fragments.DriverGoingFragment
 import com.example.grabapplication.fragments.FindPlaceFragment
 import com.example.grabapplication.fragments.InfoDriverFragment
 import com.example.grabapplication.fragments.WaitDriverFragment
+import com.example.grabapplication.googlemaps.MapsUtils
 import com.example.grabapplication.model.DriverInfo
 import com.example.grabapplication.services.BookListener
 import com.example.grabapplication.services.GrabFirebaseMessagingService
@@ -46,8 +47,6 @@ import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener{
-    
-    private var map: GoogleMap? = null
 
     private lateinit var binding: ActivityMainBinding
 
@@ -79,9 +78,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     private var fragmentBottom : Fragment? = null
     var currentFragment = Constants.FRAGMENT_MAP
 
-
-    private var driverHashMap: HashMap<String, Marker> = HashMap()
-    private var listDriver: HashMap<String, DriverInfo> = HashMap()
+    private var isFirstGetDeviceLocation = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,12 +89,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         initView()
         setupEvent()
         accountManager.getTokenIdDevice {  }
-
-        // TODO debug code
-
-        driverManager.addListIdDriver()
-        getInfoDriver(FirebaseManager.getInstance().databaseDrivers)
-
     }
 
     private fun initDataMap() {
@@ -155,8 +146,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
     override fun onMapReady(googleMap: GoogleMap) {
         Log.d("NamTV", "onMapReady")
-        map = googleMap
-        map!!.setOnMarkerClickListener(this)
+        mainMap = googleMap
+        mainMap!!.setOnMarkerClickListener(this)
 
         // Prompt the user for permission.
         getLocationPermission()
@@ -172,8 +163,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
     override fun onMarkerClick(marker: Marker?): Boolean{
         val idDriver = marker?.tag
-        if (idDriver != null && listDriver.containsKey(idDriver)) {
-            val driverInfo = listDriver[idDriver]
+        if (idDriver != null && driverManager.listDriverHashMap.containsKey(idDriver)) {
+            val driverInfo = driverManager.listDriverHashMap[idDriver]
             selectDriver(driverInfo!!)
         }
         return true
@@ -243,9 +234,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                             if (location != null) {
                                 val currentLocation = LatLng(location.latitude, location.longitude)
                                 accountManager.setLocationUser(currentLocation)
-                                map?.moveCamera(
+                                mainMap?.moveCamera(
                                     CameraUpdateFactory.newLatLng(currentLocation)
                                 )
+                                if (isFirstGetDeviceLocation) {
+                                    isFirstGetDeviceLocation = false
+                                    driverManager.getListDriverFromServer()
+                                    Log.d("NamTV", "isFirstGetDeviceLocation")
+                                }
                             }
                         }
                     }
@@ -255,11 +251,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                     if (location != null) {
                         val currentLocation = LatLng(location.latitude, location.longitude)
                         accountManager.setLocationUser(currentLocation)
-                        map?.moveCamera(
+                        mainMap?.moveCamera(
                             CameraUpdateFactory.newLatLngZoom(
                                 currentLocation, Constants.DEFAULT_ZOOM_MAPS.toFloat()
                             )
                         )
+                        if (isFirstGetDeviceLocation) {
+                            isFirstGetDeviceLocation = false
+                            driverManager.getListDriverFromServer()
+                            Log.d("NamTV", "isFirstGetDeviceLocation")
+                        }
                         fusedLocationProviderClient?.requestLocationUpdates(
                             locationRequest,
                             locationCallback,
@@ -270,23 +271,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             }
         } catch (e: SecurityException) {
             Log.e("NamTV", "MainActivity::getDeviceLocation: SecurityException: $e")
-        }
-    }
-
-    private fun addOrUpdateMarkerDriver(driverInfo: DriverInfo) {
-        if (driverHashMap.containsKey(driverInfo.idDriver)) {
-            val marker = driverHashMap[driverInfo.idDriver]
-            marker?.position = LatLng(driverInfo.latitude, driverInfo.longitude)
-        } else {
-            val markerOption = MarkerOptions().apply {
-                position(LatLng(driverInfo.latitude, driverInfo.longitude))
-                icon(bitmapFromVector(R.drawable.motocross))
-                title(driverInfo.name)
-                snippet(driverInfo.rate.toString())
-            }
-            val marker = map!!.addMarker(markerOption)
-            marker.tag = driverInfo.idDriver
-            driverHashMap[driverInfo.idDriver] = marker
         }
     }
 
@@ -311,37 +295,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         }
     }
 
-    private fun bitmapFromVector(vectorResId: Int): BitmapDescriptor? {
-        // below line is use to generate a drawable.
-        val vectorDrawable = ContextCompat.getDrawable(this, vectorResId)
-
-        // below line is use to set bounds to our vector drawable.
-        vectorDrawable!!.setBounds(
-            0,
-            0,
-            vectorDrawable.intrinsicWidth,
-            vectorDrawable.intrinsicHeight
-        )
-
-        // below line is use to create a bitmap for our
-        // drawable which we have added.
-        val bitmap = Bitmap.createBitmap(
-            vectorDrawable.intrinsicWidth,
-            vectorDrawable.intrinsicHeight,
-            Bitmap.Config.ARGB_8888
-        )
-
-        // below line is use to add bitmap in our canvas.
-        val canvas = Canvas(bitmap)
-
-        // below line is use to draw our
-        // vector drawable in canvas.
-        vectorDrawable.draw(canvas)
-
-        // after generating our bitmap we are returning our bitmap.
-        return BitmapDescriptorFactory.fromBitmap(bitmap)
-    }
-
     /**
      * Updates the map's UI settings based on whether the user has granted location permission.
      */
@@ -351,11 +304,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         }
         try {
             if (locationPermissionGranted) {
-                map?.isMyLocationEnabled = true
-                map?.uiSettings?.isMyLocationButtonEnabled = true
+                mainMap?.isMyLocationEnabled = true
+                mainMap?.uiSettings?.isMyLocationButtonEnabled = true
             } else {
-                map?.isMyLocationEnabled = false
-                map?.uiSettings?.isMyLocationButtonEnabled = false
+                mainMap?.isMyLocationEnabled = false
+                mainMap?.uiSettings?.isMyLocationButtonEnabled = false
                 accountManager.setLocationUser(Constants.DEFAULT_LOCATION)
                 getLocationPermission()
             }
@@ -364,22 +317,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         }
     }
 
-    private fun getInfoDriver(database: DatabaseReference) {
-        for (id in driverManager.listIdDriver) {
-            database.child(id).addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    Log.d("NamTV", "onDataChange")
-                    val driverInfo = driverManager.getInfoDriverFromDataSnapshot(snapshot)
-                    listDriver[driverInfo.idDriver] = driverInfo
-                    addOrUpdateMarkerDriver(driverInfo)
-                }
 
-                override fun onCancelled(error: DatabaseError) {
-                    Log.d("NamTV", "onCancelled")
-                }
-            })
-        }
-    }
 
     private fun selectDriver(driverInfo: DriverInfo) {
         mainViewModel.selectDriver(driverInfo) {
@@ -537,5 +475,26 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
     companion object {
         private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
+
+        private var mainMap: GoogleMap? = null
+        private var driverHashMap: HashMap<String, Marker> = HashMap()
+        fun addOrUpdateMarkerDriver(driverInfo: DriverInfo) {
+            if (driverHashMap.containsKey(driverInfo.driverId)) {
+                // Update marker
+                val marker = driverHashMap[driverInfo.driverId]
+                marker?.position = LatLng(driverInfo.latitude, driverInfo.longitude)
+            } else {
+                // Add new marker
+                val markerOption = MarkerOptions().apply {
+                    position(LatLng(driverInfo.latitude, driverInfo.longitude))
+                    icon(MapsUtils.bitmapFromVector(R.drawable.motocross))
+                    title(driverInfo.name)
+                    snippet(driverInfo.rate.toString())
+                }
+                val marker = mainMap!!.addMarker(markerOption)
+                marker.tag = driverInfo.driverId
+                driverHashMap[driverInfo.driverId] = marker
+            }
+        }
     }
 }

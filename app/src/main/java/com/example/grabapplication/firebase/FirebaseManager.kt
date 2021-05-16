@@ -38,7 +38,7 @@ class FirebaseManager private constructor() {
             }
 
     fun updateLocationUserToFirebase(location: LatLng) {
-        val idUser = AccountManager.getInstance().getIdUser()
+        val idUser = AccountManager.getInstance().getUserId()
         if (idUser.isNotEmpty()) {
             databaseUsers.child(idUser).child(FirebaseConstants.KEY_LATITUDE).setValue(location.latitude)
             databaseUsers.child(idUser).child(FirebaseConstants.KEY_LONGITUDE).setValue(location.longitude)
@@ -46,7 +46,7 @@ class FirebaseManager private constructor() {
     }
 
     fun updateTokenIdToFirebase(tokenId: String) {
-        val idUser = AccountManager.getInstance().getIdUser()
+        val idUser = AccountManager.getInstance().getUserId()
         if (idUser.isNotEmpty()) {
             databaseUsers.child(idUser).child(FirebaseConstants.KEY_TOKEN_ID).setValue(tokenId)
         }

@@ -6,7 +6,7 @@ import kotlin.properties.Delegates
 
 @Parcelize
 data class UserInfo(
-    var idUser: String,
+    var userId: String,
     var tokenId: String,
     var name: String,
     var age: Int,
@@ -30,4 +30,9 @@ enum class UserInfoKey(val rawValue: String) {
     KeyLongitude("longitude"),
     KeyStatus("status"),
     KeyStartDate("startDate")
+}
+
+enum class SexValue(val rawValue: Int) {
+    MALE(0),
+    FEMALE(1)
 }

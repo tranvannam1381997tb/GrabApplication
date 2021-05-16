@@ -20,5 +20,8 @@ class Constants {
 
         const val TIME_WAIT_DRIVER: Long = 60 * 1000
         const val COUNT_DOWN_INTERVAL: Long = 1 * 1000
+
+        const val REQUEST_GET_LIST_DRIVER = 100
+        const val TIME_SCHEDULE_GET_LIST_DRIVER = 60*1000
     }
 }

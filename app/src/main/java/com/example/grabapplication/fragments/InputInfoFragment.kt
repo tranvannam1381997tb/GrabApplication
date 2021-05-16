@@ -2,7 +2,6 @@ package com.example.grabapplication.fragments
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,18 +11,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.example.grabapplication.R
 import com.example.grabapplication.activities.MainActivity
-import com.example.grabapplication.activities.SignUpActivity
 import com.example.grabapplication.common.*
 import com.example.grabapplication.connecttion.HttpConnection
 import com.example.grabapplication.databinding.FragmentInputInfoBinding
+import com.example.grabapplication.model.SexValue
 import com.example.grabapplication.model.UserInfoKey
 import com.example.grabapplication.viewmodel.BaseViewModelFactory
 import com.example.grabapplication.viewmodel.SignUpViewModel
-import kotlinx.android.synthetic.main.fragment_input_info.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
 class InputInfoFragment : Fragment() {
@@ -58,7 +52,7 @@ class InputInfoFragment : Fragment() {
                         val jsonObject = JSONObject(dataResponse)
                         val userId = CommonUtils.getStringFromJsonObject(jsonObject, UserInfoKey.KeyUserId.rawValue)
                         val accountManager = AccountManager.getInstance()
-                        accountManager.saveIdUser(userId)
+                        accountManager.saveUserId(userId)
                         startMainActivity()
                     } else {
                         showToastError(dataResponse)
@@ -79,7 +73,11 @@ class InputInfoFragment : Fragment() {
         jsonInfo.put(UserInfoKey.KeyPassword.rawValue, inputInfoViewModel.password)
         jsonInfo.put(UserInfoKey.KeyName.rawValue, inputInfoViewModel.name)
         jsonInfo.put(UserInfoKey.KeyAge.rawValue, inputInfoViewModel.age)
-        jsonInfo.put(UserInfoKey.KeySex.rawValue, inputInfoViewModel.sex)
+        if (inputInfoViewModel.sex == SexValue.MALE.rawValue) {
+            jsonInfo.put(UserInfoKey.KeySex.rawValue, 0)
+        } else {
+            jsonInfo.put(UserInfoKey.KeySex.rawValue, 1)
+        }
         return jsonInfo
     }
 

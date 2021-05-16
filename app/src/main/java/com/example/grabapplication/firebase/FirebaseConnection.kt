@@ -10,7 +10,6 @@ import com.example.grabapplication.googlemaps.models.Distance
 import com.google.firebase.messaging.FirebaseMessaging
 import org.json.JSONException
 import org.json.JSONObject
-import javax.security.auth.callback.Callback
 
 class FirebaseConnection private constructor() {
 
@@ -65,7 +64,7 @@ class FirebaseConnection private constructor() {
             val accountManager = AccountManager.getInstance()
             notificationData.put(FirebaseConstants.KEY_START_ADDRESS, distancePlaceChoose.startAddress)
             notificationData.put(FirebaseConstants.KEY_END_ADDRESS, distancePlaceChoose.endAddress)
-            notificationData.put(FirebaseConstants.KEY_USER_ID, accountManager.getIdUser())
+            notificationData.put(FirebaseConstants.KEY_USER_ID, accountManager.getUserId())
             notificationData.put(FirebaseConstants.KEY_PRICE, "10000")
             notificationData.put(FirebaseConstants.KEY_DISTANCE, distancePlaceChoose.distanceText)
             notificationData.put(FirebaseConstants.KEY_TOKEN_ID, accountManager.getTokenId())

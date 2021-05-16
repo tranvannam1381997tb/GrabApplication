@@ -7,7 +7,11 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.example.grabapplication.GrabApplication
 import com.example.grabapplication.R
+import com.example.grabapplication.common.AccountManager
+import com.example.grabapplication.common.CommonUtils
 import com.example.grabapplication.common.Constants
+import com.example.grabapplication.model.DriverInfo
+import com.example.grabapplication.model.UserInfoKey
 import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStream
@@ -119,6 +123,41 @@ class HttpConnection private constructor() {
         requestQueue.add(jsonObjectRequest)
     }
 
+    fun getListDriver(callback:(Boolean, String) -> Unit) {
+        val url = String.format(URL_GET_LIST_DRIVER, HOST)
+        val jsonBody = JSONObject()
+        jsonBody.put(UserInfoKey.KeyUserId.rawValue, AccountManager.getInstance().getUserId())
+        val jsonObjectRequest = object : JsonObjectRequest(Method.POST, url, jsonBody, Response.Listener<JSONObject> {
+            if (it != null && it.has(Constants.KEY_SUCCESS)) {
+                callback.invoke(true, it.toString())
+            }
+        }, Response.ErrorListener {
+            if (it.networkResponse != null) {
+                val statusCode = it.networkResponse.statusCode
+                if (statusCode == 400) {
+                    val dataError = JSONObject(it.networkResponse.data.toString(Charsets.UTF_8))
+                    val error = dataError.getString("error")
+                    callback.invoke(false, error)
+                }
+            }
+
+            callback.invoke(false, GrabApplication.getAppContext().getString(R.string.connect_server_error))
+        }) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val params = HashMap<String, String>()
+                params["Content-Type"] = "application/json; charset=utf-8"
+                params["Accept"] = "application/json"
+                return params
+            }
+        }
+        jsonObjectRequest.retryPolicy = DefaultRetryPolicy(
+            CONNECTION_TIMEOUT,
+            DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        val requestQueue = Volley.newRequestQueue(GrabApplication.getAppContext())
+        requestQueue.add(jsonObjectRequest)
+    }
+
     private fun requestHttps(http: HttpURLConnection): CompletionHandler {
         var inputStream: InputStream? = null
         var inputStreamReader: InputStreamReader? = null
@@ -168,6 +207,7 @@ class HttpConnection private constructor() {
     companion object {
         private const val URL_LOGIN_FORMAT = "http://%s/api/user/login"
         private const val URL_SIGN_UP = "http://%s/api/user/create"
+        private const val URL_GET_LIST_DRIVER = "http://%s/api/user/find-drivers"
         private const val HOST = "192.168.1.215:3000"
         private const val CONNECTION_TIMEOUT = 30000
 

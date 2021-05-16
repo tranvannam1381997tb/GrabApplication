@@ -6,7 +6,7 @@ import java.util.*
 
 @Parcelize
 data class DriverInfo(
-    var idDriver: String,
+    var driverId: String,
     var tokenId: String,
     var name: String,
     var age: Int,
@@ -39,5 +39,15 @@ enum class DriverInfoKey(val rawValue: String) {
     KeyLicensePlateNumber("licensePlateNumber")
 }
 
-const val TYPE_GRAB_BIKE = 1
-const val TYPE_GRAB_CAR = 2
+enum class DriverStatus(val rawValue: Int) {
+    StatusOff(-1),
+    StatusOn(0),
+    StatusArrivingOrigin(1),
+    StatusGoing(2),
+    StatusArrivingDestination(3)
+}
+
+enum class TypeDriverValue(val rawValue: String) {
+    GRAB_BIKE("GrabBike"),
+    GRAB_CAR("GrabCar")
+}

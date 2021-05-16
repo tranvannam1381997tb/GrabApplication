@@ -7,7 +7,7 @@ import com.google.firebase.iid.FirebaseInstanceId
 
 class AccountManager private constructor() {
 
-    private var idUser: String? = null
+    private var userId: String? = null
     private var tokenId: String? = null
     private var name: String? = null
     private var age: Int? = null
@@ -37,12 +37,12 @@ class AccountManager private constructor() {
         }
     }
 
-    fun saveIdUser(id: String) {
-        idUser = id
+    fun saveUserId(id: String) {
+        userId = id
     }
 
-    fun getIdUser(): String{
-        return idUser ?: ""
+    fun getUserId(): String{
+        return userId ?: ""
     }
 
     fun getTokenIdDevice(callback: (String?) -> Unit) {
@@ -105,7 +105,3 @@ class AccountManager private constructor() {
     }
 }
 
-enum class SexValue(val rawValue: Int) {
-    MALE(0),
-    FEMALE(1)
-}
