@@ -40,7 +40,6 @@ class DriverManager private constructor() {
     }
 
     fun updateDriverInfoFromDataSnapshot(snapshot: DataSnapshot) {
-//        val driverId = FirebaseUtils.getStringFromDataSnapshot(snapshot, DriverInfoKey.KeyDriverId.rawValue)
         val driverId = snapshot.key
         if (listDriverHashMap[driverId] != null) {
             val driverInfo = listDriverHashMap[driverId]!!

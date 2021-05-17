@@ -5,7 +5,6 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.grabapplication.GrabApplication
 import com.example.grabapplication.R
-import com.example.grabapplication.activities.MainActivity
 import com.example.grabapplication.common.AccountManager
 import com.example.grabapplication.common.CommonUtils
 import com.example.grabapplication.googlemaps.models.Distance
@@ -62,7 +61,16 @@ class MapsConnection private constructor() {
                                 val startAddress = CommonUtils.getStringFromJsonObject(leg, MapsConstant.DIRECTION_START_ADDRESS)
                                 val endAddress = CommonUtils.getStringFromJsonObject(leg, MapsConstant.DIRECTION_END_ADDRESS)
 
-                                minDistance = Distance(distanceText, distanceValue, durationText, durationValue, startAddress, endAddress)
+                                val startLocation = CommonUtils.getJsonObjectFromJsonObject(leg, MapsConstant.DIRECTION_START_LOCATION)
+                                val endLocation = CommonUtils.getJsonObjectFromJsonObject(leg, MapsConstant.DIRECTION_END_LOCATION)
+
+                                val latStart = CommonUtils.getDoubleFromJsonObject(startLocation, MapsConstant.DIRECTION_LAT)
+                                val lngStart = CommonUtils.getDoubleFromJsonObject(startLocation, MapsConstant.DIRECTION_LNG)
+
+                                val latEnd = CommonUtils.getDoubleFromJsonObject(endLocation, MapsConstant.DIRECTION_LAT)
+                                val lngEnd = CommonUtils.getDoubleFromJsonObject(endLocation, MapsConstant.DIRECTION_LNG)
+
+                                minDistance = Distance(distanceText, distanceValue, durationText, durationValue, startAddress, endAddress, latStart, lngStart, latEnd, lngEnd)
                             }
                         }
                     }

@@ -1,6 +1,7 @@
 package com.example.grabapplication.googlemaps
 
 import com.example.grabapplication.googlemaps.models.Distance
+import com.google.android.gms.maps.model.LatLng
 
 class MapsConstant {
     companion object {
@@ -21,6 +22,10 @@ class MapsConstant {
         const val DIRECTION_VALUE = "value"
         const val DIRECTION_START_ADDRESS = "start_address"
         const val DIRECTION_END_ADDRESS = "end_address"
+        const val DIRECTION_START_LOCATION = "start_location"
+        const val DIRECTION_END_LOCATION = "end_location"
+        const val DIRECTION_LAT = "lat"
+        const val DIRECTION_LNG = "lng"
 
         // google geocoding api key
         const val GEOCODE_STATUS = "status"
@@ -37,6 +42,6 @@ class MapsConstant {
         const val PLACE_FORMATTED_ADDRESS = "formatted_address"
         const val PLACE_NAME = "name"
 
-        val DEFAULT_DISTANCE = Distance("1km", 1000, "10 phút", 600, "106 Hoàng Quốc Việt", "10 Nguyễn Văn Huyên")
+        val DEFAULT_DISTANCE = Distance("1,5 km", 1506, "5 phút", 322, "Ng. 106 - Hoàng Quốc Việt, Hà Nội, Việt Nam", "Ng. 10 Nguyễn Văn Huyên, Cầu Giấy, Hà Nội, Việt Nam", 21.0477757, 105.794652, 21.0376798, 105.7965187)
     }
 }
