@@ -39,7 +39,7 @@ class DriverManager private constructor() {
         }
     }
 
-    fun updateDriverInfoFromDataSnapshot(snapshot: DataSnapshot) {
+    fun getDriverInfoFromDataSnapshot(snapshot: DataSnapshot) {
         val driverId = snapshot.key
         if (listDriverHashMap[driverId] != null) {
             val driverInfo = listDriverHashMap[driverId]!!
@@ -69,7 +69,7 @@ class DriverManager private constructor() {
             val driverInfo = driver.value
             val listener = databaseDrivers.child(driverInfo.driverId).addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    updateDriverInfoFromDataSnapshot(snapshot)
+                    getDriverInfoFromDataSnapshot(snapshot)
                     if (listDriverHashMap[driverInfo.driverId] != null) {
 
                         Log.d("NamTV", "onDataChange ${listDriverHashMap[driverInfo.driverId]!!.latitude} ${listDriverHashMap[driverInfo.driverId]!!.longitude}")
@@ -138,5 +138,7 @@ class DriverManager private constructor() {
             )
             listDriverHashMap[driverInfo.driverId] = driverInfo
         }
+
+        Log.d("NamTV", "listDriverHashMap = ${listDriverHashMap.size}")
     }
 }

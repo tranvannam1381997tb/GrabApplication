@@ -31,7 +31,8 @@ class MainViewModel: ViewModel() {
 
     fun selectDriver(driverInfo: DriverInfo, callback: (Boolean) -> Unit) {
         driverInfoSelect = driverInfo
-        MapsConnection.getInstance().getShortestWay(driverInfo.latitude, driverInfo.longitude) {
+        MapsConnection.getInstance().
+        getShortestWay(driverInfo.latitude, driverInfo.longitude) {
             distanceDriver = it
             callback.invoke(true)
         }

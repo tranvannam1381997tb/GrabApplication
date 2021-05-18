@@ -3,8 +3,6 @@ package com.example.grabapplication.activities
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -23,7 +21,6 @@ import com.example.grabapplication.common.DriverManager
 import com.example.grabapplication.customviews.ConfirmDialog
 import com.example.grabapplication.databinding.ActivityMainBinding
 import com.example.grabapplication.firebase.FirebaseConnection
-import com.example.grabapplication.firebase.FirebaseManager
 import com.example.grabapplication.fragments.DriverGoingFragment
 import com.example.grabapplication.fragments.FindPlaceFragment
 import com.example.grabapplication.fragments.InfoDriverFragment
@@ -40,10 +37,6 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener{
@@ -122,7 +115,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 if (currentFragment == Constants.FRAGMENT_WAIT_DRIVER && fragmentBottom is WaitDriverFragment) {
                     (fragmentBottom as WaitDriverFragment).countDownTimer?.cancel()
                     this@MainActivity.runOnUiThread {
-                        gotoDriverGoingFragment()
+                        gotoDriverGoingFragment(DriverGoingFragment.STATUS_ARRIVING_ORIGIN)
                     }
                 }
             }
@@ -133,10 +126,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 }
             }
 
-            override fun handleDriverArrived() {
+            override fun handleDriverArrivedOrigin() {
                 if (currentFragment == Constants.FRAGMENT_DRIVER_GOING && fragmentBottom is DriverGoingFragment) {
                     this@MainActivity.runOnUiThread {
-                        // TODO
+                        gotoDriverGoingFragment(DriverGoingFragment.STATUS_ARRIVED_ORIGIN)
                     }
                 }
             }
@@ -317,8 +310,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         }
     }
 
-
-
     private fun selectDriver(driverInfo: DriverInfo) {
         mainViewModel.selectDriver(driverInfo) {
             mainViewModel.isShowingLayoutBottom.set(true)
@@ -438,7 +429,26 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         binding.fragmentBottom.layoutParams = layoutParams
     }
 
-    fun gotoDriverGoingFragment() {
+    fun gotoDriverGoingFragment(statusDriverGoingFragment: Int) {
+        fragmentBottom = DriverGoingFragment()
+        currentFragment = Constants.FRAGMENT_DRIVER_GOING
+
+        val bundle = Bundle()
+        bundle.putInt(DriverGoingFragment.STATUS_DRIVER_GOING_FRAGMENT, statusDriverGoingFragment)
+        fragmentBottom!!.arguments = bundle
+
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.setCustomAnimations(
+            R.anim.slide_in_bottom,
+            R.anim.slide_out_top,
+            R.anim.pop_in_bottom,
+            R.anim.pop_out_top
+        )
+        transaction.replace(R.id.fragmentBottom, fragmentBottom as DriverGoingFragment).commit()
+        updateSizeFragmentBook()
+    }
+
+    fun handleEventDriverArrivedOrigin() {
         fragmentBottom = DriverGoingFragment()
         currentFragment = Constants.FRAGMENT_DRIVER_GOING
         val transaction = supportFragmentManager.beginTransaction()

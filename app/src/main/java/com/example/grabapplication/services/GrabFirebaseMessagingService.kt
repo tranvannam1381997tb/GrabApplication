@@ -26,9 +26,9 @@ class GrabFirebaseMessagingService : FirebaseMessagingService() {
                     } else if (CommonUtils.getBooleanFromJsonObject(jsonData, FirebaseConstants.KEY_DRIVER_REJECT)) {
                         // Driver reject book
                         bookListener?.handleDriverReject()
-                    } else if (CommonUtils.getBooleanFromJsonObject(jsonData, FirebaseConstants.KEY_DRIVER_ARRIVED)) {
+                    } else if (CommonUtils.getBooleanFromJsonObject(jsonData, FirebaseConstants.KEY_DRIVER_ARRIVED_ORIGIN)) {
                         // Driver arrived
-                        bookListener?.handleDriverArrived()
+                        bookListener?.handleDriverArrivedOrigin()
                     }
                 } catch (e: JSONException) {
                     // Do nothing
@@ -59,5 +59,5 @@ interface BookListener {
 
     fun handleDriverReject()
 
-    fun handleDriverArrived()
+    fun handleDriverArrivedOrigin()
 }
