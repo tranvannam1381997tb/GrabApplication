@@ -58,8 +58,8 @@ class DriverGoingFragment : Fragment() {
                 STATUS_ARRIVED_ORIGIN -> updateLayoutArrivedOrigin()
 
                 STATUS_START_GOING -> updateLayoutGoing(bundle.getInt(FirebaseConstants.KEY_TIME_ARRIVED_DESTINATION))
-//
-//                STATUS_ARRIVED_DESTINATION -> updateLayoutArrivedDestination()
+
+                STATUS_ARRIVED_DESTINATION -> updateLayoutArrivedDestination()
             }
         }
     }
@@ -94,6 +94,11 @@ class DriverGoingFragment : Fragment() {
         binding.txtTime.text = timeDriverArrivedDestination
         binding.txtNotify.visibility = View.VISIBLE
         binding.txtTime.visibility = View.VISIBLE
+    }
+
+    private fun updateLayoutArrivedDestination() {
+        binding.description.setText(R.string.driver_arrived_destination)
+        binding.btnCancel.visibility = View.GONE
     }
 
     private fun handleClickBtnCancel() {

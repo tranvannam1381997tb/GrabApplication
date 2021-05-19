@@ -60,36 +60,6 @@ class HttpConnection private constructor() {
         requestQueue.add(jsonObjectRequest)
     }
 
-    fun startGetPrice(startAddress : String, endAddress : String, distance: Int): CompletionHandler {
-        try {
-            val url = URL("http://192.168.1.105:3000/get-price")
-            val http = url.openConnection() as HttpURLConnection
-            http.connectTimeout = 30000
-            http.requestMethod = "POST"
-
-            http.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
-            http.setRequestProperty("Accept", "application/json")
-
-            val jsonBody = JSONObject()
-            jsonBody.put("startAddress", startAddress)
-            jsonBody.put("endAddress", endAddress)
-            jsonBody.put("distance", distance)
-
-            val outputInBytes = jsonBody.toString().toByteArray(Charsets.UTF_8)
-            val os = http.outputStream
-            os.write(outputInBytes)
-            os.close()
-
-            return requestHttps(http)
-        } catch (e: MalformedURLException) {
-            Log.d("NamTV", "HttpConnection::startURLConnection: MalformedURLException: $e")
-            return CompletionHandler(null, e.toString(), 0)
-        } catch (e: Exception) {
-            Log.d("NamTV", "HttpConnection::startURLConnection: Exception: $e")
-            return CompletionHandler(null, e.toString(), 0)
-        }
-    }
-
     fun startSignUp(jsonBody: JSONObject, callback:(Boolean, String) -> Unit) {
         val url = String.format(URL_SIGN_UP, HOST)
         val jsonObjectRequest = object : JsonObjectRequest(Method.POST, url, jsonBody, Response.Listener<JSONObject> {

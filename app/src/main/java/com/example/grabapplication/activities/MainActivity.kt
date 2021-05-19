@@ -149,6 +149,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 }
             }
 
+            override fun handleDriverArrivedDestination(jsonData: JSONObject) {
+                if (currentFragment == Constants.FRAGMENT_DRIVER_GOING && fragmentBottom is DriverGoingFragment) {
+                    this@MainActivity.runOnUiThread {
+                        gotoDriverGoingFragment(DriverGoingFragment.STATUS_ARRIVED_DESTINATION, jsonData)
+                    }
+                }
+            }
+
         }
     }
 
@@ -496,6 +504,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 // Update marker
                 val marker = driverHashMap[driverInfo.driverId]
                 marker?.position = LatLng(driverInfo.latitude, driverInfo.longitude)
+                Log.d("NamTV", "Update marker")
             } else {
                 // Add new marker
                 val markerOption = MarkerOptions().apply {
@@ -507,6 +516,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 val marker = mainMap!!.addMarker(markerOption)
                 marker.tag = driverInfo.driverId
                 driverHashMap[driverInfo.driverId] = marker
+                Log.d("NamTV", "Add new marker")
             }
         }
     }

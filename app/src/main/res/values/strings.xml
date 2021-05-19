@@ -67,7 +67,8 @@
 	// Main Activity
 	<string name="driver_arriving_origin">Tài xế đang đến đón bạn</string>
     <string name="driver_arrived_origin">Tài xế đã đến điểm đón</string>
-	<string name="driver_start_going">Bắt đầu di chuyển</string>
+	<string name="driver_start_going">Đang di chuyển</string>
+    <string name="driver_arrived_destination">Đã đến điểm đến</string>
 
 	<string name="notify_time_driver_arrived_origin">Tài xế sẽ đến điểm đón lúc %s</string>
 	<string name="notify_time_driver_arrived_destination">Thời gian đến lúc %s</string>
