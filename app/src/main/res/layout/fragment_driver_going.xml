@@ -159,7 +159,18 @@
                 android:layout_marginTop="10dp"
                 android:textColor="@color/color_child_info_driver"
                 android:textSize="@dimen/text_size_info"
-                tools:text="@string/time_drive_arrived"/>
+                tools:text="@string/notify_time_driver_arrived_origin"
+	            android:visibility="gone"/>
+
+	        <TextView
+		        android:id="@+id/txtTime"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_marginTop="10dp"
+		        android:textColor="@color/color_child_info_driver"
+		        android:textSize="@dimen/text_size_info"
+		        tools:text="@string/notify_time_driver_arrived_origin"
+		        android:visibility="gone"/>
         </LinearLayout>
 
         <Button
@@ -175,6 +186,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layout_info_driver"
+	        android:visibility="gone"
             tools:text="@string/cancel_book" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

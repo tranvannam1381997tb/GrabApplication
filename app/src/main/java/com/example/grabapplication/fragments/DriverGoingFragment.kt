@@ -9,14 +9,18 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.grabapplication.R
 import com.example.grabapplication.activities.MainActivity
+import com.example.grabapplication.common.CommonUtils
 import com.example.grabapplication.common.setOnSingleClickListener
 import com.example.grabapplication.databinding.FragmentDriverGoingBinding
+import com.example.grabapplication.firebase.FirebaseConstants
 import com.example.grabapplication.viewmodel.BaseViewModelFactory
 import com.example.grabapplication.viewmodel.MainViewModel
+import org.json.JSONObject
+import java.util.*
 
 class DriverGoingFragment : Fragment() {
 
-    private val waitDriverViewModel: MainViewModel
+    private val driverGoingViewModel: MainViewModel
             by lazy {
                 ViewModelProvider(requireActivity(), BaseViewModelFactory(requireContext())).get(
                         MainViewModel::class.java)
@@ -29,7 +33,7 @@ class DriverGoingFragment : Fragment() {
                               savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_driver_going, container, false)
         val view = binding.root
-        binding.viewModel = waitDriverViewModel
+        binding.viewModel = driverGoingViewModel
         updateLayout()
         setupEvent()
         return view
@@ -47,28 +51,49 @@ class DriverGoingFragment : Fragment() {
         val bundle = arguments
         if (bundle != null) {
             currentStatus = bundle.getInt(STATUS_DRIVER_GOING_FRAGMENT)
+            val jsonData = JSONObject(bundle.getString(JSON_DATA, "{}"))
             when (currentStatus) {
-                STATUS_ARRIVING_ORIGIN -> updateLayoutArrivingOrigin()
+                STATUS_ARRIVING_ORIGIN -> updateLayoutArrivingOrigin(jsonData.getInt(FirebaseConstants.KEY_TIME_ARRIVED_ORIGIN))
 
                 STATUS_ARRIVED_ORIGIN -> updateLayoutArrivedOrigin()
 
-//                STATUS_GOING -> updateLayoutGoing()
+                STATUS_START_GOING -> updateLayoutGoing(bundle.getInt(FirebaseConstants.KEY_TIME_ARRIVED_DESTINATION))
 //
 //                STATUS_ARRIVED_DESTINATION -> updateLayoutArrivedDestination()
             }
         }
     }
 
-    private fun updateLayoutArrivingOrigin() {
+    private fun updateLayoutArrivingOrigin(timeArrivedOrigin: Int) {
         binding.description.setText(R.string.driver_arriving_origin)
         binding.btnCancel.visibility = View.VISIBLE
         binding.btnCancel.setText(R.string.cancel_book)
-//        binding.txtNotify.setText()
+        val currentTime = Calendar.getInstance()
+        currentTime.add(Calendar.SECOND, timeArrivedOrigin)
+        val timeDriverArrived = CommonUtils.getTimeArrived(currentTime)
+        val strNotify = getString(R.string.notify_time_driver_arrived_origin, timeDriverArrived)
+        binding.txtNotify.text = strNotify
+        binding.txtNotify.visibility = View.VISIBLE
+        binding.btnCancel.visibility = View.VISIBLE
     }
 
     private fun updateLayoutArrivedOrigin() {
         binding.description.setText(R.string.driver_arrived_origin)
+    }
+
+
+    private fun updateLayoutGoing(timeDriverArrivedDestination: Int) {
+        binding.description.setText(R.string.driver_start_going)
         binding.btnCancel.visibility = View.GONE
+        val currentTime = Calendar.getInstance()
+        currentTime.add(Calendar.SECOND, timeDriverArrivedDestination)
+        val timeDriverArrived = CommonUtils.getTimeArrived(currentTime)
+        val timeDriverArrivedDestination = getString(R.string.notify_time_driver_arrived_destination, timeDriverArrived)
+        val endAddress = getString(R.string.notify_end_address, driverGoingViewModel.distancePlaceChoose.get()!!.endAddress)
+        binding.txtNotify.text = endAddress
+        binding.txtTime.text = timeDriverArrivedDestination
+        binding.txtNotify.visibility = View.VISIBLE
+        binding.txtTime.visibility = View.VISIBLE
     }
 
     private fun handleClickBtnCancel() {
@@ -79,9 +104,10 @@ class DriverGoingFragment : Fragment() {
 
     companion object {
         const val STATUS_DRIVER_GOING_FRAGMENT = "statusDriverGoingFragment"
+        const val JSON_DATA = "jsonData"
         const val STATUS_ARRIVING_ORIGIN = 0
         const val STATUS_ARRIVED_ORIGIN = 1
-        const val STATUS_GOING = 2
+        const val STATUS_START_GOING = 2
         const val STATUS_ARRIVED_DESTINATION = 3
 
     }

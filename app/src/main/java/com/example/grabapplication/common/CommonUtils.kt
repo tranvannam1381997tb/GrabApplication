@@ -8,7 +8,9 @@ import android.widget.EditText
 import com.example.grabapplication.model.TypeDriverValue
 import org.json.JSONArray
 import org.json.JSONObject
+import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 class CommonUtils {
     companion object {
@@ -113,6 +115,11 @@ class CommonUtils {
         private fun hideKeyboard(activity: Activity){
             val inputMethod: InputMethodManager = activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethod.hideSoftInputFromWindow(activity.currentFocus!!.windowToken!!, 0)
+        }
+
+        fun getTimeArrived(calendar: Calendar): String {
+            val dateFormat = SimpleDateFormat("HH:mm")
+            return dateFormat.format(calendar.time)
         }
     }
 }

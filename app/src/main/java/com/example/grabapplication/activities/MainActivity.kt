@@ -21,6 +21,7 @@ import com.example.grabapplication.common.DriverManager
 import com.example.grabapplication.customviews.ConfirmDialog
 import com.example.grabapplication.databinding.ActivityMainBinding
 import com.example.grabapplication.firebase.FirebaseConnection
+import com.example.grabapplication.firebase.FirebaseConstants
 import com.example.grabapplication.fragments.DriverGoingFragment
 import com.example.grabapplication.fragments.FindPlaceFragment
 import com.example.grabapplication.fragments.InfoDriverFragment
@@ -38,6 +39,9 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.activity_main.*
+import org.json.JSONObject
+import java.util.*
+import kotlin.collections.HashMap
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener{
 
@@ -72,6 +76,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     var currentFragment = Constants.FRAGMENT_MAP
 
     private var isFirstGetDeviceLocation = true
+
+    private var timeDriverArrivedDestination = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -111,11 +117,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
     private fun setupEvent() {
         GrabFirebaseMessagingService.bookListener = object : BookListener {
-            override fun handleDriverGoingBook() {
+            override fun handleDriverGoingBook(jsonData: JSONObject) {
                 if (currentFragment == Constants.FRAGMENT_WAIT_DRIVER && fragmentBottom is WaitDriverFragment) {
                     (fragmentBottom as WaitDriverFragment).countDownTimer?.cancel()
                     this@MainActivity.runOnUiThread {
-                        gotoDriverGoingFragment(DriverGoingFragment.STATUS_ARRIVING_ORIGIN)
+                        gotoDriverGoingFragment(DriverGoingFragment.STATUS_ARRIVING_ORIGIN, jsonData)
                     }
                 }
             }
@@ -126,10 +132,19 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 }
             }
 
-            override fun handleDriverArrivedOrigin() {
+            override fun handleDriverArrivedOrigin(jsonData: JSONObject) {
                 if (currentFragment == Constants.FRAGMENT_DRIVER_GOING && fragmentBottom is DriverGoingFragment) {
                     this@MainActivity.runOnUiThread {
-                        gotoDriverGoingFragment(DriverGoingFragment.STATUS_ARRIVED_ORIGIN)
+                        gotoDriverGoingFragment(DriverGoingFragment.STATUS_ARRIVED_ORIGIN, jsonData)
+                        timeDriverArrivedDestination = jsonData.getInt(FirebaseConstants.KEY_TIME_ARRIVED_DESTINATION)
+                    }
+                }
+            }
+
+            override fun handleDriverGoing(jsonData: JSONObject) {
+                if (currentFragment == Constants.FRAGMENT_DRIVER_GOING && fragmentBottom is DriverGoingFragment) {
+                    this@MainActivity.runOnUiThread {
+                        gotoDriverGoingFragment(DriverGoingFragment.STATUS_START_GOING, jsonData)
                     }
                 }
             }
@@ -429,28 +444,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         binding.fragmentBottom.layoutParams = layoutParams
     }
 
-    fun gotoDriverGoingFragment(statusDriverGoingFragment: Int) {
+    fun gotoDriverGoingFragment(statusDriverGoingFragment: Int, jsonData: JSONObject) {
         fragmentBottom = DriverGoingFragment()
         currentFragment = Constants.FRAGMENT_DRIVER_GOING
 
         val bundle = Bundle()
         bundle.putInt(DriverGoingFragment.STATUS_DRIVER_GOING_FRAGMENT, statusDriverGoingFragment)
+        bundle.putString(DriverGoingFragment.JSON_DATA, jsonData.toString())
+        bundle.putInt(FirebaseConstants.KEY_TIME_ARRIVED_DESTINATION, timeDriverArrivedDestination)
         fragmentBottom!!.arguments = bundle
 
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.setCustomAnimations(
-            R.anim.slide_in_bottom,
-            R.anim.slide_out_top,
-            R.anim.pop_in_bottom,
-            R.anim.pop_out_top
-        )
-        transaction.replace(R.id.fragmentBottom, fragmentBottom as DriverGoingFragment).commit()
-        updateSizeFragmentBook()
-    }
-
-    fun handleEventDriverArrivedOrigin() {
-        fragmentBottom = DriverGoingFragment()
-        currentFragment = Constants.FRAGMENT_DRIVER_GOING
         val transaction = supportFragmentManager.beginTransaction()
         transaction.setCustomAnimations(
             R.anim.slide_in_bottom,
