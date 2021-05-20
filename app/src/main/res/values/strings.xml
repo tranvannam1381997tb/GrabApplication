@@ -73,4 +73,9 @@
 	<string name="notify_time_driver_arrived_origin">Tài xế sẽ đến điểm đón lúc %s</string>
 	<string name="notify_time_driver_arrived_destination">Thời gian đến lúc %s</string>
 	<string name="notify_end_address">Điểm đến: %s</string>
+	<string name="notify_start_address">Điểm đón: %s</string>
+
+	// Bill Fragment
+	<string name="description_bill_fragment">Thông tin chuyến xe</string>
+	<string name="vote_driver">Vote cho tài xế</string>
 </resources>

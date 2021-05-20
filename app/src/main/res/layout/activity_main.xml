@@ -30,6 +30,14 @@
 		</androidx.constraintlayout.widget.ConstraintLayout>
 
 		<FrameLayout
+			android:id="@+id/fragmentBill"
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintTop_toTopOf="parent"
+			android:visibility="@{viewModel.isShowingLayoutBill ? View.VISIBLE : View.INVISIBLE}"/>
+
+		<FrameLayout
 			android:id="@+id/fragmentBottom"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"

@@ -55,7 +55,7 @@ class DriverGoingFragment : Fragment() {
             when (currentStatus) {
                 STATUS_ARRIVING_ORIGIN -> updateLayoutArrivingOrigin(jsonData.getInt(FirebaseConstants.KEY_TIME_ARRIVED_ORIGIN))
 
-                STATUS_ARRIVED_ORIGIN -> updateLayoutArrivedOrigin()
+                STATUS_ARRIVED_ORIGIN -> updateLayoutArrivedOrigin(jsonData.getString(FirebaseConstants.KEY_START_ADDRESS))
 
                 STATUS_START_GOING -> updateLayoutGoing(bundle.getInt(FirebaseConstants.KEY_TIME_ARRIVED_DESTINATION))
 
@@ -77,8 +77,11 @@ class DriverGoingFragment : Fragment() {
         binding.btnCancel.visibility = View.VISIBLE
     }
 
-    private fun updateLayoutArrivedOrigin() {
+    private fun updateLayoutArrivedOrigin(startAddress: String) {
         binding.description.setText(R.string.driver_arrived_origin)
+        val strNotify = getString(R.string.notify_start_address, startAddress)
+        binding.txtNotify.text = strNotify
+        binding.txtNotify.visibility = View.VISIBLE
     }
 
 
@@ -114,6 +117,5 @@ class DriverGoingFragment : Fragment() {
         const val STATUS_ARRIVED_ORIGIN = 1
         const val STATUS_START_GOING = 2
         const val STATUS_ARRIVED_DESTINATION = 3
-
     }
 }

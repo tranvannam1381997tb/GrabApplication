@@ -15,6 +15,7 @@ import com.example.grabapplication.adapters.ListPlaceAdapter
 import com.example.grabapplication.common.*
 import com.example.grabapplication.databinding.FragmentFindPlaceBinding
 import com.example.grabapplication.googlemaps.MapsConnection
+import com.example.grabapplication.googlemaps.models.Distance
 import com.example.grabapplication.googlemaps.models.PlaceModel
 import com.example.grabapplication.viewmodel.BaseViewModelFactory
 import com.example.grabapplication.viewmodel.MainViewModel
@@ -85,13 +86,13 @@ class FindPlaceFragment : Fragment() {
                 CommonUtils.clearFocusEditText(requireActivity())
 
                 MapsConnection.getInstance().getShortestWay(placeModel.lat, placeModel.lng) {
+                    it.endAddress = placeModel.formattedAddress
                     findPlaceViewModel.distancePlaceChoose.set(it)
                     showListPlace(false)
                 }
             }
         }
     }
-
 
     private fun findPlaceFromStringEditText(edtString: String) {
         if (edtString.isNotEmpty()) {

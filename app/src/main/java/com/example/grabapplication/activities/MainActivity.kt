@@ -22,10 +22,7 @@ import com.example.grabapplication.customviews.ConfirmDialog
 import com.example.grabapplication.databinding.ActivityMainBinding
 import com.example.grabapplication.firebase.FirebaseConnection
 import com.example.grabapplication.firebase.FirebaseConstants
-import com.example.grabapplication.fragments.DriverGoingFragment
-import com.example.grabapplication.fragments.FindPlaceFragment
-import com.example.grabapplication.fragments.InfoDriverFragment
-import com.example.grabapplication.fragments.WaitDriverFragment
+import com.example.grabapplication.fragments.*
 import com.example.grabapplication.googlemaps.MapsUtils
 import com.example.grabapplication.model.DriverInfo
 import com.example.grabapplication.services.BookListener
@@ -111,7 +108,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             override fun bookDriver() {
                 showDialogConfirmBookDriver()
             }
-
         }
     }
 
@@ -157,6 +153,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 }
             }
 
+            override fun handleDriverBill() {
+                if (currentFragment == Constants.FRAGMENT_DRIVER_GOING && fragmentBottom is DriverGoingFragment) {
+                    this@MainActivity.runOnUiThread {
+                        gotoBillFragment()
+                    }
+                }
+            }
         }
     }
 
@@ -383,54 +386,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         updateSizeFragmentBook()
     }
 
-    private fun showDialogConfirmBookDriver() {
-        val dialogConfirm = ConfirmDialog(this)
-        dialogConfirm.setTextDisplay(
-            getString(R.string.confirm_book_driver),
-            null,
-            getString(R.string.label_cancel),
-            getString(R.string.label_ok)
-        )
-        dialogConfirm.setOnClickOK(View.OnClickListener {
-            mainViewModel.distancePlaceChoose.get()?.let { distance ->
-                FirebaseConnection.getInstance().pushNotifyToDriver(
-                    distance,
-                    mainViewModel.driverInfoSelect!!.tokenId
-                ) { isSuccess ->
-                    mainViewModel.isShowingProgress.set(false)
-                    if (isSuccess) {
-                        gotoWaitDriverFragment()
-                    } else {
-                        showDialogError(getString(R.string.error_connect_to_driver))
-                    }
-                }
-                mainViewModel.isShowingProgress.set(true)
-            }
-
-            dialogConfirm.dismiss()
-        })
-        dialogConfirm.setTextTypeBoldBtnOK()
-        dialogConfirm.show()
-    }
-
-    private fun showDialogError(error: String) {
-        val dialogError = ConfirmDialog(this)
-        dialogError.setTextDisplay(
-            error,
-            null,
-            getString(R.string.back),
-            getString(R.string.try_again)
-        )
-        dialogError.setOnClickOK(View.OnClickListener {
-            dialogError.dismiss()
-        })
-        dialogError.setOnClickCancel(View.OnClickListener {
-            dialogError.dismiss()
-            gotoMapFragment()
-        })
-        dialogError.show()
-    }
-
     private fun gotoWaitDriverFragment() {
         fragmentBottom = WaitDriverFragment()
         currentFragment = Constants.FRAGMENT_WAIT_DRIVER
@@ -473,6 +428,22 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         updateSizeFragmentBook()
     }
 
+    private fun gotoBillFragment() {
+        fragmentBottom = BillFragment()
+        currentFragment = Constants.FRAGMENT_BILL
+        mainViewModel.isShowingLayoutBill.set(true)
+        mainViewModel.isShowingLayoutBottom.set(false)
+
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.setCustomAnimations(
+            R.anim.slide_in_bottom,
+            R.anim.slide_out_top,
+            R.anim.pop_in_bottom,
+            R.anim.pop_out_top
+        )
+        transaction.replace(R.id.fragmentBill, fragmentBottom as BillFragment).commit()
+    }
+
     fun showDialogConfirmCancelBook() {
         val dialogConfirm = ConfirmDialog(this)
         dialogConfirm.setTextDisplay(
@@ -492,6 +463,52 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         })
         dialogConfirm.setTextTypeBoldBtnOK()
         dialogConfirm.show()
+    }
+
+    private fun showDialogConfirmBookDriver() {
+        val dialogConfirm = ConfirmDialog(this)
+        dialogConfirm.setTextDisplay(
+            getString(R.string.confirm_book_driver),
+            null,
+            getString(R.string.label_cancel),
+            getString(R.string.label_ok)
+        )
+        dialogConfirm.setOnClickOK(View.OnClickListener {
+            mainViewModel.distancePlaceChoose.get()?.let { distance ->
+                FirebaseConnection.getInstance().pushNotifyToDriver(
+                    distance,
+                    mainViewModel.driverInfoSelect!!.tokenId
+                ) { isSuccess ->
+                    if (isSuccess) {
+                        gotoWaitDriverFragment()
+                    } else {
+                        showDialogError(getString(R.string.error_connect_to_driver))
+                    }
+                }
+            }
+
+            dialogConfirm.dismiss()
+        })
+        dialogConfirm.setTextTypeBoldBtnOK()
+        dialogConfirm.show()
+    }
+
+    private fun showDialogError(error: String) {
+        val dialogError = ConfirmDialog(this)
+        dialogError.setTextDisplay(
+            error,
+            null,
+            getString(R.string.back),
+            getString(R.string.try_again)
+        )
+        dialogError.setOnClickOK(View.OnClickListener {
+            dialogError.dismiss()
+        })
+        dialogError.setOnClickCancel(View.OnClickListener {
+            dialogError.dismiss()
+            gotoMapFragment()
+        })
+        dialogError.show()
     }
 
     companion object {
