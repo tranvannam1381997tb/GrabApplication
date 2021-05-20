@@ -51,8 +51,4 @@ class FirebaseManager private constructor() {
             databaseUsers.child(idUser).child(FirebaseConstants.KEY_TOKEN_ID).setValue(tokenId)
         }
     }
-
-    fun pushNotifyToDriver() {
-
-    }
 }

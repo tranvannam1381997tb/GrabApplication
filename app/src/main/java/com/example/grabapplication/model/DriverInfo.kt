@@ -10,7 +10,7 @@ data class DriverInfo(
     var tokenId: String,
     var name: String,
     var age: Int,
-    var sex: Int,
+    var sex: String,
     var phoneNumber: String,
     var latitude: Double,
     var longitude: Double,

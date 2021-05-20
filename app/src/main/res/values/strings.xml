@@ -26,8 +26,8 @@
     <string name="time_to_you">Thời gian đến chỗ bạn: </string>
 
     //Find place fragment
-    <string name="time_to_move">Thời gian di chuyển: </string>
-    <string name="distance_length">Khoảng cách: </string>
+    <string name="time_to_move">Thời gian di chuyển: %s</string>
+    <string name="distance_length">Khoảng cách: %s</string>
     <string name="confirm_book_driver">Bạn có muốn đặt cuốc xe này chứ?</string>
     <string name="try_again">Thử lại</string>
     <string name="back">Thoát</string>

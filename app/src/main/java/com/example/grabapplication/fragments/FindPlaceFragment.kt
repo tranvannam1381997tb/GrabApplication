@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import com.example.grabapplication.R
@@ -87,7 +86,8 @@ class FindPlaceFragment : Fragment() {
 
                 MapsConnection.getInstance().getShortestWay(placeModel.lat, placeModel.lng) {
                     it.endAddress = placeModel.formattedAddress
-                    findPlaceViewModel.distancePlaceChoose.set(it)
+                    updateDistancePlaceChoose(it)
+                    setStringTxtInfo()
                     showListPlace(false)
                 }
             }
@@ -104,6 +104,22 @@ class FindPlaceFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun updateDistancePlaceChoose(distance: Distance) {
+        findPlaceViewModel.bookInfo.get()!!.startAddress = distance.startAddress
+        findPlaceViewModel.bookInfo.get()!!.endAddress = distance.endAddress
+        findPlaceViewModel.bookInfo.get()!!.latStart = distance.latStart
+        findPlaceViewModel.bookInfo.get()!!.lngStart = distance.lngStart
+        findPlaceViewModel.bookInfo.get()!!.latEnd = distance.latEnd
+        findPlaceViewModel.bookInfo.get()!!.lngEnd = distance.lngEnd
+        findPlaceViewModel.bookInfo.get()!!.distance = distance.distanceText
+        findPlaceViewModel.bookInfo.get()!!.duration = distance.durationText
+    }
+
+    private fun setStringTxtInfo() {
+        binding.txtDistance.text = getString(R.string.distance_length, findPlaceViewModel.bookInfo.get()!!.distance)
+        binding.txtDuration.text = getString(R.string.time_to_move, findPlaceViewModel.bookInfo.get()!!.duration)
     }
 
     private fun showListPlace(show: Boolean) {

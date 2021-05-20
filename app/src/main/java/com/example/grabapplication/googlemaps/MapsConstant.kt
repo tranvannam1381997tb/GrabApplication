@@ -1,6 +1,7 @@
 package com.example.grabapplication.googlemaps
 
 import com.example.grabapplication.googlemaps.models.Distance
+import com.example.grabapplication.model.BookInfo
 import com.google.android.gms.maps.model.LatLng
 
 class MapsConstant {
@@ -43,5 +44,6 @@ class MapsConstant {
         const val PLACE_NAME = "name"
 
         val DEFAULT_DISTANCE = Distance("1,5 km", 1506, "5 phút", 322, "Ng. 106 - Hoàng Quốc Việt, Hà Nội, Việt Nam", "Ng. 10 Nguyễn Văn Huyên, Cầu Giấy, Hà Nội, Việt Nam", 21.0477757, 105.794652, 21.0376798, 105.7965187)
+        val DEFAULT_BOOK_INFO = BookInfo(null, null, null, null, null, null, null, null, null, null)
     }
 }

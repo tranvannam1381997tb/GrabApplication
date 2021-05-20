@@ -400,13 +400,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         updateSizeFragmentBook()
     }
 
-    private fun updateSizeFragmentBook() {
-        val layoutParams = binding.fragmentBottom.layoutParams
-        layoutParams.height = FrameLayout.LayoutParams.WRAP_CONTENT
-        layoutParams.width = FrameLayout.LayoutParams.MATCH_PARENT
-        binding.fragmentBottom.layoutParams = layoutParams
-    }
-
     fun gotoDriverGoingFragment(statusDriverGoingFragment: Int, jsonData: JSONObject) {
         fragmentBottom = DriverGoingFragment()
         currentFragment = Constants.FRAGMENT_DRIVER_GOING
@@ -444,6 +437,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         transaction.replace(R.id.fragmentBill, fragmentBottom as BillFragment).commit()
     }
 
+    private fun updateSizeFragmentBook() {
+        val layoutParams = binding.fragmentBottom.layoutParams
+        layoutParams.height = FrameLayout.LayoutParams.WRAP_CONTENT
+        layoutParams.width = FrameLayout.LayoutParams.MATCH_PARENT
+        binding.fragmentBottom.layoutParams = layoutParams
+    }
+
     fun showDialogConfirmCancelBook() {
         val dialogConfirm = ConfirmDialog(this)
         dialogConfirm.setTextDisplay(
@@ -474,16 +474,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             getString(R.string.label_ok)
         )
         dialogConfirm.setOnClickOK(View.OnClickListener {
-            mainViewModel.distancePlaceChoose.get()?.let { distance ->
-                FirebaseConnection.getInstance().pushNotifyToDriver(
-                    distance,
-                    mainViewModel.driverInfoSelect!!.tokenId
-                ) { isSuccess ->
-                    if (isSuccess) {
-                        gotoWaitDriverFragment()
-                    } else {
-                        showDialogError(getString(R.string.error_connect_to_driver))
-                    }
+            FirebaseConnection.getInstance().pushNotifyToDriver(mainViewModel.bookInfo.get()!!) { isSuccess ->
+                if (isSuccess) {
+                    gotoWaitDriverFragment()
+                } else {
+                    showDialogError(getString(R.string.error_connect_to_driver))
                 }
             }
 
@@ -509,6 +504,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             gotoMapFragment()
         })
         dialogError.show()
+    }
+
+    private fun saveBookInfo() {
+       // TODO
     }
 
     companion object {

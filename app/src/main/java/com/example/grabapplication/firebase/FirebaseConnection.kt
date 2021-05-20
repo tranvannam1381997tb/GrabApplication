@@ -6,7 +6,7 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.example.grabapplication.GrabApplication
 import com.example.grabapplication.common.AccountManager
-import com.example.grabapplication.googlemaps.models.Distance
+import com.example.grabapplication.model.BookInfo
 import com.google.firebase.messaging.FirebaseMessaging
 import org.json.JSONException
 import org.json.JSONObject
@@ -27,9 +27,9 @@ class FirebaseConnection private constructor() {
         }
     }
 
-    fun pushNotifyToDriver(distancePlaceChoose: Distance, idDriver: String, callback: (Boolean) -> Unit) {
-        FirebaseMessaging.getInstance().subscribeToTopic(idDriver)
-        val notification = createBodyRequestPush(distancePlaceChoose, idDriver)
+    fun pushNotifyToDriver(bookInfo: BookInfo, callback: (Boolean) -> Unit) {
+        FirebaseMessaging.getInstance().subscribeToTopic(bookInfo.driverInfo!!.driverId)
+        val notification = createBodyRequestPush(bookInfo)
         val jsonObjectRequest = object : JsonObjectRequest(FirebaseConstants.FCM_API, notification,
             Response.Listener<JSONObject> {
                 Log.d("NamTV", "JsonObjectRequest Response.Listener + $it")
@@ -55,22 +55,22 @@ class FirebaseConnection private constructor() {
         requestQueue.add(jsonObjectRequest)
     }
 
-    private fun createBodyRequestPush(distancePlaceChoose: Distance, idDriver: String): JSONObject {
+    private fun createBodyRequestPush(bookInfo: BookInfo): JSONObject {
         val notification = JSONObject()
         val notificationBody = JSONObject()
         val notificationData = JSONObject()
 
         try {
             val accountManager = AccountManager.getInstance()
-            notificationData.put(FirebaseConstants.KEY_START_ADDRESS, distancePlaceChoose.startAddress)
-            notificationData.put(FirebaseConstants.KEY_END_ADDRESS, distancePlaceChoose.endAddress)
-            notificationData.put(FirebaseConstants.KEY_LAT_START, distancePlaceChoose.latStart)
-            notificationData.put(FirebaseConstants.KEY_LNG_START, distancePlaceChoose.lngStart)
-            notificationData.put(FirebaseConstants.KEY_LAT_END, distancePlaceChoose.latEnd)
-            notificationData.put(FirebaseConstants.KEY_LNG_END, distancePlaceChoose.lngEnd)
+            notificationData.put(FirebaseConstants.KEY_START_ADDRESS, bookInfo.startAddress)
+            notificationData.put(FirebaseConstants.KEY_END_ADDRESS, bookInfo.endAddress)
+            notificationData.put(FirebaseConstants.KEY_LAT_START, bookInfo.latStart)
+            notificationData.put(FirebaseConstants.KEY_LNG_START, bookInfo.lngStart)
+            notificationData.put(FirebaseConstants.KEY_LAT_END, bookInfo.latEnd)
+            notificationData.put(FirebaseConstants.KEY_LNG_END, bookInfo.lngEnd)
             notificationData.put(FirebaseConstants.KEY_USER_ID, accountManager.getUserId())
             notificationData.put(FirebaseConstants.KEY_PRICE, "10000")
-            notificationData.put(FirebaseConstants.KEY_DISTANCE, distancePlaceChoose.distanceText)
+            notificationData.put(FirebaseConstants.KEY_DISTANCE, bookInfo.distance)
             notificationData.put(FirebaseConstants.KEY_TOKEN_ID, accountManager.getTokenId())
             notificationData.put(FirebaseConstants.KEY_NAME, accountManager.getName())
             notificationData.put(FirebaseConstants.KEY_SEX, accountManager.getSex())
@@ -79,7 +79,7 @@ class FirebaseConnection private constructor() {
 
             notificationBody.put(FirebaseConstants.KEY_BOOK_DRIVER,notificationData)
 
-            notification.put(FirebaseConstants.KEY_TO, idDriver)
+            notification.put(FirebaseConstants.KEY_TO, bookInfo.driverInfo!!.tokenId)
             notification.put(FirebaseConstants.KEY_DATA, notificationBody)
             Log.d("NamTV", "notify = $notification")
 

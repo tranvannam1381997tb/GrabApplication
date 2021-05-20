@@ -13,6 +13,8 @@ import com.example.grabapplication.firebase.FirebaseManager
 import com.example.grabapplication.firebase.FirebaseUtils
 import com.example.grabapplication.model.DriverInfo
 import com.example.grabapplication.model.DriverInfoKey
+import com.example.grabapplication.model.SexValue
+import com.example.grabapplication.model.UserInfoKey
 import com.example.grabapplication.services.GetListDriverReceiver
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -113,6 +115,11 @@ class DriverManager private constructor() {
             val name =  CommonUtils.getStringFromJsonObject(driverJsonObject, DriverInfoKey.KeyName.rawValue)
             val age = CommonUtils.getIntFromJsonObject(driverJsonObject, DriverInfoKey.KeyAge.rawValue)
             val sex = CommonUtils.getIntFromJsonObject(driverJsonObject, DriverInfoKey.KeySex.rawValue)
+            val sexValue = if (sex == 0) {
+                SexValue.MALE.rawValue
+            } else {
+                SexValue.MALE.rawValue
+            }
             val phoneNumber = CommonUtils.getStringFromJsonObject(driverJsonObject, DriverInfoKey.KeyPhoneNumber.rawValue)
             val rate = CommonUtils.getDoubleFromJsonObject(driverJsonObject, DriverInfoKey.KeyRate.rawValue)
             val status = CommonUtils.getIntFromJsonObject(driverJsonObject, DriverInfoKey.KeyStatus.rawValue)
@@ -126,7 +133,7 @@ class DriverManager private constructor() {
                 tokenId = tokenId,
                 name = name,
                 age = age,
-                sex = sex,
+                sex = sexValue,
                 phoneNumber = phoneNumber,
                 latitude = Constants.DEFAULT_LOCATION.latitude,
                 longitude = Constants.DEFAULT_LOCATION.longitude,
@@ -140,6 +147,6 @@ class DriverManager private constructor() {
             listDriverHashMap[driverInfo.driverId] = driverInfo
         }
 
-        Log.d("NamTV", "listDriverHashMap = ${listDriverHashMap.size}")
+        Log.d("NamTV", "listDriverHashMap = ${listDriverHashMap.size} $listDriver")
     }
 }

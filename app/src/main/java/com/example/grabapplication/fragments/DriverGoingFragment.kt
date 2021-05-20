@@ -92,7 +92,7 @@ class DriverGoingFragment : Fragment() {
         currentTime.add(Calendar.SECOND, timeDriverArrivedDestination)
         val timeDriverArrived = CommonUtils.getTimeArrived(currentTime)
         val timeDriverArrivedDestination = getString(R.string.notify_time_driver_arrived_destination, timeDriverArrived)
-        val endAddress = getString(R.string.notify_end_address, driverGoingViewModel.distancePlaceChoose.get()!!.endAddress)
+        val endAddress = getString(R.string.notify_end_address, driverGoingViewModel.bookInfo.get()!!.endAddress)
         binding.txtNotify.text = endAddress
         binding.txtTime.text = timeDriverArrivedDestination
         binding.txtNotify.visibility = View.VISIBLE

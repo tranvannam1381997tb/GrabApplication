@@ -50,7 +50,7 @@
                     android:id="@+id/name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{viewModel.driverInfoSelect.name}"
+                    android:text="@{viewModel.bookInfo.driverInfo.name}"
                     android:textColor="@color/color_black"
                     android:textSize="@dimen/text_size_name"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -74,7 +74,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/margin_start_with_info"
-                    android:text="@{Double.toString(viewModel.driverInfoSelect.rate)}"
+                    android:text="@{Double.toString(viewModel.bookInfo.driverInfo.rate)}"
                     android:textColor="@color/color_black"
                     android:textSize="@dimen/text_size_name"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -114,7 +114,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{viewModel.driverInfoSelect.typeVehicle}"
+                    android:text="@{viewModel.bookInfo.driverInfo.typeVehicle}"
                     android:textColor="@color/color_child_info_driver"
                     android:textSize="@dimen/text_size_info"
                     tools:text="Honda Wave" />
@@ -130,7 +130,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/margin_start_with_info"
-                    android:text="@{viewModel.driverInfoSelect.licensePlateNumber}"
+                    android:text="@{viewModel.bookInfo.driverInfo.licensePlateNumber}"
                     android:textColor="@color/color_child_info_driver"
                     android:textSize="@dimen/text_size_info"
                     tools:text="29G1-075.80" />
@@ -146,7 +146,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/margin_start_with_info"
-                    android:text="@{viewModel.driverInfoSelect.typeDriver}"
+                    android:text="@{viewModel.bookInfo.driverInfo.typeDriver}"
                     android:textColor="@color/color_child_info_driver"
                     android:textSize="@dimen/text_size_info"
                     tools:text="GrabBike" />

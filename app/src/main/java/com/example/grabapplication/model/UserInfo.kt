@@ -32,7 +32,7 @@ enum class UserInfoKey(val rawValue: String) {
     KeyStartDate("startDate")
 }
 
-enum class SexValue(val rawValue: Int) {
-    MALE(0),
-    FEMALE(1)
+enum class SexValue(val rawValue: String) {
+    MALE("Nam"),
+    FEMALE("Nữ")
 }

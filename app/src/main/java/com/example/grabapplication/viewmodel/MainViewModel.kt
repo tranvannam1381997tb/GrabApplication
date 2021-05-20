@@ -17,13 +17,11 @@ class MainViewModel: ViewModel() {
     var isShowingLayoutBottom = ObservableField(false)
     var isShowingLayoutBill = ObservableField(false)
 
-    var driverInfoSelect: DriverInfo? = null
     var distanceDriver: Distance? = null
     var listPlace = MutableLiveData<ArrayList<PlaceModel>>()
 
     var onItemClickListener: OnItemClickListener? = null
-    var distancePlaceChoose: ObservableField<Distance> = ObservableField(MapsConstant.DEFAULT_DISTANCE)
-    var bookInfo: BookInfo? = null
+    var bookInfo: ObservableField<BookInfo> = ObservableField(MapsConstant.DEFAULT_BOOK_INFO)
 
     var countDownTimer = ObservableField(60)
 
@@ -32,7 +30,8 @@ class MainViewModel: ViewModel() {
     }
 
     fun selectDriver(driverInfo: DriverInfo, callback: (Boolean) -> Unit) {
-        driverInfoSelect = driverInfo
+        bookInfo.get()!!.driverInfo = driverInfo
+
         MapsConnection.getInstance().getShortestWay(driverInfo.latitude, driverInfo.longitude) {
             distanceDriver = it
             callback.invoke(true)
