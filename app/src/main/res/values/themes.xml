@@ -18,4 +18,9 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">@dimen/text_size_button</item>
     </style>
+
+    <style name="RatingBar" parent="Theme.AppCompat">
+        <item name="colorControlNormal">@color/text_color_button_back_header_disable</item>
+        <item name="colorControlActivated">@color/color_yellow</item>
+    </style>
 </resources>

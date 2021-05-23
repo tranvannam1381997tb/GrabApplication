@@ -6,7 +6,7 @@ class Constants {
     companion object {
         const val DEFAULT_ZOOM_MAPS = 15
 
-        const val DATE_FORMAT_FOR_FIREBASE = "dd/MM/yyyy"
+        const val DATE_FORMAT_SERVER = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX"
         const val DATE_FORMAT_APP = "dd, MMM yyyy"
         const val KEY_SUCCESS = "success"
 

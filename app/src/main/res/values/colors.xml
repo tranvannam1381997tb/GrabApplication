@@ -18,4 +18,6 @@
     <color name="text_color_button_when_clicked">#3ECACACA</color>
     <color name="text_color_button_back_header_disable">#D8D7D7</color>
     <color name="color_button">#0077F5</color>
+
+    <color name="color_yellow">#FFEA28</color>
 </resources>

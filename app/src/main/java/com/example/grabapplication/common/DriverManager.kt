@@ -4,6 +4,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Handler
 import android.util.Log
 import com.example.grabapplication.GrabApplication
 import com.example.grabapplication.activities.MainActivity
@@ -25,6 +26,7 @@ class DriverManager private constructor() {
     var listDriverHashMap: HashMap<String, DriverInfo> = HashMap()
     private var listEventListener: HashMap<String, ValueEventListener> = HashMap()
     private val databaseDrivers = FirebaseManager.getInstance().databaseDrivers
+    private var listenerStatusHistory : ValueEventListener? = null
 
     companion object {
         private var instance: DriverManager? = null
@@ -56,9 +58,19 @@ class DriverManager private constructor() {
         return driverId!!
     }
 
+    fun getHistoryDriverInfoFromDataSnapshot(snapshot: DataSnapshot, driverInfo: DriverInfo) {
+        driverInfo.apply {
+            latitude = FirebaseUtils.getDoubleFromDataSnapshot(snapshot, DriverInfoKey.KeyLatitude.rawValue)
+            longitude = FirebaseUtils.getDoubleFromDataSnapshot(snapshot, DriverInfoKey.KeyLongitude.rawValue)
+            status = FirebaseUtils.getIntFromDataSnapshot(snapshot, DriverInfoKey.KeyStatus.rawValue)
+            tokenId = FirebaseUtils.getStringFromDataSnapshot(snapshot, DriverInfoKey.KeyTokenId.rawValue)
+        }
+    }
+
     fun getListDriverFromServer() {
         HttpConnection.getInstance().getListDriver { isSuccess, jsonObject ->
             if (isSuccess) {
+                MainActivity.clearMarkerDriver()
                 clearAllEventListener()
                 getListDriverFromJsonObject(JSONObject(jsonObject))
                 getInfoDriver()
@@ -92,6 +104,25 @@ class DriverManager private constructor() {
         for (eventListener in listEventListener) {
             databaseDrivers.removeEventListener(eventListener.value)
         }
+    }
+
+    fun getStatusHistoryBookInfo(driverInfo: DriverInfo, callback : (Boolean) -> Unit) {
+        listenerStatusHistory = databaseDrivers.child(driverInfo.driverId).addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                getHistoryDriverInfoFromDataSnapshot(snapshot, driverInfo)
+                MainActivity.addOrUpdateMarkerDriver(driverInfo)
+                removeEventListenerStatusHistory()
+                callback.invoke(true)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.d("NamTV", "onCancelled")
+            }
+        })
+    }
+
+    private fun removeEventListenerStatusHistory() {
+        databaseDrivers.removeEventListener(listenerStatusHistory!!)
     }
 
     private fun scheduleGetListDriver() {

@@ -25,10 +25,6 @@ class MainViewModel: ViewModel() {
 
     var countDownTimer = ObservableField(60)
 
-    fun openFindPlaceFragment() {
-        onItemClickListener?.openFindPlaceFragment()
-    }
-
     fun selectDriver(driverInfo: DriverInfo, callback: (Boolean) -> Unit) {
         bookInfo.get()!!.driverInfo = driverInfo
 
@@ -38,13 +34,10 @@ class MainViewModel: ViewModel() {
         }
     }
 
-    fun bookDriver() {
-        onItemClickListener?.bookDriver()
-    }
-
     interface OnItemClickListener {
         fun openFindPlaceFragment()
         fun bookDriver()
+        fun endBook()
     }
 }
 

@@ -51,7 +51,6 @@ class FindPlaceFragment : Fragment() {
         })
 
         showListPlace(true)
-
     }
 
     private fun setEventView() {
@@ -87,7 +86,6 @@ class FindPlaceFragment : Fragment() {
                 MapsConnection.getInstance().getShortestWay(placeModel.lat, placeModel.lng) {
                     it.endAddress = placeModel.formattedAddress
                     updateDistancePlaceChoose(it)
-                    setStringTxtInfo()
                     showListPlace(false)
                 }
             }
@@ -115,14 +113,17 @@ class FindPlaceFragment : Fragment() {
         findPlaceViewModel.bookInfo.get()!!.lngEnd = distance.lngEnd
         findPlaceViewModel.bookInfo.get()!!.distance = distance.distanceText
         findPlaceViewModel.bookInfo.get()!!.duration = distance.durationText
-    }
-
-    private fun setStringTxtInfo() {
-        binding.txtDistance.text = getString(R.string.distance_length, findPlaceViewModel.bookInfo.get()!!.distance)
-        binding.txtDuration.text = getString(R.string.time_to_move, findPlaceViewModel.bookInfo.get()!!.duration)
+        findPlaceViewModel.bookInfo.get()!!.price = getPrice(distance.distanceValue)
     }
 
     private fun showListPlace(show: Boolean) {
         findPlaceViewModel.isShowingListPlace.set(show)
+    }
+
+    private fun getPrice(distanceValue: Int): String {
+        val priceOfKilometer = AppPreferences.getInstance(requireContext()).priceOfKilometer
+        val price = distanceValue / 1000 * priceOfKilometer
+
+        return getString(R.string.price, price.toString())
     }
 }

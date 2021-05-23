@@ -14,8 +14,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
+import com.example.grabapplication.GrabApplication
 import com.example.grabapplication.R
 import com.example.grabapplication.common.AccountManager
+import com.example.grabapplication.common.AppPreferences
 import com.example.grabapplication.common.Constants
 import com.example.grabapplication.common.DriverManager
 import com.example.grabapplication.customviews.ConfirmDialog
@@ -25,6 +27,7 @@ import com.example.grabapplication.firebase.FirebaseConstants
 import com.example.grabapplication.fragments.*
 import com.example.grabapplication.googlemaps.MapsUtils
 import com.example.grabapplication.model.DriverInfo
+import com.example.grabapplication.model.DriverStatus
 import com.example.grabapplication.services.BookListener
 import com.example.grabapplication.services.GrabFirebaseMessagingService
 import com.example.grabapplication.viewmodel.BaseViewModelFactory
@@ -85,6 +88,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         initView()
         setupEvent()
         accountManager.getTokenIdDevice {  }
+        getDataBook()
     }
 
     private fun initDataMap() {
@@ -108,6 +112,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             override fun bookDriver() {
                 showDialogConfirmBookDriver()
             }
+
+            override fun endBook() {
+                // Bill Fragment worked
+            }
         }
     }
 
@@ -117,6 +125,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 if (currentFragment == Constants.FRAGMENT_WAIT_DRIVER && fragmentBottom is WaitDriverFragment) {
                     (fragmentBottom as WaitDriverFragment).countDownTimer?.cancel()
                     this@MainActivity.runOnUiThread {
+                        AppPreferences.getInstance(GrabApplication.getAppContext()).bookInfoPreferences = mainViewModel.bookInfo.get()!!
                         gotoDriverGoingFragment(DriverGoingFragment.STATUS_ARRIVING_ORIGIN, jsonData)
                     }
                 }
@@ -156,10 +165,39 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             override fun handleDriverBill() {
                 if (currentFragment == Constants.FRAGMENT_DRIVER_GOING && fragmentBottom is DriverGoingFragment) {
                     this@MainActivity.runOnUiThread {
+                        AppPreferences.getInstance(GrabApplication.getAppContext()).bookInfoPreferences = null
                         gotoBillFragment()
                     }
                 }
             }
+        }
+    }
+
+    private fun getDataBook() {
+        val bookInfoPreferences = AppPreferences.getInstance(this).bookInfoPreferences
+        if (bookInfoPreferences != null) {
+            mainViewModel.bookInfo.set(bookInfoPreferences)
+            val driverInfo = bookInfoPreferences.driverInfo!!
+            driverManager.getStatusHistoryBookInfo(driverInfo) {
+                if (it) {
+                    val statusDriver = driverInfo.status
+                    when(statusDriver) {
+                        DriverStatus.StatusArrivingOrigin.rawValue -> {
+
+                        }
+                        DriverStatus.StatusWaitingUser.rawValue -> {
+
+                        }
+                        DriverStatus.StatusArrivingDestination.rawValue -> {
+
+                        }
+                        DriverStatus.StatusBilling.rawValue -> {
+
+                        }
+                    }
+                }
+            }
+
         }
     }
 
@@ -346,6 +384,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     fun gotoMapFragment() {
         currentFragment = Constants.FRAGMENT_MAP
         fragmentBottom = null
+        mainViewModel.isShowingLayoutBill.set(false)
         mainViewModel.isShowingLayoutBottom.set(false)
         for (fragment in supportFragmentManager.fragments) {
             if (fragment !is SupportMapFragment) {
@@ -534,6 +573,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 driverHashMap[driverInfo.driverId] = marker
                 Log.d("NamTV", "Add new marker")
             }
+        }
+
+        fun clearMarkerDriver() {
+            mainMap?.clear()
+            driverHashMap.clear()
         }
     }
 }

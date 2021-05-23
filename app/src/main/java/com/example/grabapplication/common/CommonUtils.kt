@@ -5,10 +5,13 @@ import android.app.Activity
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import com.example.grabapplication.model.SexValue
 import com.example.grabapplication.model.TypeDriverValue
 import org.json.JSONArray
 import org.json.JSONObject
 import java.text.SimpleDateFormat
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.*
 
@@ -77,10 +80,11 @@ class CommonUtils {
         @SuppressLint("SimpleDateFormat")
         private fun convertStringToDate(dateString: String): String {
             try {
-                val formatter = DateTimeFormatter.ofPattern(Constants.DATE_FORMAT_FOR_FIREBASE)
-                val date = formatter.parse(dateString)
-
-                return DateTimeFormatter.ofPattern(Constants.DATE_FORMAT_APP).format(date)
+                val formatterServer = DateTimeFormatter.ofPattern(Constants.DATE_FORMAT_SERVER)
+                val odtInstanceAtOffset: OffsetDateTime = OffsetDateTime.parse(dateString, formatterServer)
+                val odtInstanceAtUTC: OffsetDateTime = odtInstanceAtOffset.withOffsetSameInstant(ZoneOffset.UTC)
+                val formatterApp = DateTimeFormatter.ofPattern(Constants.DATE_FORMAT_APP)
+                return odtInstanceAtUTC.format(formatterApp)
             } catch (e: Exception) {
                 Log.d("NamTV", "CommonUtils::convertStringToDate: exception = $e")
             }
@@ -120,6 +124,14 @@ class CommonUtils {
         fun getTimeArrived(calendar: Calendar): String {
             val dateFormat = SimpleDateFormat("HH:mm")
             return dateFormat.format(calendar.time)
+        }
+
+        fun getSexValue(sex: Int): String {
+            return if (sex == 0) {
+                SexValue.MALE.rawValue
+            } else {
+                SexValue.FEMALE.rawValue
+            }
         }
     }
 }

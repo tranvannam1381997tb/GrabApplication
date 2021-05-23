@@ -14,6 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
+        android:focusable="true"
+        android:clickable="true"
         android:padding="20dp">
 
         <TextView
@@ -95,7 +97,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/layout_start_address"
+                android:id="@+id/layout_info_vehicle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -106,102 +108,119 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@{viewModel.bookInfo.driverInfo.typeVehicle}"
                     android:textColor="@color/color_child_info_driver"
-                    android:textSize="@dimen/text_size_info" />
+                    android:textSize="@dimen/text_size_info"
+                    tools:text="Honda Wave" />
+
+                <ImageView
+                    android:layout_width="5dp"
+                    android:layout_height="5dp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="@dimen/margin_start_with_info"
+                    android:src="@drawable/black_circle" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{viewModel.bookInfo.startAddress}"
+                    android:layout_marginStart="@dimen/margin_start_with_info"
+                    android:text="@{viewModel.bookInfo.driverInfo.licensePlateNumber}"
                     android:textColor="@color/color_child_info_driver"
                     android:textSize="@dimen/text_size_info"
-                    tools:text="116 Lương Thế Vinh" />
+                    tools:text="29G1-075.80" />
+
+                <ImageView
+                    android:layout_width="5dp"
+                    android:layout_height="5dp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="@dimen/margin_start_with_info"
+                    android:src="@drawable/black_circle" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/margin_start_with_info"
+                    android:text="@{viewModel.bookInfo.driverInfo.typeDriver}"
+                    android:textColor="@color/color_child_info_driver"
+                    android:textSize="@dimen/text_size_info"
+                    tools:text="GrabBike" />
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/layout_end_address"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/txtStartAddress"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/color_child_info_driver"
+                android:textSize="@dimen/text_size_info"
+                android:layout_marginTop="10dp"
+                android:text="@{@string/notify_start_address(viewModel.bookInfo.startAddress)}"
+                tools:text="@string/notify_start_address"/>
+
+            <TextView
+                android:id="@+id/txtEndAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_child_info_driver"
+                android:textSize="@dimen/text_size_info"
+                android:layout_marginTop="10dp"
+                android:text="@{@string/notify_end_address(viewModel.bookInfo.endAddress)}"
+                tools:text="@string/notify_end_address" />
+
+            <TextView
+                android:id="@+id/txtDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_child_info_driver"
+                android:textSize="@dimen/text_size_info"
+                android:layout_marginTop="10dp"
+                android:text="@{@string/distance_length(viewModel.bookInfo.distance)}"
+                tools:text="@string/distance_length" />
+
+
+            <TextView
+                android:id="@+id/txtPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_child_info_driver"
+                android:textSize="@dimen/text_size_info"
+                android:layout_marginTop="10dp"
+                android:text="@{@string/notify_price(viewModel.bookInfo.price)}"
+                tools:text="@string/notify_price" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/vote_driver"
+                android:textColor="@color/color_child_info_driver"
+                android:textSize="@dimen/text_size_info"
+                android:layout_marginTop="10dp" />
+
+            <androidx.appcompat.widget.AppCompatRatingBar
+                android:id="@+id/rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:theme="@style/RatingBar"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
-                android:gravity="start"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/color_child_info_driver"
-                    android:textSize="@dimen/text_size_info" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{viewModel.bookInfo.endAddress}"
-                    android:textColor="@color/color_child_info_driver"
-                    android:textSize="@dimen/text_size_info"
-                    tools:text="1 Lương Thế Vinh" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/layout_distance"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:gravity="start"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/color_child_info_driver"
-                    android:textSize="@dimen/text_size_info" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{viewModel.bookInfo.distance}"
-                    android:textColor="@color/color_child_info_driver"
-                    android:textSize="@dimen/text_size_info"
-                    tools:text="1 km" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/layout_price"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:gravity="start"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/color_child_info_driver"
-                    android:textSize="@dimen/text_size_info" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{viewModel.bookInfo.price}"
-                    android:textColor="@color/color_child_info_driver"
-                    android:textSize="@dimen/text_size_info"
-                    tools:text="10 phút" />
-            </LinearLayout>
+                style="?attr/ratingBarStyleIndicator"
+                android:isIndicator="false"
+                android:numStars="5"
+                android:stepSize="1"/>
         </LinearLayout>
 
         <Button
-            android:id="@+id/btnReceivedMoney"
+            android:id="@+id/btnEnd"
             style="@style/Widget.Button.Simple"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
+            android:text="@string/end"
             android:background="@drawable/button_style"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:onSingleClick="@{() -> viewModel.onItemClickListener.endBook()}" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

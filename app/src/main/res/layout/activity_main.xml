@@ -19,7 +19,8 @@
 			android:layout_width="match_parent"
 			android:layout_height="0dp"
 			app:layout_constraintBottom_toTopOf="@id/fragmentBottom"
-			app:layout_constraintTop_toTopOf="parent">
+			app:layout_constraintTop_toTopOf="parent"
+			android:visibility="@{viewModel.isShowingLayoutBill ? View.INVISIBLE : View.VISIBLE}">
 
 			<fragment
 				android:id="@+id/map"

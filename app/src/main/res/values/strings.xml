@@ -18,12 +18,12 @@
     <string name="prompt_end_address">Bạn đến đâu?</string>
 
     //Info driver fragment
-    <string name="start_date">Gia nhập </string>
+    <string name="start_date">Gia nhập: %s</string>
     <string name="grab_bike">GrabBike</string>
     <string name="grab_car">GrabCar</string>
     <string name="book_vehicle">Đặt xe</string>
-    <string name="distance_to_you">Khoảng cách đến chỗ bạn: </string>
-    <string name="time_to_you">Thời gian đến chỗ bạn: </string>
+    <string name="distance_to_you">Khoảng cách đến chỗ bạn: %s</string>
+    <string name="time_to_you">Thời gian đến chỗ bạn: %s</string>
 
     //Find place fragment
     <string name="time_to_move">Thời gian di chuyển: %s</string>
@@ -32,6 +32,7 @@
     <string name="try_again">Thử lại</string>
     <string name="back">Thoát</string>
     <string name="error_connect_to_driver">Lỗi kết nối đến tài xế</string>
+    <string name="price">%s VNĐ</string>
 
     //Wait driver fragment
     <string name="description_wait_driver">Đang chờ tài xế</string>
@@ -78,4 +79,6 @@
 	// Bill Fragment
 	<string name="description_bill_fragment">Thông tin chuyến xe</string>
 	<string name="vote_driver">Vote cho tài xế</string>
+    <string name="notify_price">Giá tiền: %s</string>
+    <string name="end">Kết thúc</string>
 </resources>

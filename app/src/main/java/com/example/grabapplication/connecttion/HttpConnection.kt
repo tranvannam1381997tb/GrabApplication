@@ -8,17 +8,11 @@ import com.android.volley.toolbox.Volley
 import com.example.grabapplication.GrabApplication
 import com.example.grabapplication.R
 import com.example.grabapplication.common.AccountManager
-import com.example.grabapplication.common.CommonUtils
 import com.example.grabapplication.common.Constants
-import com.example.grabapplication.model.DriverInfo
+import com.example.grabapplication.model.DriverInfoKey
 import com.example.grabapplication.model.UserInfoKey
+import org.json.JSONException
 import org.json.JSONObject
-import java.io.BufferedReader
-import java.io.InputStream
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
-import java.net.MalformedURLException
-import java.net.URL
 
 class HttpConnection private constructor() {
 
@@ -128,50 +122,39 @@ class HttpConnection private constructor() {
         requestQueue.add(jsonObjectRequest)
     }
 
-    private fun requestHttps(http: HttpURLConnection): CompletionHandler {
-        var inputStream: InputStream? = null
-        var inputStreamReader: InputStreamReader? = null
-        var buffer: BufferedReader? = null
-        try {
-            http.connect()
-            val responseCode = http.responseCode
-            val completionHandler = CompletionHandler(null, null, responseCode)
-            when (responseCode) {
-                HttpURLConnection.HTTP_OK -> {
-                    inputStream = http.inputStream
-                    inputStreamReader = InputStreamReader(inputStream)
-                    buffer = BufferedReader(inputStreamReader)
-                    val data = getByteArrayFromStream(buffer)
-                    Log.d("NamTV", "connect success: $data")
-                    completionHandler.data = data
-                }
-
-                else -> {
-                    inputStream = http.errorStream
-                    inputStreamReader = InputStreamReader(inputStream)
-                    buffer = BufferedReader(inputStreamReader)
-                    val error = getByteArrayFromStream(buffer)
-                    Log.d("NamTV", "connect error: $error")
-                    completionHandler.error = error
-                }
+    fun voteStarDriver(driverId: String, rating: Int) {
+        val url = String.format(URL_LOGIN_FORMAT, HOST)
+        val jsonBody = createBodyRequestVote(driverId, rating)
+        val jsonObjectRequest = object : JsonObjectRequest(Method.POST, url, jsonBody, Response.Listener<JSONObject> {
+        }, Response.ErrorListener {
+        }) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val params = HashMap<String, String>()
+                params["Content-Type"] = "application/json; charset=utf-8"
+                params["Accept"] = "application/json"
+                return params
             }
-            return completionHandler
-        } catch (e: Exception) {
-            Log.d("NamTV", "startURLConnection::exception: $e")
-            return CompletionHandler(null, e.toString(), 1)
         }
+        jsonObjectRequest.retryPolicy = DefaultRetryPolicy(
+            CONNECTION_TIMEOUT,
+            DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        val requestQueue = Volley.newRequestQueue(GrabApplication.getAppContext())
+        requestQueue.add(jsonObjectRequest)
     }
 
-    private fun getByteArrayFromStream(buffer: BufferedReader?): String {
-        val data = StringBuilder()
-        var line: String?
-        line = buffer!!.readLine()
-        while (line != null) {
-            data.append(line)
-            data.append("\n")
-            line = buffer.readLine()
+    private fun createBodyRequestVote(driverId: String, rating: Int): JSONObject {
+        val jsonObject = JSONObject()
+
+        try {
+            jsonObject.put(DriverInfoKey.KeyDriverId.rawValue, driverId)
+            jsonObject.put(DriverInfoKey.KeyRate.rawValue, rating)
+
+        } catch (e: JSONException) {
+            Log.e("NamTV", "FirebaseConnection::pushNotifyToDriver: $e")
+        } finally {
+            return jsonObject
         }
-        return data.toString()
     }
 
     companion object {

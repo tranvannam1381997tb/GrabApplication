@@ -69,7 +69,7 @@ class FirebaseConnection private constructor() {
             notificationData.put(FirebaseConstants.KEY_LAT_END, bookInfo.latEnd)
             notificationData.put(FirebaseConstants.KEY_LNG_END, bookInfo.lngEnd)
             notificationData.put(FirebaseConstants.KEY_USER_ID, accountManager.getUserId())
-            notificationData.put(FirebaseConstants.KEY_PRICE, "10000")
+            notificationData.put(FirebaseConstants.KEY_PRICE, bookInfo.price)
             notificationData.put(FirebaseConstants.KEY_DISTANCE, bookInfo.distance)
             notificationData.put(FirebaseConstants.KEY_TOKEN_ID, accountManager.getTokenId())
             notificationData.put(FirebaseConstants.KEY_NAME, accountManager.getName())

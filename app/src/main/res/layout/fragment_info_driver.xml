@@ -13,7 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-	    android:background="@drawable/fragment_book_border"
+        android:background="@drawable/fragment_book_border"
         android:padding="20dp">
 
         <LinearLayout
@@ -68,30 +68,14 @@
                     android:src="@drawable/star" />
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/layout_start_date"
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:layout_marginTop="10dp"
-                android:gravity="start"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/start_date"
-                    android:textColor="@color/color_child_info_driver"
-                    android:textSize="@dimen/text_size_info" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{viewModel.bookInfo.driverInfo.startDate}"
-                    android:textColor="@color/color_child_info_driver"
-                    android:textSize="@dimen/text_size_info"
-                    tools:text="13, Th8 2020" />
-            </LinearLayout>
+                android:text="@{@string/start_date(viewModel.bookInfo.driverInfo.startDate)}"
+                android:textColor="@color/color_child_info_driver"
+                android:textSize="@dimen/text_size_info"
+                tools:text="@string/start_date" />
 
             <LinearLayout
                 android:id="@+id/layout_info_vehicle"
@@ -100,7 +84,7 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
                 android:gravity="start"
-                android:orientation="horizontal" >
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -143,70 +127,38 @@
                     tools:text="GrabBike" />
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/layout_distance"
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:layout_marginTop="10dp"
-                android:gravity="start"
-                android:orientation="horizontal" >
+                android:text="@{@string/distance_to_you(viewModel.distanceDriver.distanceText)}"
+                android:textColor="@color/color_child_info_driver"
+                android:textSize="@dimen/text_size_info"
+                tools:text="@string/distance_to_you" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/distance_to_you"
-                    android:textColor="@color/color_child_info_driver"
-                    android:textSize="@dimen/text_size_info" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{viewModel.distanceDriver.distanceText}"
-                    android:textColor="@color/color_child_info_driver"
-                    android:textSize="@dimen/text_size_info"
-                    tools:text="1 km" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/layout_duration"
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:layout_marginTop="10dp"
-                android:gravity="start"
-                android:orientation="horizontal" >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/time_to_you"
-                    android:textColor="@color/color_child_info_driver"
-                    android:textSize="@dimen/text_size_info" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{viewModel.distanceDriver.durationText}"
-                    android:textColor="@color/color_child_info_driver"
-                    android:textSize="@dimen/text_size_info"
-                    tools:text="10 phút" />
-            </LinearLayout>
+                android:text="@{@string/time_to_you(viewModel.distanceDriver.durationText)}"
+                android:textColor="@color/color_child_info_driver"
+                android:textSize="@dimen/text_size_info"
+                tools:text="@string/time_to_you" />
         </LinearLayout>
 
-	    <Button
-		    android:id="@+id/btnBook"
-		    style="@style/Widget.Button.Simple"
-		    android:layout_width="match_parent"
-		    android:layout_height="wrap_content"
-		    android:layout_marginTop="30dp"
-		    android:background="@drawable/button_style"
-		    android:paddingStart="16dp"
-		    android:paddingEnd="16dp"
-		    android:text="@string/book_vehicle"
-		    app:layout_constraintTop_toBottomOf="@+id/layout_info_driver"
-		    app:layout_constraintBottom_toBottomOf="parent"
-		    app:onSingleClick="@{() -> viewModel.openFindPlaceFragment()}" />
+        <Button
+            android:id="@+id/btnBook"
+            style="@style/Widget.Button.Simple"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/button_style"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="@string/book_vehicle"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/layout_info_driver"
+            app:onSingleClick="@{() -> viewModel.onItemClickListener.openFindPlaceFragment()}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
