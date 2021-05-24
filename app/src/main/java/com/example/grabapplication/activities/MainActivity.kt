@@ -393,6 +393,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         }
     }
 
+    private fun gotoDriverSuggestFragment() {
+        fragmentBottom = DriverSuggestFragment()
+        currentFragment = Constants.FRAGMENT_DRIVER_SUGGEST
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.setCustomAnimations(
+            R.anim.slide_in_bottom,
+            R.anim.slide_out_top,
+            R.anim.pop_in_bottom,
+            R.anim.pop_out_top
+        )
+        transaction.addToBackStack(null)
+        transaction.replace(R.id.fragmentBottom, fragmentBottom as DriverSuggestFragment).commit()
+        updateSizeFragmentBook()
+    }
+
     private fun gotoInfoDriverFragment() {
         fragmentBottom = InfoDriverFragment()
         currentFragment = Constants.FRAGMENT_INFO_DRIVER

@@ -4,7 +4,6 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Handler
 import android.util.Log
 import com.example.grabapplication.GrabApplication
 import com.example.grabapplication.activities.MainActivity
@@ -15,7 +14,6 @@ import com.example.grabapplication.firebase.FirebaseUtils
 import com.example.grabapplication.model.DriverInfo
 import com.example.grabapplication.model.DriverInfoKey
 import com.example.grabapplication.model.SexValue
-import com.example.grabapplication.model.UserInfoKey
 import com.example.grabapplication.services.GetListDriverReceiver
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -149,7 +147,7 @@ class DriverManager private constructor() {
             val sexValue = if (sex == 0) {
                 SexValue.MALE.rawValue
             } else {
-                SexValue.MALE.rawValue
+                SexValue.FEMALE.rawValue
             }
             val phoneNumber = CommonUtils.getStringFromJsonObject(driverJsonObject, DriverInfoKey.KeyPhoneNumber.rawValue)
             val rate = CommonUtils.getDoubleFromJsonObject(driverJsonObject, DriverInfoKey.KeyRate.rawValue)
@@ -178,6 +176,19 @@ class DriverManager private constructor() {
             listDriverHashMap[driverInfo.driverId] = driverInfo
         }
 
+        sortListDriver()
         Log.d("NamTV", "listDriverHashMap = ${listDriverHashMap.size} $listDriver")
+    }
+
+    private fun sortListDriver() {
+
+        val a = listDriverHashMap.toList().sortedBy { (_, value) -> value.rate}.toMap()
+        listDriverHashMap.clear()
+        listDriverHashMap = a
+        var count = 0
+        for (entry in listDriverHashMap) {
+            Log.d("NamTV", "sort[$count] = ${entry.key} + ${entry.value.rate}")
+            count++
+        }
     }
 }

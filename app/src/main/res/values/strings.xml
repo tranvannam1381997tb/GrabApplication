@@ -18,7 +18,8 @@
     <string name="prompt_end_address">Bạn đến đâu?</string>
 
     //Info driver fragment
-    <string name="start_date">Gia nhập: %s</string>
+    <string name="age">Tuổi: %s</string>
+    <string name="start_date">Ngày gia nhập: %s</string>
     <string name="grab_bike">GrabBike</string>
     <string name="grab_car">GrabCar</string>
     <string name="book_vehicle">Đặt xe</string>
@@ -81,4 +82,7 @@
 	<string name="vote_driver">Vote cho tài xế</string>
     <string name="notify_price">Giá tiền: %s</string>
     <string name="end">Kết thúc</string>
+
+    // Driver Suggest Fragment
+    <string name="description_driver_suggest">Tài xế gợi ý cho bạn</string>
 </resources>

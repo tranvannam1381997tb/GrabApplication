@@ -45,7 +45,7 @@ class FindPlaceFragment : Fragment() {
         binding.viewModel = findPlaceViewModel
         binding.adapter = listPlaceAdapter
         findPlaceViewModel.listPlace.value?.clear()
-        findPlaceViewModel.listPlace.observe(this, Observer {
+        findPlaceViewModel.listPlace.observe(viewLifecycleOwner, Observer {
             Log.d("NamTV", "list = ${it.size}")
             it.let (listPlaceAdapter::submitList)
         })

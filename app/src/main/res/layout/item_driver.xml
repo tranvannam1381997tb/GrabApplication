@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="driverInfo"
+            type="com.example.grabapplication.model.DriverInfo" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/layoutDriver"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:paddingBottom="0dp">
+
+        <View
+            android:id="@+id/line_start_list_driver"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/color_line_end_item_place" />
+
+        <LinearLayout
+            android:id="@+id/layout_name_driver"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:gravity="start"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{driverInfo.name}"
+                android:textColor="@color/color_black"
+                android:textSize="@dimen/text_size_name"
+                android:textStyle="bold"
+                tools:text="Tran Van Nam" />
+
+            <ImageView
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/margin_start_with_info"
+                android:src="@drawable/black_circle" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_start_with_info"
+                android:text="@{Double.toString(driverInfo.rate)}"
+                android:textColor="@color/color_black"
+                android:textSize="@dimen/text_size_name"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="5.0" />
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/margin_start_with_info"
+                android:src="@drawable/star" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_info_vehicle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:gravity="start"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{driverInfo.typeVehicle}"
+                android:textColor="@color/color_child_info_driver"
+                android:textSize="@dimen/text_size_info"
+                tools:text="Honda Wave" />
+
+            <ImageView
+                android:layout_width="5dp"
+                android:layout_height="5dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/margin_start_with_info"
+                android:src="@drawable/black_circle" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_start_with_info"
+                android:text="@{driverInfo.licensePlateNumber}"
+                android:textColor="@color/color_child_info_driver"
+                android:textSize="@dimen/text_size_info"
+                tools:text="29G1-075.80" />
+
+            <ImageView
+                android:layout_width="5dp"
+                android:layout_height="5dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/margin_start_with_info"
+                android:src="@drawable/black_circle" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_start_with_info"
+                android:text="@{driverInfo.typeDriver}"
+                android:textColor="@color/color_child_info_driver"
+                android:textSize="@dimen/text_size_info"
+                tools:text="GrabBike" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/line_end_item_driver"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/color_line_end_item_place" />
+
+        <View
+            android:id="@+id/line_end_list_driver"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/color_line_end_item_place" />
+
+    </LinearLayout>
+
+</layout>

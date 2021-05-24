@@ -72,6 +72,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:text="@{@string/age(viewModel.bookInfo.driverInfo.age)}"
+                android:textColor="@color/color_child_info_driver"
+                android:textSize="@dimen/text_size_info"
+                tools:text="@string/age" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:text="@{@string/start_date(viewModel.bookInfo.driverInfo.startDate)}"
                 android:textColor="@color/color_child_info_driver"
                 android:textSize="@dimen/text_size_info"

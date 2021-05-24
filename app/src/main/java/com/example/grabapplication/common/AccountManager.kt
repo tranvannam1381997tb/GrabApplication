@@ -3,7 +3,6 @@ package com.example.grabapplication.common
 import android.util.Log
 import com.example.grabapplication.firebase.FirebaseManager
 import com.google.android.gms.maps.model.LatLng
-import com.google.firebase.iid.FirebaseInstanceId
 
 class AccountManager private constructor() {
 
@@ -51,16 +50,16 @@ class AccountManager private constructor() {
             FirebaseManager.getInstance().updateTokenIdToFirebase(tokenId!!)
             return
         }
-        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
-            if(!it.isSuccessful){
-                Log.e("NamTV", "getInstanceId failed", it.exception)
-                return@addOnCompleteListener
-            }
-            val token =  it.result?.token
-            Log.d("NamTV", "$token")
-            callback.invoke(token)
-            FirebaseManager.getInstance().updateTokenIdToFirebase(token!!)
-        }
+//        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
+//            if(!it.isSuccessful){
+//                Log.e("NamTV", "getInstanceId failed", it.exception)
+//                return@addOnCompleteListener
+//            }
+//            val token =  it.result?.token
+//            Log.d("NamTV", "$token")
+//            callback.invoke(token)
+//            FirebaseManager.getInstance().updateTokenIdToFirebase(token!!)
+//        }
     }
 
     fun setLocationUser(location: LatLng) {
