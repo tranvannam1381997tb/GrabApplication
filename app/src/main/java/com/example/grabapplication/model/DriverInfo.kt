@@ -14,12 +14,13 @@ data class DriverInfo(
     var phoneNumber: String,
     var latitude: Double,
     var longitude: Double,
-    var rate: Double,
+    var rate: Float,
     var status: Int,
     var startDate: String,
     var typeDriver: String,
     var typeVehicle: String,
-    var licensePlateNumber: String
+    var licensePlateNumber: String,
+    var point: Float
 ) : Parcelable
 
 enum class DriverInfoKey(val rawValue: String) {
@@ -36,7 +37,9 @@ enum class DriverInfoKey(val rawValue: String) {
     KeyStartDate("startDate"),
     KeyTypeDriver("typeDriver"),
     KeyTypeVehicle("typeVehicle"),
-    KeyLicensePlateNumber("licensePlateNumber")
+    KeyLicensePlateNumber("licensePlateNumber"),
+    KeyPoint("point"),
+    KeyDistance("distance")
 }
 
 enum class DriverStatus(val rawValue: Int) {

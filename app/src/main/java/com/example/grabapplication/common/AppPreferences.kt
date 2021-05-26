@@ -40,9 +40,31 @@ class AppPreferences private constructor(context: Context) {
             editor.putInt(PRICE_OF_KILOMETER, value).commit()
         }
 
-    var ratePoint: Float = 0.0
+    var ratePoint: Float = 0.5F
         get() {
-            return prefs.getFloat(RATE_POINT, 5000)
+            return prefs.getFloat(RATE_POINT, 0.5F)
+        }
+        set(value) {
+            field = value
+            editor.putFloat(RATE_POINT, value).commit()
+        }
+
+    var distancePoint: Float = 0.5F
+        get() {
+            return prefs.getFloat(DISTANCE_POINT, 0.5F)
+        }
+        set(value) {
+            field = value
+            editor.putFloat(DISTANCE_POINT, value).commit()
+        }
+
+    var agePoint: Float = 0.5F
+        get() {
+            return prefs.getFloat(AGE_POINT, 0.5F)
+        }
+        set(value) {
+            field = value
+            editor.putFloat(AGE_POINT, value).commit()
         }
 
     companion object : SingletonHolder<AppPreferences, Context>(::AppPreferences) {

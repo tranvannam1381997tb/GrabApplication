@@ -48,7 +48,6 @@ class CommonUtils {
                 data = jsonObject.getString(key).toDoubleOrNull()
             }
             if (data == null) {
-
                 data = 0.0
             }
             return data
@@ -60,6 +59,17 @@ class CommonUtils {
             } else {
                 0
             }
+        }
+
+        fun getFloatFromJsonObject(jsonObject: JSONObject, key: String) : Float {
+            var data: Float? = null
+            if (jsonObject.has(key)) {
+                data = jsonObject.getString(key).toFloatOrNull()
+            }
+            if (data == null) {
+                data = 0F
+            }
+            return data
         }
 
         fun getBooleanFromJsonObject(jsonObject: JSONObject, key: String) : Boolean {

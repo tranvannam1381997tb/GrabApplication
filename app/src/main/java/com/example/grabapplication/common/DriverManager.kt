@@ -11,6 +11,7 @@ import com.example.grabapplication.connecttion.HttpConnection
 import com.example.grabapplication.firebase.FirebaseConstants
 import com.example.grabapplication.firebase.FirebaseManager
 import com.example.grabapplication.firebase.FirebaseUtils
+import com.example.grabapplication.googlemaps.models.Distance
 import com.example.grabapplication.model.DriverInfo
 import com.example.grabapplication.model.DriverInfoKey
 import com.example.grabapplication.model.SexValue
@@ -26,6 +27,7 @@ class DriverManager private constructor() {
     private var listEventListener: HashMap<String, ValueEventListener> = HashMap()
     private val databaseDrivers = FirebaseManager.getInstance().databaseDrivers
     private var listenerStatusHistory : ValueEventListener? = null
+    private val appPreferences: AppPreferences by lazy { AppPreferences.getInstance(GrabApplication.getAppContext()) }
 
     companion object {
         private var instance: DriverManager? = null
@@ -151,12 +153,14 @@ class DriverManager private constructor() {
                 SexValue.FEMALE.rawValue
             }
             val phoneNumber = CommonUtils.getStringFromJsonObject(driverJsonObject, DriverInfoKey.KeyPhoneNumber.rawValue)
-            val rate = CommonUtils.getDoubleFromJsonObject(driverJsonObject, DriverInfoKey.KeyRate.rawValue)
+            val rate = CommonUtils.getFloatFromJsonObject(driverJsonObject, DriverInfoKey.KeyRate.rawValue)
             val status = CommonUtils.getIntFromJsonObject(driverJsonObject, DriverInfoKey.KeyStatus.rawValue)
             val startDate = CommonUtils.getDateFromJsonObject(driverJsonObject, DriverInfoKey.KeyStartDate.rawValue)
             val typeDriver = CommonUtils.getTypeDriver(driverJsonObject, DriverInfoKey.KeyTypeDriver.rawValue)
             val typeVehicle = CommonUtils.getStringFromJsonObject(driverJsonObject, DriverInfoKey.KeyTypeVehicle.rawValue)
             val licensePlateNumber = CommonUtils.getStringFromJsonObject(driverJsonObject, DriverInfoKey.KeyLicensePlateNumber.rawValue)
+            val distance = CommonUtils.getIntFromJsonObject(driverJsonObject, DriverInfoKey.KeyDistance.rawValue)
+            val point = scoreDriver(rate, distance, age)
 
             val driverInfo = DriverInfo(
                 driverId = driverId,
@@ -172,7 +176,8 @@ class DriverManager private constructor() {
                 startDate = startDate,
                 typeDriver = typeDriver,
                 typeVehicle = typeVehicle,
-                licensePlateNumber = licensePlateNumber
+                licensePlateNumber = licensePlateNumber,
+                point = point
             )
             newListDriver[driverInfo.driverId] = driverInfo
         }
@@ -184,11 +189,15 @@ class DriverManager private constructor() {
     }
 
     private fun sortListDriver(newListDriver: HashMap<String, DriverInfo>) {
-        val result = newListDriver.toList().sortedBy { (_, value) -> value.rate}.toMap()
+        val result = newListDriver.toList().sortedBy { (_, value) -> value.point}.toMap()
         listDriverHashMap.clear()
         for (entry in result) {
             listDriverHashMap[entry.key] = entry.value
             Log.d("NamTV", "rate = ${entry.value.rate}")
         }
+    }
+
+    private fun scoreDriver(rate: Float, distance: Int, age: Int): Float {
+        return (rate * appPreferences.ratePoint - distance * appPreferences.distancePoint + age * appPreferences.agePoint)
     }
 }

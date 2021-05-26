@@ -12,6 +12,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.example.grabapplication.R
 import com.example.grabapplication.adapters.DriverSuggestAdapter
+import com.example.grabapplication.common.DriverManager
 import com.example.grabapplication.databinding.FragmentDriverSuggestBinding
 import com.example.grabapplication.model.DriverInfo
 import com.example.grabapplication.viewmodel.BaseViewModelFactory
@@ -29,7 +30,7 @@ class DriverSuggestFragment : Fragment() {
         DriverSuggestAdapter()
     }
 
-    private val listDriverSuggest = MutableLiveData<DriverInfo>()
+    private val listDriverSuggest = MutableLiveData<ArrayList<DriverInfo>>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_driver_suggest, container, false)
@@ -45,7 +46,7 @@ class DriverSuggestFragment : Fragment() {
         binding.viewModel = suggestDriverViewModel
         binding.adapter = driverSuggestAdapter
         listDriverSuggest.observe(viewLifecycleOwner, Observer {
-            Log.d("NamTV", "list = ${it.size}")
+//            Log.d("NamTV", "list = ${it.size}")
             it.let (driverSuggestAdapter::submitList)
         })
     }
@@ -64,6 +65,12 @@ class DriverSuggestFragment : Fragment() {
     }
 
     private fun getListDriverSuggest() {
-//        for (driverInfo in suggestDriverViewModel)
+        val listDriver = DriverManager.getInstance().listDriverHashMap.values
+        for (driverInfo in listDriver) {
+            listDriverSuggest.value?.add(driverInfo)
+            if (listDriverSuggest.value!!.size >= 5) {
+                break
+            }
+        }
     }
 }
