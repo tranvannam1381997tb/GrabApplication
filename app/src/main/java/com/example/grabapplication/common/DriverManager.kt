@@ -19,9 +19,10 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import org.json.JSONObject
+import java.util.*
 
 class DriverManager private constructor() {
-    var listDriverHashMap: HashMap<String, DriverInfo> = HashMap()
+    var listDriverHashMap: LinkedHashMap<String, DriverInfo> = LinkedHashMap()
     private var listEventListener: HashMap<String, ValueEventListener> = HashMap()
     private val databaseDrivers = FirebaseManager.getInstance().databaseDrivers
     private var listenerStatusHistory : ValueEventListener? = null
@@ -134,7 +135,7 @@ class DriverManager private constructor() {
     }
 
     private fun getListDriverFromJsonObject(jsonObject: JSONObject) {
-        listDriverHashMap.clear()
+        val newListDriver = HashMap<String, DriverInfo>()
 
         val listDriver = CommonUtils.getJsonArrayFromJsonObject(jsonObject, FirebaseConstants.KEY_DRIVERS)
         for (i in 0 until listDriver.length()) {
@@ -173,22 +174,21 @@ class DriverManager private constructor() {
                 typeVehicle = typeVehicle,
                 licensePlateNumber = licensePlateNumber
             )
-            listDriverHashMap[driverInfo.driverId] = driverInfo
+            newListDriver[driverInfo.driverId] = driverInfo
         }
 
-        sortListDriver()
+        if (!newListDriver.isEmpty()) {
+            sortListDriver(newListDriver)
+        }
         Log.d("NamTV", "listDriverHashMap = ${listDriverHashMap.size} $listDriver")
     }
 
-    private fun sortListDriver() {
-
-        val a = listDriverHashMap.toList().sortedBy { (_, value) -> value.rate}.toMap()
+    private fun sortListDriver(newListDriver: HashMap<String, DriverInfo>) {
+        val result = newListDriver.toList().sortedBy { (_, value) -> value.rate}.toMap()
         listDriverHashMap.clear()
-        listDriverHashMap = a
-        var count = 0
-        for (entry in listDriverHashMap) {
-            Log.d("NamTV", "sort[$count] = ${entry.key} + ${entry.value.rate}")
-            count++
+        for (entry in result) {
+            listDriverHashMap[entry.key] = entry.value
+            Log.d("NamTV", "rate = ${entry.value.rate}")
         }
     }
 }

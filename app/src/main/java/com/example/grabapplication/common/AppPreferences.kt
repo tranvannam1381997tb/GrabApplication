@@ -32,16 +32,24 @@ class AppPreferences private constructor(context: Context) {
         }
 
     var priceOfKilometer: Int = 5000
-    get() {
-        return prefs.getInt(PRICE_OF_KILOMETER, 5000)
-    }
-    set(value) {
-        field = value
-        editor.putInt(PRICE_OF_KILOMETER, value).commit()
-    }
+        get() {
+            return prefs.getInt(PRICE_OF_KILOMETER, 5000)
+        }
+        set(value) {
+            field = value
+            editor.putInt(PRICE_OF_KILOMETER, value).commit()
+        }
+
+    var ratePoint: Float = 0.0
+        get() {
+            return prefs.getFloat(RATE_POINT, 5000)
+        }
 
     companion object : SingletonHolder<AppPreferences, Context>(::AppPreferences) {
         const val BOOK_INFO = "bookInfo"
         const val PRICE_OF_KILOMETER = "priceOfKilometer"
+        const val RATE_POINT = "ratePoint"
+        const val DISTANCE_POINT = "distancePoint"
+        const val AGE_POINT = "agePoint"
     }
 }
