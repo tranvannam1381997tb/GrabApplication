@@ -50,7 +50,6 @@ class BillFragment : Fragment() {
                     (activity as MainActivity).gotoMapFragment()
                 }
             }
-
         }
     }
 }

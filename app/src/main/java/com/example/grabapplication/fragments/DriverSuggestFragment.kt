@@ -2,7 +2,6 @@ package com.example.grabapplication.fragments
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.example.grabapplication.R
+import com.example.grabapplication.activities.MainActivity
 import com.example.grabapplication.adapters.DriverSuggestAdapter
 import com.example.grabapplication.common.DriverManager
 import com.example.grabapplication.databinding.FragmentDriverSuggestBinding
@@ -20,7 +20,7 @@ import com.example.grabapplication.viewmodel.MainViewModel
 
 class DriverSuggestFragment : Fragment() {
 
-    private val suggestDriverViewModel: MainViewModel
+    private val driverSuggestViewModel: MainViewModel
             by lazy {
                 ViewModelProvider(requireActivity(), BaseViewModelFactory(requireContext())).get(MainViewModel::class.java)
             }
@@ -43,7 +43,7 @@ class DriverSuggestFragment : Fragment() {
     }
 
     private fun initView() {
-        binding.viewModel = suggestDriverViewModel
+        binding.viewModel = driverSuggestViewModel
         binding.adapter = driverSuggestAdapter
         listDriverSuggest.observe(viewLifecycleOwner, Observer {
             it.let (driverSuggestAdapter::submitList)
@@ -59,6 +59,21 @@ class DriverSuggestFragment : Fragment() {
 //                    showListPlace(false)
 //                }
 
+            }
+        }
+
+        driverSuggestViewModel.onClickDriverSuggest = object : MainViewModel.OnClickDriverSuggest {
+            override fun clickTxtSuggestDriver() {
+                if (driverSuggestViewModel.isShowingListDriverSuggest.get()!!) {
+                    driverSuggestViewModel.isShowingListDriverSuggest.set(false)
+                    binding.layoutListDriver.animate().alpha(0.0f).duration = 1000
+                } else {
+                    driverSuggestViewModel.isShowingListDriverSuggest.set(true)
+                    binding.layoutListDriver.animate().alpha(1.0f).duration = 1000
+                }
+                if (activity is MainActivity) {
+                    (activity as MainActivity).updateSizeFragmentBook()
+                }
             }
         }
     }

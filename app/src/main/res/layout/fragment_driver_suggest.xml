@@ -24,33 +24,47 @@
         android:focusable="true">
 
         <TextView
-            android:id="@+id/description"
-            android:layout_width="match_parent"
+            android:id="@+id/txtSuggestDriver"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:drawablePadding="10dp"
             android:gravity="center"
+            android:paddingTop="20dp"
+            android:paddingBottom="20dp"
             android:text="@string/description_driver_suggest"
             android:textColor="@color/color_black"
             android:textSize="@dimen/text_size_description"
             android:textStyle="bold"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:drawableEndCompat="@drawable/up"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:onSingleClick="@{() -> viewModel.onClickDriverSuggest.clickTxtSuggestDriver()}" />
 
-	    <View
-		    app:layout_constraintTop_toBottomOf="@id/description"
-		    android:layout_marginTop="20dp"
-		    android:id="@+id/line_start_list_driver"
-		    android:layout_width="match_parent"
-		    android:layout_height="1dp"
-		    android:background="@color/color_line_end_item_place" />
+        <View
+            android:id="@+id/line_start_list_driver"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/color_line_end_item_place"
+            app:layout_constraintTop_toBottomOf="@id/txtSuggestDriver" />
 
-        <androidx.recyclerview.widget.RecyclerView
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutListDriver"
             android:layout_width="match_parent"
             android:layout_height="280dp"
-	        android:layout_marginBottom="20dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:animateLayoutChanges="true"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/line_start_list_driver"
-            app:setDriverSuggestAdapter="@{adapter}"
-            tools:visibility="gone" />
+            android:visibility="@{viewModel.isShowingListDriverSuggest ? View.VISIBLE : View.GONE}"
+            app:layout_constraintTop_toBottomOf="@id/line_start_list_driver">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="20dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:setDriverSuggestAdapter="@{adapter}" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

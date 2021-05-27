@@ -100,20 +100,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         mapFragment?.getMapAsync(this)
 
         transaction = supportFragmentManager.beginTransaction()
-
-        mainViewModel.onItemClickListener = object : MainViewModel.OnItemClickListener {
-            override fun openFindPlaceFragment() {
-                gotoFindPlaceFragment()
-            }
-
-            override fun bookDriver() {
-                showDialogConfirmBookDriver()
-            }
-
-            override fun endBook() {
-                // Bill Fragment worked
-            }
-        }
     }
 
     private fun setupEvent() {
@@ -169,6 +155,20 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             }
         }
 
+        mainViewModel.onItemClickListener = object : MainViewModel.OnItemClickListener {
+            override fun openFindPlaceFragment() {
+                gotoFindPlaceFragment()
+            }
+
+            override fun bookDriver() {
+                showDialogConfirmBookDriver()
+            }
+
+            override fun endBook() {
+                // Bill Fragment worked
+            }
+        }
+
         binding.layoutMain.setOnSingleClickListener(View.OnClickListener {
             if (currentFragment == Constants.FRAGMENT_DRIVER_SUGGEST) {
                 gotoMapFragment()
@@ -185,8 +185,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             val driverInfo = bookInfoPreferences.driverInfo!!
             driverManager.getStatusHistoryBookInfo(driverInfo) {
                 if (it) {
-                    val statusDriver = driverInfo.status
-                    when(statusDriver) {
+                    when(driverInfo.status) {
                         DriverStatus.StatusArrivingOrigin.rawValue -> {
 
                         }
@@ -508,7 +507,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         transaction.replace(R.id.fragmentBill, fragmentBottom as BillFragment).commit()
     }
 
-    private fun updateSizeFragmentBook() {
+    fun updateSizeFragmentBook() {
         val layoutParams = binding.fragmentBottom.layoutParams
         layoutParams.height = FrameLayout.LayoutParams.WRAP_CONTENT
         layoutParams.width = FrameLayout.LayoutParams.MATCH_PARENT

@@ -16,11 +16,13 @@ class MainViewModel: ViewModel() {
     var isShowingListPlace = ObservableField(true)
     var isShowingLayoutBottom = ObservableField(false)
     var isShowingLayoutBill = ObservableField(false)
+    var isShowingListDriverSuggest = ObservableField(false)
 
     var distanceDriver: Distance? = null
     var listPlace = MutableLiveData<ArrayList<PlaceModel>>()
 
     var onItemClickListener: OnItemClickListener? = null
+    var onClickDriverSuggest: OnClickDriverSuggest? = null
     var bookInfo: ObservableField<BookInfo> = ObservableField(MapsConstant.DEFAULT_BOOK_INFO)
 
     var countDownTimer = ObservableField(60)
@@ -38,6 +40,10 @@ class MainViewModel: ViewModel() {
         fun openFindPlaceFragment()
         fun bookDriver()
         fun endBook()
+    }
+
+    interface OnClickDriverSuggest {
+        fun clickTxtSuggestDriver()
     }
 }
 
