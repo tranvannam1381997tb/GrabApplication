@@ -16,10 +16,7 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import com.example.grabapplication.GrabApplication
 import com.example.grabapplication.R
-import com.example.grabapplication.common.AccountManager
-import com.example.grabapplication.common.AppPreferences
-import com.example.grabapplication.common.Constants
-import com.example.grabapplication.common.DriverManager
+import com.example.grabapplication.common.*
 import com.example.grabapplication.customviews.ConfirmDialog
 import com.example.grabapplication.databinding.ActivityMainBinding
 import com.example.grabapplication.firebase.FirebaseConnection
@@ -171,6 +168,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 }
             }
         }
+
+        binding.layoutMain.setOnSingleClickListener(View.OnClickListener {
+            if (currentFragment == Constants.FRAGMENT_DRIVER_SUGGEST) {
+                gotoMapFragment()
+            } else if (currentFragment == Constants.FRAGMENT_MAP) {
+                gotoDriverSuggestFragment()
+            }
+        })
     }
 
     private fun getDataBook() {
@@ -219,10 +224,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     }
 
     override fun onMarkerClick(marker: Marker?): Boolean{
-        val idDriver = marker?.tag
-        if (idDriver != null && driverManager.listDriverHashMap.containsKey(idDriver)) {
-            val driverInfo = driverManager.listDriverHashMap[idDriver]
-            selectDriver(driverInfo!!)
+        if (currentFragment == Constants.FRAGMENT_MAP || currentFragment == Constants.FRAGMENT_DRIVER_SUGGEST ||
+            currentFragment == Constants.FRAGMENT_INFO_DRIVER) {
+            val idDriver = marker?.tag
+            if (idDriver != null && driverManager.listDriverHashMap.containsKey(idDriver)) {
+                val driverInfo = driverManager.listDriverHashMap[idDriver]
+                selectDriver(driverInfo!!)
+            }
         }
         return true
     }
@@ -296,7 +304,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                                 )
                                 if (isFirstGetDeviceLocation) {
                                     isFirstGetDeviceLocation = false
-                                    driverManager.getListDriverFromServer()
+                                    driverManager.getListDriverFromServer {
+
+                                    }
                                     Log.d("NamTV", "isFirstGetDeviceLocation")
                                 }
                             }
@@ -315,7 +325,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                         )
                         if (isFirstGetDeviceLocation) {
                             isFirstGetDeviceLocation = false
-                            driverManager.getListDriverFromServer()
+                            driverManager.getListDriverFromServer {
+                                if (it) {
+                                    gotoDriverSuggestFragment()
+                                }
+                            }
                             Log.d("NamTV", "isFirstGetDeviceLocation")
                         }
                         fusedLocationProviderClient?.requestLocationUpdates(
@@ -394,18 +408,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     }
 
     private fun gotoDriverSuggestFragment() {
-        fragmentBottom = DriverSuggestFragment()
-        currentFragment = Constants.FRAGMENT_DRIVER_SUGGEST
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.setCustomAnimations(
-            R.anim.slide_in_bottom,
-            R.anim.slide_out_top,
-            R.anim.pop_in_bottom,
-            R.anim.pop_out_top
-        )
-        transaction.addToBackStack(null)
-        transaction.replace(R.id.fragmentBottom, fragmentBottom as DriverSuggestFragment).commit()
-        updateSizeFragmentBook()
+        if (!mainViewModel.isShowingLayoutBill.get()!! && !mainViewModel.isShowingLayoutBottom.get()!!) {
+            mainViewModel.isShowingLayoutBottom.set(true)
+            fragmentBottom = DriverSuggestFragment()
+            currentFragment = Constants.FRAGMENT_DRIVER_SUGGEST
+            val transaction = supportFragmentManager.beginTransaction()
+            transaction.setCustomAnimations(
+                R.anim.slide_in_bottom,
+                R.anim.slide_out_top,
+                R.anim.pop_in_bottom,
+                R.anim.pop_out_top
+            )
+            transaction.addToBackStack(null)
+            transaction.replace(R.id.fragmentBottom, fragmentBottom as DriverSuggestFragment).commit()
+            updateSizeFragmentBook()
+        }
     }
 
     private fun gotoInfoDriverFragment() {

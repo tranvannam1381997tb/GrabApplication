@@ -19,17 +19,15 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layoutView"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
-        android:background="@drawable/fragment_book_border"
+        android:layout_height="wrap_content"
         android:clickable="true"
-        android:focusable="true"
-        android:padding="20dp">
+        android:focusable="true">
 
         <TextView
             android:id="@+id/description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
             android:gravity="center"
             android:text="@string/description_driver_suggest"
             android:textColor="@color/color_black"
@@ -37,13 +35,21 @@
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent" />
 
+	    <View
+		    app:layout_constraintTop_toBottomOf="@id/description"
+		    android:layout_marginTop="20dp"
+		    android:id="@+id/line_start_list_driver"
+		    android:layout_width="match_parent"
+		    android:layout_height="1dp"
+		    android:background="@color/color_line_end_item_place" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="20dp"
+            android:layout_height="280dp"
+	        android:layout_marginBottom="20dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/description"
+            app:layout_constraintTop_toBottomOf="@id/line_start_list_driver"
             app:setDriverSuggestAdapter="@{adapter}"
             tools:visibility="gone" />
     </androidx.constraintlayout.widget.ConstraintLayout>

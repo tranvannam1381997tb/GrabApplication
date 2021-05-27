@@ -19,12 +19,6 @@
         android:orientation="vertical"
         android:paddingBottom="0dp">
 
-        <View
-            android:id="@+id/line_start_list_driver"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/color_line_end_item_place" />
-
         <LinearLayout
             android:id="@+id/layout_name_driver"
             android:layout_width="match_parent"
@@ -127,6 +121,7 @@
             android:id="@+id/line_end_item_driver"
             android:layout_width="match_parent"
             android:layout_height="1dp"
+	        android:layout_marginStart="20dp"
             android:background="@color/color_line_end_item_place" />
 
         <View

@@ -46,7 +46,6 @@ class DriverSuggestFragment : Fragment() {
         binding.viewModel = suggestDriverViewModel
         binding.adapter = driverSuggestAdapter
         listDriverSuggest.observe(viewLifecycleOwner, Observer {
-//            Log.d("NamTV", "list = ${it.size}")
             it.let (driverSuggestAdapter::submitList)
         })
     }
@@ -65,12 +64,14 @@ class DriverSuggestFragment : Fragment() {
     }
 
     private fun getListDriverSuggest() {
-        val listDriver = DriverManager.getInstance().listDriverHashMap.values
-        for (driverInfo in listDriver) {
-            listDriverSuggest.value?.add(driverInfo)
-            if (listDriverSuggest.value!!.size >= 5) {
+        val mutableDriver = DriverManager.getInstance().listDriverHashMap.values
+        val listDriver = ArrayList<DriverInfo>()
+        for (driverInfo in mutableDriver) {
+            listDriver.add(driverInfo)
+            if (listDriver.size >= 5) {
                 break
             }
         }
+        listDriverSuggest.value = listDriver
     }
 }

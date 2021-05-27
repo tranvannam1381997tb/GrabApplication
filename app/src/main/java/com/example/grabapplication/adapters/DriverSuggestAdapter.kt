@@ -2,6 +2,7 @@ package com.example.grabapplication.adapters
 
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.databinding.BindingAdapter
@@ -18,10 +19,19 @@ class DriverSuggestAdapter : ListAdapter<DriverInfo, DriverSuggestAdapter.ItemHo
     var callback: OnClickItemDriverListener? = null
 
     inner class ItemHolder constructor(val binding: ItemDriverBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(driverInfo: DriverInfo) {
+        fun bind(driverInfo: DriverInfo, position: Int) {
             driverInfo.let {
                 binding.setVariable(BR.driverInfo, it)
                 binding.executePendingBindings()
+            }
+            val lineEndItemDriver = itemView.findViewById<View>(R.id.line_end_item_driver)
+            val lineEndListDriver = itemView.findViewById<View>(R.id.line_end_list_driver)
+            if (position == itemCount - 1) {
+                lineEndItemDriver.visibility = View.GONE
+                lineEndListDriver.visibility = View.VISIBLE
+            } else {
+                lineEndItemDriver.visibility = View.VISIBLE
+                lineEndListDriver.visibility = View.GONE
             }
 
             val layoutDriver = itemView.findViewById<LinearLayout>(R.id.layoutDriver)
@@ -53,7 +63,7 @@ class DriverSuggestAdapter : ListAdapter<DriverInfo, DriverSuggestAdapter.ItemHo
 
     override fun onBindViewHolder(holder: ItemHolder, position: Int) {
         val currentDriver = getItem(position)
-        holder.bind(currentDriver)
+        holder.bind(currentDriver, position)
     }
 
 

@@ -10,7 +10,7 @@ class GetListDriverReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         context?.let {
-            DriverManager.getInstance().getListDriverFromServer()
+            DriverManager.getInstance().getListDriverFromServer {}
             Log.d("NamTV", "GetListDriverReceiver::schedule update list driver")
         }
     }

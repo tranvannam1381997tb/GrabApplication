@@ -161,7 +161,7 @@ class HttpConnection private constructor() {
         private const val URL_LOGIN_FORMAT = "http://%s/api/user/login"
         private const val URL_SIGN_UP = "http://%s/api/user/create"
         private const val URL_GET_LIST_DRIVER = "http://%s/api/user/find-drivers"
-        private const val HOST = "192.168.1.215:3000"
+        private const val HOST = "10.0.40.65:3000"
         private const val CONNECTION_TIMEOUT = 30000
 
         private var instance: HttpConnection? = null

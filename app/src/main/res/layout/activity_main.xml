@@ -11,16 +11,18 @@
 	</data>
 
 	<androidx.constraintlayout.widget.ConstraintLayout
+		android:id="@id/layoutView"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent">
+		android:layout_height="match_parent"
+		android:background="@color/white">
 
 		<androidx.constraintlayout.widget.ConstraintLayout
 			android:id="@+id/layoutMain"
 			android:layout_width="match_parent"
 			android:layout_height="0dp"
+			android:visibility="@{viewModel.isShowingLayoutBill ? View.INVISIBLE : View.VISIBLE}"
 			app:layout_constraintBottom_toTopOf="@id/fragmentBottom"
-			app:layout_constraintTop_toTopOf="parent"
-			android:visibility="@{viewModel.isShowingLayoutBill ? View.INVISIBLE : View.VISIBLE}">
+			app:layout_constraintTop_toTopOf="parent">
 
 			<fragment
 				android:id="@+id/map"
@@ -34,15 +36,16 @@
 			android:id="@+id/fragmentBill"
 			android:layout_width="match_parent"
 			android:layout_height="0dp"
+			android:visibility="@{viewModel.isShowingLayoutBill ? View.VISIBLE : View.INVISIBLE}"
 			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintTop_toTopOf="parent"
-			android:visibility="@{viewModel.isShowingLayoutBill ? View.VISIBLE : View.INVISIBLE}"/>
+			app:layout_constraintTop_toTopOf="parent" />
 
 		<FrameLayout
 			android:id="@+id/fragmentBottom"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
+			android:background="@drawable/fragment_book_border"
 			android:visibility="@{viewModel.isShowingLayoutBottom ? View.VISIBLE : View.GONE}"
-			app:layout_constraintBottom_toBottomOf="parent"/>
+			app:layout_constraintBottom_toBottomOf="parent" />
 	</androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

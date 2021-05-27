@@ -68,13 +68,14 @@ class DriverManager private constructor() {
         }
     }
 
-    fun getListDriverFromServer() {
+    fun getListDriverFromServer(callback: (Boolean) -> Unit) {
         HttpConnection.getInstance().getListDriver { isSuccess, jsonObject ->
             if (isSuccess) {
                 MainActivity.clearMarkerDriver()
                 clearAllEventListener()
                 getListDriverFromJsonObject(JSONObject(jsonObject))
                 getInfoDriver()
+                callback.invoke(true)
             }
         }
         scheduleGetListDriver()
@@ -132,7 +133,6 @@ class DriverManager private constructor() {
             val pendingIntent = PendingIntent.getBroadcast(it, Constants.REQUEST_GET_LIST_DRIVER, keepAliveVPNServiceReceiver, 0)
             val alarmManager = it.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + Constants.TIME_SCHEDULE_GET_LIST_DRIVER, pendingIntent)
-
         }
     }
 
