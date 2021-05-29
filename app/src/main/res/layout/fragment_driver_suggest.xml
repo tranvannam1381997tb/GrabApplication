@@ -23,14 +23,24 @@
         android:clickable="true"
         android:focusable="true">
 
+        <ImageView
+            android:id="@+id/iconRefresh"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:padding="5dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/txtSuggestDriver"
+            app:layout_constraintBottom_toBottomOf="@id/txtSuggestDriver"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/refresh"
+            android:visibility="@{viewModel.isShowingListDriverSuggest ? View.VISIBLE : View.GONE}" />
+
         <TextView
             android:id="@+id/txtSuggestDriver"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:drawablePadding="10dp"
             android:gravity="center"
-            android:paddingTop="20dp"
-            android:paddingBottom="20dp"
             android:text="@string/description_driver_suggest"
             android:textColor="@color/color_black"
             android:textSize="@dimen/text_size_description"
@@ -39,7 +49,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:onSingleClick="@{() -> viewModel.onClickDriverSuggest.clickTxtSuggestDriver()}" />
+            android:onClick="@{() -> viewModel.onClickDriverSuggest.clickTxtSuggestDriver()}" />
 
         <View
             android:id="@+id/line_start_list_driver"

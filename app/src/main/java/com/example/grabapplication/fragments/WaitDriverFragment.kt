@@ -14,9 +14,7 @@ import com.example.grabapplication.activities.MainActivity
 import com.example.grabapplication.common.Constants
 import com.example.grabapplication.common.setOnSingleClickListener
 import com.example.grabapplication.customviews.ConfirmDialog
-import com.example.grabapplication.databinding.FragmentInfoDriverBinding
 import com.example.grabapplication.databinding.FragmentWaitDriverBinding
-import com.example.grabapplication.firebase.FirebaseConnection
 import com.example.grabapplication.viewmodel.BaseViewModelFactory
 import com.example.grabapplication.viewmodel.MainViewModel
 
@@ -30,7 +28,7 @@ class WaitDriverFragment : Fragment() {
 
     private lateinit var binding: FragmentWaitDriverBinding
     var countDownTimer: CountDownTimer? = null
-    private var isDialogShowing = false
+    private var dialog: ConfirmDialog? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -73,29 +71,27 @@ class WaitDriverFragment : Fragment() {
     }
 
     fun showDialogConfirmCancelBook() {
-        val dialogConfirm = ConfirmDialog(requireContext())
-        dialogConfirm.setTextDisplay(
+        if (dialog != null && dialog!!.isShowing) {
+            dialog!!.dismiss()
+        }
+        dialog = ConfirmDialog(requireContext())
+        dialog!!.setTextDisplay(
             getString(R.string.confirm_cancel_book),
             null,
             getString(R.string.no),
             getString(R.string.cancel_book)
         )
-        dialogConfirm.setOnClickOK(View.OnClickListener {
-            isDialogShowing = false
-            dialogConfirm.dismiss()
+        dialog!!.setOnClickOK(View.OnClickListener {
+            dialog!!.dismiss()
             gotoMapFragment()
 
             // TODO
         })
-        dialogConfirm.setOnClickCancel(View.OnClickListener {
-            isDialogShowing = false
-            dialogConfirm.dismiss()
+        dialog!!.setOnClickCancel(View.OnClickListener {
+            dialog!!.dismiss()
         })
-        dialogConfirm.setTextTypeBoldBtnOK()
-        if (!isDialogShowing) {
-            dialogConfirm.show()
-            isDialogShowing = true
-        }
+        dialog!!.setTextTypeBoldBtnOK()
+        dialog!!.show()
     }
 
     fun gotoMapFragment() {
@@ -106,29 +102,31 @@ class WaitDriverFragment : Fragment() {
     }
 
     fun showDialogBookNew() {
-        val dialogConfirm = ConfirmDialog(requireContext())
-        dialogConfirm.setTextDisplay(
+        if (dialog != null && dialog!!.isShowing) {
+            dialog!!.dismiss()
+        }
+        dialog = ConfirmDialog(requireContext())
+        dialog!!.setTextDisplay(
             getString(R.string.driver_cancel),
             null,
             null,
             getString(R.string.label_ok)
         )
-        dialogConfirm.setOnClickOK(View.OnClickListener {
-            isDialogShowing = false
-            dialogConfirm.dismiss()
+        dialog!!.setOnClickOK(View.OnClickListener {
+            dialog!!.dismiss()
             gotoMapFragment()
             // TODO
         })
 
-        dialogConfirm.setTextTypeBoldBtnOK()
-        if (isDialogShowing) {
-            dialogConfirm.show()
-            isDialogShowing = true
-        }
+        dialog!!.setTextTypeBoldBtnOK()
+        dialog!!.show()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         countDownTimer?.cancel()
+        if (dialog != null) {
+            dialog!!.dismiss()
+        }
     }
 }

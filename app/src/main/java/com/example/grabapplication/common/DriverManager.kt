@@ -11,9 +11,9 @@ import com.example.grabapplication.connecttion.HttpConnection
 import com.example.grabapplication.firebase.FirebaseConstants
 import com.example.grabapplication.firebase.FirebaseManager
 import com.example.grabapplication.firebase.FirebaseUtils
-import com.example.grabapplication.googlemaps.models.Distance
 import com.example.grabapplication.model.DriverInfo
 import com.example.grabapplication.model.DriverInfoKey
+import com.example.grabapplication.model.DriverStatus
 import com.example.grabapplication.model.SexValue
 import com.example.grabapplication.services.GetListDriverReceiver
 import com.google.firebase.database.DataSnapshot
@@ -87,10 +87,16 @@ class DriverManager private constructor() {
             val listener = databaseDrivers.child(driverInfo.driverId).addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val driverId = getDriverInfoFromDataSnapshot(snapshot)
-                    if (listDriverHashMap[driverId] != null) {
+                    val itemDriverInfo = listDriverHashMap[driverId]
+                    if (itemDriverInfo != null) {
 
                         Log.d("NamTV", "onDataChange $driverId ${listDriverHashMap[driverId]!!.latitude} ${listDriverHashMap[driverId]!!.longitude}")
-                        MainActivity.addOrUpdateMarkerDriver(listDriverHashMap[driverId]!!)
+                        if (itemDriverInfo.status != DriverStatus.StatusOn.rawValue) {
+                            MainActivity.removeMarkerDriver(driverId)
+                            listDriverHashMap.remove(driverId)
+                        } else {
+                            MainActivity.addOrUpdateMarkerDriver(listDriverHashMap[driverId]!!)
+                        }
                     }
                 }
 
@@ -155,6 +161,9 @@ class DriverManager private constructor() {
             val phoneNumber = CommonUtils.getStringFromJsonObject(driverJsonObject, DriverInfoKey.KeyPhoneNumber.rawValue)
             val rate = CommonUtils.getFloatFromJsonObject(driverJsonObject, DriverInfoKey.KeyRate.rawValue)
             val status = CommonUtils.getIntFromJsonObject(driverJsonObject, DriverInfoKey.KeyStatus.rawValue)
+            if (status != DriverStatus.StatusOn.rawValue) {
+                continue
+            }
             val startDate = CommonUtils.getDateFromJsonObject(driverJsonObject, DriverInfoKey.KeyStartDate.rawValue)
             val typeDriver = CommonUtils.getTypeDriver(driverJsonObject, DriverInfoKey.KeyTypeDriver.rawValue)
             val typeVehicle = CommonUtils.getStringFromJsonObject(driverJsonObject, DriverInfoKey.KeyTypeVehicle.rawValue)
@@ -182,7 +191,7 @@ class DriverManager private constructor() {
             newListDriver[driverInfo.driverId] = driverInfo
         }
 
-        if (!newListDriver.isEmpty()) {
+        if (newListDriver.isNotEmpty()) {
             sortListDriver(newListDriver)
         }
         Log.d("NamTV", "listDriverHashMap = ${listDriverHashMap.size} $listDriver")

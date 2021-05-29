@@ -4,6 +4,8 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
@@ -37,7 +39,6 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONObject
-import java.util.*
 import kotlin.collections.HashMap
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener{
@@ -75,6 +76,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     private var isFirstGetDeviceLocation = true
 
     private var timeDriverArrivedDestination = 0
+
+    var isChoosingDriver = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -169,12 +172,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             }
         }
 
-        binding.layoutMain.setOnSingleClickListener(View.OnClickListener {
-            if (currentFragment == Constants.FRAGMENT_DRIVER_SUGGEST) {
-                gotoMapFragment()
-            } else if (currentFragment == Constants.FRAGMENT_MAP) {
-                gotoDriverSuggestFragment()
-            }
+        binding.iconBack.setOnSingleClickListener(View.OnClickListener {
+            onBackPressed()
         })
     }
 
@@ -226,9 +225,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         if (currentFragment == Constants.FRAGMENT_MAP || currentFragment == Constants.FRAGMENT_DRIVER_SUGGEST ||
             currentFragment == Constants.FRAGMENT_INFO_DRIVER) {
             val idDriver = marker?.tag
-            if (idDriver != null && driverManager.listDriverHashMap.containsKey(idDriver)) {
+            if (idDriver != null && driverManager.listDriverHashMap.containsKey(idDriver) && !isChoosingDriver) {
+                isChoosingDriver = true
                 val driverInfo = driverManager.listDriverHashMap[idDriver]
-                selectDriver(driverInfo!!)
+                selectDriver(driverInfo!!) {
+                    isChoosingDriver = false
+                }
             }
         }
         return true
@@ -326,7 +328,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                             isFirstGetDeviceLocation = false
                             driverManager.getListDriverFromServer {
                                 if (it) {
-                                    gotoDriverSuggestFragment()
+                                    scheduleGotoDriverSuggestFragment()
                                 }
                             }
                             Log.d("NamTV", "isFirstGetDeviceLocation")
@@ -387,44 +389,56 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         }
     }
 
-    private fun selectDriver(driverInfo: DriverInfo) {
+    fun selectDriver(driverInfo: DriverInfo, callback: (Boolean) -> Unit) {
         mainViewModel.selectDriver(driverInfo) {
-            mainViewModel.isShowingLayoutBottom.set(true)
+            callback.invoke(true)
             gotoInfoDriverFragment()
         }
     }
 
     fun gotoMapFragment() {
-        currentFragment = Constants.FRAGMENT_MAP
-        fragmentBottom = null
         mainViewModel.isShowingLayoutBill.set(false)
         mainViewModel.isShowingLayoutBottom.set(false)
+        mainViewModel.isShowingIconBack.set(false)
+
+        currentFragment = Constants.FRAGMENT_MAP
+        fragmentBottom = null
         for (fragment in supportFragmentManager.fragments) {
             if (fragment !is SupportMapFragment) {
                 supportFragmentManager.beginTransaction().remove(fragment).commit()
             }
         }
+        scheduleGotoDriverSuggestFragment()
     }
 
-    private fun gotoDriverSuggestFragment() {
-        if (!mainViewModel.isShowingLayoutBill.get()!! && !mainViewModel.isShowingLayoutBottom.get()!!) {
-            mainViewModel.isShowingLayoutBottom.set(true)
-            fragmentBottom = DriverSuggestFragment()
-            currentFragment = Constants.FRAGMENT_DRIVER_SUGGEST
-            val transaction = supportFragmentManager.beginTransaction()
-            transaction.setCustomAnimations(
-                R.anim.slide_in_bottom,
-                R.anim.slide_out_top,
-                R.anim.pop_in_bottom,
-                R.anim.pop_out_top
-            )
-            transaction.addToBackStack(null)
-            transaction.replace(R.id.fragmentBottom, fragmentBottom as DriverSuggestFragment).commit()
-            updateSizeFragmentBook()
-        }
+    private fun scheduleGotoDriverSuggestFragment() {
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (!mainViewModel.isShowingLayoutBill.get()!! && !mainViewModel.isShowingLayoutBottom.get()!! && currentFragment == Constants.FRAGMENT_MAP) {
+                mainViewModel.isShowingLayoutBottom.set(true)
+                mainViewModel.isShowingLayoutBill.set(false)
+                mainViewModel.isShowingIconBack.set(false)
+
+                fragmentBottom = DriverSuggestFragment()
+                currentFragment = Constants.FRAGMENT_DRIVER_SUGGEST
+                val transaction = supportFragmentManager.beginTransaction()
+                transaction.setCustomAnimations(
+                        R.anim.slide_in_bottom,
+                        R.anim.slide_out_top,
+                        R.anim.pop_in_bottom,
+                        R.anim.pop_out_top
+                )
+                transaction.addToBackStack(null)
+                transaction.replace(R.id.fragmentBottom, fragmentBottom as DriverSuggestFragment).commit()
+                updateSizeFragmentBook()
+            }
+        }, 1000L)
     }
 
     private fun gotoInfoDriverFragment() {
+        mainViewModel.isShowingLayoutBottom.set(true)
+        mainViewModel.isShowingLayoutBill.set(false)
+        mainViewModel.isShowingIconBack.set(true)
+
         fragmentBottom = InfoDriverFragment()
         currentFragment = Constants.FRAGMENT_INFO_DRIVER
         val transaction = supportFragmentManager.beginTransaction()
@@ -441,6 +455,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     }
 
     private fun gotoFindPlaceFragment() {
+        mainViewModel.isShowingLayoutBottom.set(true)
+        mainViewModel.isShowingLayoutBill.set(false)
+        mainViewModel.isShowingIconBack.set(true)
+
         fragmentBottom = FindPlaceFragment()
         currentFragment = Constants.FRAGMENT_FIND_PLACE
         val transaction = supportFragmentManager.beginTransaction()
@@ -457,6 +475,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     }
 
     private fun gotoWaitDriverFragment() {
+        mainViewModel.isShowingLayoutBottom.set(true)
+        mainViewModel.isShowingLayoutBill.set(false)
+        mainViewModel.isShowingIconBack.set(true)
+
         fragmentBottom = WaitDriverFragment()
         currentFragment = Constants.FRAGMENT_WAIT_DRIVER
         val transaction = supportFragmentManager.beginTransaction()
@@ -471,6 +493,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     }
 
     fun gotoDriverGoingFragment(statusDriverGoingFragment: Int, jsonData: JSONObject) {
+        mainViewModel.isShowingLayoutBottom.set(true)
+        mainViewModel.isShowingLayoutBill.set(false)
+        mainViewModel.isShowingIconBack.set(true)
+
         fragmentBottom = DriverGoingFragment()
         currentFragment = Constants.FRAGMENT_DRIVER_GOING
 
@@ -492,10 +518,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     }
 
     private fun gotoBillFragment() {
+        mainViewModel.isShowingLayoutBottom.set(false)
+        mainViewModel.isShowingLayoutBill.set(true)
+        mainViewModel.isShowingIconBack.set(false)
+
         fragmentBottom = BillFragment()
         currentFragment = Constants.FRAGMENT_BILL
-        mainViewModel.isShowingLayoutBill.set(true)
-        mainViewModel.isShowingLayoutBottom.set(false)
 
         val transaction = supportFragmentManager.beginTransaction()
         transaction.setCustomAnimations(
@@ -507,7 +535,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         transaction.replace(R.id.fragmentBill, fragmentBottom as BillFragment).commit()
     }
 
-    fun updateSizeFragmentBook() {
+    private fun updateSizeFragmentBook() {
         val layoutParams = binding.fragmentBottom.layoutParams
         layoutParams.height = FrameLayout.LayoutParams.WRAP_CONTENT
         layoutParams.width = FrameLayout.LayoutParams.MATCH_PARENT
@@ -609,6 +637,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         fun clearMarkerDriver() {
             mainMap?.clear()
             driverHashMap.clear()
+        }
+
+        fun removeMarkerDriver(driverId: String) {
+            val marker = driverHashMap[driverId]
+            marker?.remove()
         }
     }
 }

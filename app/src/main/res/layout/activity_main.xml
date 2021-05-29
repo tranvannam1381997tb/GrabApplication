@@ -1,51 +1,65 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-	<data>
+    <data>
 
-		<import type="android.view.View" />
+        <import type="android.view.View" />
 
-		<variable
-			name="viewModel"
-			type="com.example.grabapplication.viewmodel.MainViewModel" />
-	</data>
+        <variable
+            name="viewModel"
+            type="com.example.grabapplication.viewmodel.MainViewModel" />
+    </data>
 
-	<androidx.constraintlayout.widget.ConstraintLayout
-		android:id="@id/layoutView"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:background="@color/white">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@id/layoutView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
 
-		<androidx.constraintlayout.widget.ConstraintLayout
-			android:id="@+id/layoutMain"
-			android:layout_width="match_parent"
-			android:layout_height="0dp"
-			android:visibility="@{viewModel.isShowingLayoutBill ? View.INVISIBLE : View.VISIBLE}"
-			app:layout_constraintBottom_toTopOf="@id/fragmentBottom"
-			app:layout_constraintTop_toTopOf="parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutMain"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:visibility="@{viewModel.isShowingLayoutBill ? View.INVISIBLE : View.VISIBLE}"
+            app:layout_constraintBottom_toTopOf="@id/fragmentBottom"
+            app:layout_constraintTop_toTopOf="parent">
 
-			<fragment
-				android:id="@+id/map"
-				android:name="com.google.android.gms.maps.SupportMapFragment"
-				android:layout_width="match_parent"
-				android:layout_height="match_parent"
-				app:layout_constraintTop_toTopOf="parent" />
-		</androidx.constraintlayout.widget.ConstraintLayout>
+            <fragment
+                android:id="@+id/map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-		<FrameLayout
-			android:id="@+id/fragmentBill"
-			android:layout_width="match_parent"
-			android:layout_height="0dp"
-			android:visibility="@{viewModel.isShowingLayoutBill ? View.VISIBLE : View.INVISIBLE}"
-			app:layout_constraintBottom_toBottomOf="parent"
-			app:layout_constraintTop_toTopOf="parent" />
+        <FrameLayout
+            android:id="@+id/fragmentBill"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:visibility="@{viewModel.isShowingLayoutBill ? View.VISIBLE : View.INVISIBLE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-		<FrameLayout
-			android:id="@+id/fragmentBottom"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:background="@drawable/fragment_book_border"
-			android:visibility="@{viewModel.isShowingLayoutBottom ? View.VISIBLE : View.GONE}"
-			app:layout_constraintBottom_toBottomOf="parent" />
-	</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/iconBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/border_icon_back"
+            android:padding="5dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/left_arrow"
+            android:visibility="@{viewModel.isShowingIconBack ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toTopOf="@id/fragmentBottom"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <FrameLayout
+            android:id="@+id/fragmentBottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/fragment_book_border"
+            android:visibility="@{viewModel.isShowingLayoutBottom ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
