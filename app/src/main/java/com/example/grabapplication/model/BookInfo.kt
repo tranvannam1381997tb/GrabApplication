@@ -15,5 +15,4 @@ data class BookInfo(
     var distance: String?,
     var duration: String?,
     var price: String?
-
 ): Parcelable

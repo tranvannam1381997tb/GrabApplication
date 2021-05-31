@@ -135,8 +135,8 @@ class DriverManager private constructor() {
 
     private fun scheduleGetListDriver() {
         GrabApplication.getAppContext().let {
-            val keepAliveVPNServiceReceiver = Intent(it, GetListDriverReceiver::class.java)
-            val pendingIntent = PendingIntent.getBroadcast(it, Constants.REQUEST_GET_LIST_DRIVER, keepAliveVPNServiceReceiver, 0)
+            val getListDriverReceiver = Intent(it, GetListDriverReceiver::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(it, Constants.REQUEST_GET_LIST_DRIVER, getListDriverReceiver, 0)
             val alarmManager = it.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + Constants.TIME_SCHEDULE_GET_LIST_DRIVER, pendingIntent)
         }

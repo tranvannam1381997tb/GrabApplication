@@ -21,7 +21,6 @@ class GrabFirebaseMessagingService : FirebaseMessagingService() {
                     Log.d("NamTV", "jsonData = $jsonData")
                     if (CommonUtils.getBooleanFromJsonObject(jsonData, FirebaseConstants.KEY_DRIVER_GOING_BOOK)) {
                         // Driver going to pick you up
-                        // TODO
                         bookListener?.handleDriverGoingBook(jsonData)
                     } else if (CommonUtils.getBooleanFromJsonObject(jsonData, FirebaseConstants.KEY_DRIVER_REJECT)) {
                         // Driver reject book

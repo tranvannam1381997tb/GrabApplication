@@ -119,6 +119,7 @@ class LoginActivity : AppCompatActivity() {
         }
         val accountManager = AccountManager.getInstance()
         accountManager.saveUserId(userId)
+        accountManager.getPolicy()
 
         val name = CommonUtils.getStringFromJsonObject(userInfo, UserInfoKey.KeyName.rawValue)
         val age = CommonUtils.getIntFromJsonObject(userInfo, UserInfoKey.KeyAge.rawValue)

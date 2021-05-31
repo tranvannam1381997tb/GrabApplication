@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.grabapplication.GrabApplication
 import com.example.grabapplication.R
 import com.example.grabapplication.common.*
+import com.example.grabapplication.connecttion.HttpConnection
 import com.example.grabapplication.customviews.ConfirmDialog
 import com.example.grabapplication.databinding.ActivityMainBinding
 import com.example.grabapplication.firebase.FirebaseConnection
@@ -111,8 +112,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 if (currentFragment == Constants.FRAGMENT_WAIT_DRIVER && fragmentBottom is WaitDriverFragment) {
                     (fragmentBottom as WaitDriverFragment).countDownTimer?.cancel()
                     this@MainActivity.runOnUiThread {
-                        AppPreferences.getInstance(GrabApplication.getAppContext()).bookInfoPreferences = mainViewModel.bookInfo.get()!!
                         gotoDriverGoingFragment(DriverGoingFragment.STATUS_ARRIVING_ORIGIN, jsonData)
+                        saveBookInfo(jsonData)
                     }
                 }
             }
@@ -135,7 +136,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             override fun handleDriverGoing(jsonData: JSONObject) {
                 if (currentFragment == Constants.FRAGMENT_DRIVER_GOING && fragmentBottom is DriverGoingFragment) {
                     this@MainActivity.runOnUiThread {
-                        gotoDriverGoingFragment(DriverGoingFragment.STATUS_START_GOING, jsonData)
+                        gotoDriverGoingFragment(DriverGoingFragment.STATUS_ARRIVING_DESTINATION, jsonData)
                     }
                 }
             }
@@ -178,7 +179,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     }
 
     private fun getDataBook() {
-        val bookInfoPreferences = AppPreferences.getInstance(this).bookInfoPreferences
+        val appPreferences = AppPreferences.getInstance(this)
+        val bookInfoPreferences = appPreferences.bookInfoPreferences
+        val jsonData = appPreferences.jsonDataBookInfo
         if (bookInfoPreferences != null) {
             mainViewModel.bookInfo.set(bookInfoPreferences)
             val driverInfo = bookInfoPreferences.driverInfo!!
@@ -186,21 +189,20 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 if (it) {
                     when(driverInfo.status) {
                         DriverStatus.StatusArrivingOrigin.rawValue -> {
-
+                            gotoDriverGoingFragment(DriverGoingFragment.STATUS_ARRIVING_ORIGIN, jsonData)
                         }
-                        DriverStatus.StatusWaitingUser.rawValue -> {
-
+                        DriverStatus.StatusArrivedOrigin.rawValue -> {
+                            gotoDriverGoingFragment(DriverGoingFragment.STATUS_ARRIVED_ORIGIN, jsonData)
                         }
                         DriverStatus.StatusArrivingDestination.rawValue -> {
-
+                            gotoDriverGoingFragment(DriverGoingFragment.STATUS_ARRIVING_DESTINATION, jsonData)
                         }
-                        DriverStatus.StatusBilling.rawValue -> {
-
+                        DriverStatus.StatusArrivedDestination.rawValue -> {
+                            gotoDriverGoingFragment(DriverGoingFragment.STATUS_ARRIVED_DESTINATION, jsonData)
                         }
                     }
                 }
             }
-
         }
     }
 
@@ -604,8 +606,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         dialogError.show()
     }
 
-    private fun saveBookInfo() {
-       // TODO
+    private fun saveBookInfo(jsonData: JSONObject) {
+        val appPreferences = AppPreferences.getInstance(this)
+        appPreferences.bookInfoPreferences = mainViewModel.bookInfo.get()
+        appPreferences.jsonDataBookInfo = jsonData
     }
 
     companion object {

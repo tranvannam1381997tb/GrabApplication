@@ -46,9 +46,9 @@ enum class DriverStatus(val rawValue: Int) {
     StatusOff(-1),
     StatusOn(0),
     StatusArrivingOrigin(1),
-    StatusWaitingUser(2),
+    StatusArrivedOrigin(2),
     StatusArrivingDestination(3),
-    StatusBilling(4)
+    StatusArrivedDestination(4)
 }
 
 enum class TypeDriverValue(val rawValue: String) {

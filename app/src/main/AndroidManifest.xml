@@ -74,6 +74,9 @@
         <receiver android:name=".services.GetListDriverReceiver"
             android:enabled="true">
         </receiver>
+        <receiver android:name=".services.GetPolicyReceiver"
+            android:enabled="true">
+        </receiver>
     </application>
 
 </manifest>

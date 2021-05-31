@@ -123,10 +123,12 @@ class HttpConnection private constructor() {
     }
 
     fun voteStarDriver(driverId: String, rating: Int) {
-        val url = String.format(URL_LOGIN_FORMAT, HOST)
+        val url = String.format(URL_RATING, HOST)
         val jsonBody = createBodyRequestVote(driverId, rating)
         val jsonObjectRequest = object : JsonObjectRequest(Method.POST, url, jsonBody, Response.Listener<JSONObject> {
+            Log.d("NamTV", "voteStarDriver $it")
         }, Response.ErrorListener {
+            Log.d("NamTV", "voteStarDriver $it")
         }) {
             override fun getHeaders(): MutableMap<String, String> {
                 val params = HashMap<String, String>()
@@ -148,8 +150,9 @@ class HttpConnection private constructor() {
 
         try {
             jsonObject.put(DriverInfoKey.KeyDriverId.rawValue, driverId)
-            jsonObject.put(DriverInfoKey.KeyRate.rawValue, rating)
+            jsonObject.put(KEY_VOTE, rating)
 
+            Log.d("NamTV", "json = $jsonObject")
         } catch (e: JSONException) {
             Log.e("NamTV", "FirebaseConnection::pushNotifyToDriver: $e")
         } finally {
@@ -157,12 +160,45 @@ class HttpConnection private constructor() {
         }
     }
 
+    fun getPolicy(callback: (Boolean, JSONObject) -> Unit) {
+        val url = String.format(URL_GET_POLICY, HOST)
+        val jsonBody = JSONObject()
+        jsonBody.put(DriverInfoKey.KeyDriverId.rawValue, AccountManager.getInstance().getUserId())
+        val jsonObjectRequest = object : JsonObjectRequest(Method.GET, url, jsonBody, Response.Listener<JSONObject> {
+            if (it.has(Constants.KEY_SUCCESS)) {
+                callback.invoke(true, it)
+            } else {
+                callback.invoke(false, it)
+            }
+            Log.d("NamTV", "policy = $it")
+        }, Response.ErrorListener {
+            callback.invoke(false, JSONObject())
+        }) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val params = HashMap<String, String>()
+                params["Content-Type"] = "application/json; charset=utf-8"
+                params["Accept"] = "application/json"
+                return params
+            }
+        }
+        jsonObjectRequest.retryPolicy = DefaultRetryPolicy(
+                CONNECTION_TIMEOUT,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        val requestQueue = Volley.newRequestQueue(GrabApplication.getAppContext())
+        requestQueue.add(jsonObjectRequest)
+    }
+
     companion object {
         private const val URL_LOGIN_FORMAT = "http://%s/api/user/login"
         private const val URL_SIGN_UP = "http://%s/api/user/create"
         private const val URL_GET_LIST_DRIVER = "http://%s/api/user/find-drivers"
+        private const val URL_RATING = "http://%s/api/user/rating"
+        private const val URL_GET_POLICY = "http://%s/api/policy/get"
         private const val HOST = "192.168.1.215:3000"
         private const val CONNECTION_TIMEOUT = 30000
+
+        private const val KEY_VOTE = "vote"
 
         private var instance: HttpConnection? = null
         fun getInstance(): HttpConnection {

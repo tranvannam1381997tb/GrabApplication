@@ -53,6 +53,7 @@ class InputInfoFragment : Fragment() {
                         val userId = CommonUtils.getStringFromJsonObject(jsonObject, UserInfoKey.KeyUserId.rawValue)
                         val accountManager = AccountManager.getInstance()
                         accountManager.saveUserId(userId)
+                        accountManager.getPolicy()
                         startMainActivity()
                     } else {
                         showToastError(dataResponse)

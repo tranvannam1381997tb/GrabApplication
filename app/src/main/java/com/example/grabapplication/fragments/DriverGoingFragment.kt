@@ -57,7 +57,7 @@ class DriverGoingFragment : Fragment() {
 
                 STATUS_ARRIVED_ORIGIN -> updateLayoutArrivedOrigin(jsonData.getString(FirebaseConstants.KEY_START_ADDRESS))
 
-                STATUS_START_GOING -> updateLayoutGoing(bundle.getInt(FirebaseConstants.KEY_TIME_ARRIVED_DESTINATION))
+                STATUS_ARRIVING_DESTINATION -> updateLayoutGoing(bundle.getInt(FirebaseConstants.KEY_TIME_ARRIVED_DESTINATION))
 
                 STATUS_ARRIVED_DESTINATION -> updateLayoutArrivedDestination()
             }
@@ -115,7 +115,7 @@ class DriverGoingFragment : Fragment() {
         const val JSON_DATA = "jsonData"
         const val STATUS_ARRIVING_ORIGIN = 0
         const val STATUS_ARRIVED_ORIGIN = 1
-        const val STATUS_START_GOING = 2
+        const val STATUS_ARRIVING_DESTINATION = 2
         const val STATUS_ARRIVED_DESTINATION = 3
     }
 }

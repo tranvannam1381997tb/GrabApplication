@@ -31,6 +31,16 @@ class AppPreferences private constructor(context: Context) {
             editor.putString(BOOK_INFO, json).commit()
         }
 
+    var jsonDataBookInfo: JSONObject = JSONObject()
+        get() {
+            val json = prefs.getString(JSON_DATA_BOOK_INFO, "{}")
+            return JSONObject(json!!)
+        }
+        set(value) {
+            field = value
+            editor.putString(JSON_DATA_BOOK_INFO, value.toString()).commit()
+        }
+
     var priceOfKilometer: Int = 5000
         get() {
             return prefs.getInt(PRICE_OF_KILOMETER, 5000)
@@ -69,6 +79,7 @@ class AppPreferences private constructor(context: Context) {
 
     companion object : SingletonHolder<AppPreferences, Context>(::AppPreferences) {
         const val BOOK_INFO = "bookInfo"
+        const val JSON_DATA_BOOK_INFO = "jsonDataBookInfo"
         const val PRICE_OF_KILOMETER = "priceOfKilometer"
         const val RATE_POINT = "ratePoint"
         const val DISTANCE_POINT = "distancePoint"
