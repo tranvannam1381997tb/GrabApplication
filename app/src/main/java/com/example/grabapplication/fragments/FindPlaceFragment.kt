@@ -86,6 +86,7 @@ class FindPlaceFragment : Fragment() {
                 MapsConnection.getInstance().getShortestWay(placeModel.lat, placeModel.lng) {
                     it.endAddress = placeModel.formattedAddress
                     updateDistancePlaceChoose(it)
+                    updateLayoutDistanceInfo()
                     showListPlace(false)
                 }
             }
@@ -118,6 +119,12 @@ class FindPlaceFragment : Fragment() {
 
     private fun showListPlace(show: Boolean) {
         findPlaceViewModel.isShowingListPlace.set(show)
+    }
+
+    private fun updateLayoutDistanceInfo() {
+        binding.txtDistance.text = getString(R.string.distance_length, findPlaceViewModel.bookInfo.get()!!.distance)
+        binding.txtDuration.text = getString(R.string.time_to_move, findPlaceViewModel.bookInfo.get()!!.duration)
+        binding.txtPrice.text = getString(R.string.notify_price, findPlaceViewModel.bookInfo.get()!!.price)
     }
 
     private fun getPrice(distanceValue: Int): String {

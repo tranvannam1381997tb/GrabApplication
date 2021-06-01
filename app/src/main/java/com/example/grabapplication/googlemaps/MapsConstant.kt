@@ -7,7 +7,7 @@ import com.google.android.gms.maps.model.LatLng
 class MapsConstant {
     companion object {
         const val URL_DIRECTION = "https://maps.googleapis.com/maps/api/directions/json?origin=%s&destination=%s&key=%s"
-        const val URL_FIND_PLACE = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=%s&key=%s"
+        const val URL_FIND_PLACE = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=%s&region=vn&key=%s"
         const val URL_GEOCODE_PLACE = "https://maps.googleapis.com/maps/api/geocode/json?latlng=%s&key=%s"
         const val URL_ENCODE_CHARSETS = "UTF-8"
         const val BASE_URL_GOOGLE_MAP = "https://maps.googleapis.com"

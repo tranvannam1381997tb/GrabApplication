@@ -82,6 +82,15 @@
                     android:text="@{@string/time_to_move(viewModel.bookInfo.duration)}"
                     android:textColor="@color/color_child_info_driver"
                     android:textSize="@dimen/text_size_info" />
+
+                <TextView
+                    android:id="@+id/txtPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@{@string/time_to_move(viewModel.bookInfo.duration)}"
+                    android:textColor="@color/color_child_info_driver"
+                    android:textSize="@dimen/text_size_info" />
             </LinearLayout>
 
             <Button
