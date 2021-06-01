@@ -407,7 +407,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         fragmentBottom = null
         for (fragment in supportFragmentManager.fragments) {
             if (fragment !is SupportMapFragment) {
-                supportFragmentManager.beginTransaction().remove(fragment).commit()
+                supportFragmentManager.beginTransaction().remove(fragment).commitAllowingStateLoss()
             }
         }
         scheduleGotoDriverSuggestFragment()
@@ -430,7 +430,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                         R.anim.pop_out_top
                 )
                 transaction.addToBackStack(null)
-                transaction.replace(R.id.fragmentBottom, fragmentBottom as DriverSuggestFragment).commit()
+                transaction.replace(R.id.fragmentBottom, fragmentBottom as DriverSuggestFragment).commitAllowingStateLoss()
                 updateSizeFragmentBook()
             }
         }, 1000L)
@@ -451,7 +451,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 R.anim.pop_out_top
         )
         transaction.addToBackStack(null)
-        transaction.replace(R.id.fragmentBottom, fragmentBottom as InfoDriverFragment).commit()
+        transaction.replace(R.id.fragmentBottom, fragmentBottom as InfoDriverFragment).commitAllowingStateLoss()
         updateSizeFragmentBook()
 
     }
@@ -471,7 +471,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             R.anim.pop_out_top
         )
         transaction.addToBackStack(null)
-        transaction.add(R.id.fragmentBottom, fragmentBottom as FindPlaceFragment).commit()
+        transaction.add(R.id.fragmentBottom, fragmentBottom as FindPlaceFragment).commitAllowingStateLoss()
 
         updateSizeFragmentBook()
     }
@@ -490,7 +490,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             R.anim.pop_in_bottom,
             R.anim.pop_out_top
         )
-        transaction.replace(R.id.fragmentBottom, fragmentBottom as WaitDriverFragment).commit()
+        transaction.replace(R.id.fragmentBottom, fragmentBottom as WaitDriverFragment).commitAllowingStateLoss()
         updateSizeFragmentBook()
     }
 
@@ -515,7 +515,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             R.anim.pop_in_bottom,
             R.anim.pop_out_top
         )
-        transaction.replace(R.id.fragmentBottom, fragmentBottom as DriverGoingFragment).commit()
+        transaction.replace(R.id.fragmentBottom, fragmentBottom as DriverGoingFragment).commitAllowingStateLoss()
         updateSizeFragmentBook()
     }
 
@@ -534,7 +534,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             R.anim.pop_in_bottom,
             R.anim.pop_out_top
         )
-        transaction.replace(R.id.fragmentBill, fragmentBottom as BillFragment).commit()
+        transaction.replace(R.id.fragmentBill, fragmentBottom as BillFragment).commitAllowingStateLoss()
     }
 
     private fun updateSizeFragmentBook() {
