@@ -52,6 +52,10 @@ class BillFragment : Fragment() {
                     (activity as MainActivity).gotoMapFragment()
                 }
             }
+
+            override fun clickIconPhone() {
+                // Do nothing
+            }
         }
     }
 }

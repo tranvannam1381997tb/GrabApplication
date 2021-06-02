@@ -93,13 +93,15 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
+                    android:id="@+id/iconPhone"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_gravity="center"
                     android:src="@drawable/phone_call"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:onSingleClick="@{() -> viewModel.onItemClickListener.clickIconPhone()}"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout

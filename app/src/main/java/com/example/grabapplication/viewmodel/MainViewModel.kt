@@ -1,10 +1,11 @@
 package com.example.grabapplication.viewmodel
 
-import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import androidx.core.content.ContextCompat.startActivity
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.grabapplication.common.Constants
 import com.example.grabapplication.googlemaps.MapsConnection
 import com.example.grabapplication.googlemaps.MapsConstant
 import com.example.grabapplication.googlemaps.models.Distance
@@ -40,6 +41,7 @@ class MainViewModel: ViewModel() {
         fun openFindPlaceFragment()
         fun bookDriver()
         fun endBook()
+        fun clickIconPhone()
     }
 
     interface OnClickDriverSuggest {

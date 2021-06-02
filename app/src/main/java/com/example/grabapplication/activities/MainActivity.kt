@@ -2,7 +2,9 @@ package com.example.grabapplication.activities
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -104,7 +106,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         }
 
         Places.createClient(this)
-
     }
 
     private fun initView() {
@@ -131,6 +132,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             override fun handleDriverReject() {
                 if (currentFragment == Constants.FRAGMENT_WAIT_DRIVER && fragmentBottom is WaitDriverFragment) {
                     (fragmentBottom as WaitDriverFragment).showDialogBookNew()
+                    AppPreferences.getInstance(this@MainActivity).bookInfoPreferences = null
                 }
             }
 
@@ -139,6 +141,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                     this@MainActivity.runOnUiThread {
                         gotoDriverGoingFragment(DriverGoingFragment.STATUS_ARRIVED_ORIGIN, jsonData)
                         timeDriverArrivedDestination = jsonData.getInt(FirebaseConstants.KEY_TIME_ARRIVED_DESTINATION)
+                        saveBookInfo(jsonData)
                     }
                 }
             }
@@ -147,6 +150,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 if (currentFragment == Constants.FRAGMENT_DRIVER_GOING && fragmentBottom is DriverGoingFragment) {
                     this@MainActivity.runOnUiThread {
                         gotoDriverGoingFragment(DriverGoingFragment.STATUS_ARRIVING_DESTINATION, jsonData)
+                        saveBookInfo(jsonData)
                     }
                 }
             }
@@ -155,6 +159,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 if (currentFragment == Constants.FRAGMENT_DRIVER_GOING && fragmentBottom is DriverGoingFragment) {
                     this@MainActivity.runOnUiThread {
                         gotoDriverGoingFragment(DriverGoingFragment.STATUS_ARRIVED_DESTINATION, jsonData)
+                        saveBookInfo(jsonData)
                     }
                 }
             }
@@ -180,6 +185,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
             override fun endBook() {
                 // Bill Fragment worked
+            }
+
+            override fun clickIconPhone() {
+                val callIntent = Intent(Intent.ACTION_CALL)
+                callIntent.data = Uri.parse("tel:${mainViewModel.bookInfo.get()!!.driverInfo!!.phoneNumber}")
+                startActivity(callIntent)
             }
         }
 

@@ -113,7 +113,6 @@ class WaitDriverFragment : Fragment() {
         dialog!!.setOnClickOK(View.OnClickListener {
             dialog!!.dismiss()
             gotoMapFragment()
-            // TODO
         })
 
         dialog!!.setTextTypeBoldBtnOK()

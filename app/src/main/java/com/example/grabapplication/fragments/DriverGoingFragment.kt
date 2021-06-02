@@ -1,5 +1,7 @@
 package com.example.grabapplication.fragments
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -45,6 +47,12 @@ class DriverGoingFragment : Fragment() {
                 STATUS_ARRIVING_ORIGIN -> handleClickBtnCancel()
             }
         })
+
+        binding.iconPhone.setOnSingleClickListener(View.OnClickListener {
+            val callIntent = Intent(Intent.ACTION_CALL)
+            callIntent.data = Uri.parse("tel:${driverGoingViewModel.bookInfo.get()!!.driverInfo!!.phoneNumber}")
+            startActivity(callIntent)
+        })
     }
 
     private fun updateLayout() {
@@ -57,7 +65,7 @@ class DriverGoingFragment : Fragment() {
 
                 STATUS_ARRIVED_ORIGIN -> updateLayoutArrivedOrigin(jsonData.getString(FirebaseConstants.KEY_START_ADDRESS))
 
-                STATUS_ARRIVING_DESTINATION -> updateLayoutGoing(bundle.getInt(FirebaseConstants.KEY_TIME_ARRIVED_DESTINATION))
+                STATUS_ARRIVING_DESTINATION -> updateLayoutArrivingDestination(bundle.getInt(FirebaseConstants.KEY_TIME_ARRIVED_DESTINATION))
 
                 STATUS_ARRIVED_DESTINATION -> updateLayoutArrivedDestination()
             }
@@ -84,7 +92,7 @@ class DriverGoingFragment : Fragment() {
         binding.txtNotify.visibility = View.VISIBLE
     }
 
-    private fun updateLayoutGoing(timeDriverArrivedDestination: Int) {
+    private fun updateLayoutArrivingDestination(timeDriverArrivedDestination: Int) {
         binding.description.setText(R.string.driver_start_going)
         binding.btnCancel.visibility = View.GONE
         val currentTime = Calendar.getInstance()
