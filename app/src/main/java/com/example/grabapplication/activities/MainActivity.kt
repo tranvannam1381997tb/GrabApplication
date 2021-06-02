@@ -19,7 +19,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.grabapplication.GrabApplication
 import com.example.grabapplication.R
 import com.example.grabapplication.common.*
-import com.example.grabapplication.connecttion.HttpConnection
 import com.example.grabapplication.customviews.ConfirmDialog
 import com.example.grabapplication.databinding.ActivityMainBinding
 import com.example.grabapplication.firebase.FirebaseConnection
@@ -37,10 +36,12 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.*
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.libraries.places.api.Places
 import kotlinx.android.synthetic.main.activity_main.*
 import org.json.JSONObject
-import kotlin.collections.HashMap
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener{
 
@@ -95,6 +96,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     private fun initDataMap() {
         // Construct a FusedLocationProviderClient.
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+
+        val apiKey = getString(R.string.maps_api_key)
+
+        if (!Places.isInitialized()) {
+            Places.initialize(GrabApplication.getAppContext(), apiKey)
+        }
+
+        Places.createClient(this)
+
     }
 
     private fun initView() {
@@ -537,7 +547,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         transaction.replace(R.id.fragmentBill, fragmentBottom as BillFragment).commitAllowingStateLoss()
     }
 
-    private fun updateSizeFragmentBook() {
+    fun updateSizeFragmentBook() {
         val layoutParams = binding.fragmentBottom.layoutParams
         layoutParams.height = FrameLayout.LayoutParams.WRAP_CONTENT
         layoutParams.width = FrameLayout.LayoutParams.MATCH_PARENT
@@ -553,10 +563,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             getString(R.string.cancel_book)
         )
         dialogConfirm.setOnClickOK(View.OnClickListener {
-            dialogConfirm.dismiss()
-            gotoMapFragment()
-
-            // TODO
+            FirebaseConnection.getInstance().pushNotifyToCancelBook(mainViewModel.bookInfo.get()!!) {
+                dialogConfirm.dismiss()
+                gotoMapFragment()
+            }
         })
         dialogConfirm.setOnClickCancel(View.OnClickListener {
             dialogConfirm.dismiss()

@@ -125,10 +125,11 @@ class HttpConnection private constructor() {
     fun voteStarDriver(driverId: String, rating: Int) {
         val url = String.format(URL_RATING, HOST)
         val jsonBody = createBodyRequestVote(driverId, rating)
+        Log.d("NamTV", "voteStarDriver $jsonBody")
         val jsonObjectRequest = object : JsonObjectRequest(Method.POST, url, jsonBody, Response.Listener<JSONObject> {
-            Log.d("NamTV", "voteStarDriver $it")
+            Log.d("NamTV", "voteStarDriver success $it")
         }, Response.ErrorListener {
-            Log.d("NamTV", "voteStarDriver $it")
+            Log.d("NamTV", "voteStarDriver error $it")
         }) {
             override fun getHeaders(): MutableMap<String, String> {
                 val params = HashMap<String, String>()
@@ -195,7 +196,7 @@ class HttpConnection private constructor() {
         private const val URL_GET_LIST_DRIVER = "http://%s/api/user/find-drivers"
         private const val URL_RATING = "http://%s/api/user/rating"
         private const val URL_GET_POLICY = "http://%s/api/policy/get"
-        private const val HOST = "192.168.1.215:3000"
+        private const val HOST = "10.0.40.65:3000"
         private const val CONNECTION_TIMEOUT = 30000
 
         private const val KEY_VOTE = "vote"
@@ -213,5 +214,3 @@ class HttpConnection private constructor() {
         }
     }
 }
-
-class CompletionHandler(var data: String?, var error: String?, var responseCode: Int?)

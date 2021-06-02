@@ -14,7 +14,6 @@
     <string name="channel_id">channel1</string>
 
     <string name="description_map_screen">Đặt xe</string>
-    <string name="prompt_start_address">Gặp tôi ở…</string>
     <string name="prompt_end_address">Bạn đến đâu?</string>
 
     //Info driver fragment
@@ -27,6 +26,7 @@
     <string name="time_to_you">Thời gian đến chỗ bạn: %s</string>
 
     //Find place fragment
+    <string name="description_find_place">Nhập nơi bạn đến</string>
     <string name="time_to_move">Thời gian di chuyển: %s</string>
     <string name="distance_length">Khoảng cách: %s</string>
     <string name="confirm_book_driver">Bạn có muốn đặt cuốc xe này chứ?</string>

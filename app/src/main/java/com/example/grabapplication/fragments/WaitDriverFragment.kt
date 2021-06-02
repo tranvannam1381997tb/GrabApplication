@@ -48,8 +48,6 @@ class WaitDriverFragment : Fragment() {
         binding.btnCancel.setOnSingleClickListener(View.OnClickListener {
             showDialogConfirmCancelBook()
         })
-
-
     }
 
     private fun setupCountDownTimer() {

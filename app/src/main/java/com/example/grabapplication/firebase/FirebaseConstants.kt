@@ -16,6 +16,7 @@ class FirebaseConstants {
         const val KEY_LAT_END = "latEnd"
         const val KEY_LNG_END = "lngEnd"
         const val KEY_USER_ID = "userId"
+        const val KEY_DRIVER_ID = "driverId"
         const val KEY_PRICE = "price"
         const val KEY_DISTANCE = "distance"
         const val KEY_NAME = "name"
@@ -23,6 +24,7 @@ class FirebaseConstants {
         const val KEY_AGE = "age"
         const val KEY_PHONE_NUMBER = "phoneNumber"
         const val KEY_BOOK_DRIVER = "bookDriver"
+        const val KEY_CANCEL_BOOK = "cancelBook"
 
         const val KEY_TO = "to"
         const val KEY_DATA = "data"

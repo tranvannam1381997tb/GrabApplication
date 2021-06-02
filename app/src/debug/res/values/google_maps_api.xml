@@ -1,4 +1,3 @@
 <resources>
-    <string name="maps_api_key">AIzaSyCzFv4J8WqEmHet8aTBF_vP2gSa9CC0DFo</string>
-    <string name="directions_api_key">AIzaSyD4uKs3ygHu0zrfIp9zjg5ioZ6COnjzIpc</string>
+    <string name="maps_api_key">AIzaSyD4uKs3ygHu0zrfIp9zjg5ioZ6COnjzIpc</string>
 </resources>

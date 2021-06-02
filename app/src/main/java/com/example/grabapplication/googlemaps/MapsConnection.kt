@@ -9,7 +9,6 @@ import com.example.grabapplication.common.AccountManager
 import com.example.grabapplication.common.CommonUtils
 import com.example.grabapplication.googlemaps.models.Distance
 import com.example.grabapplication.googlemaps.models.PlaceModel
-import com.google.android.gms.maps.model.LatLng
 import org.json.JSONObject
 import java.net.URLEncoder
 import kotlin.collections.ArrayList
@@ -92,7 +91,7 @@ class MapsConnection private constructor() {
             originLocation,
             destinationLocation,
             GrabApplication.getAppContext().getString(
-                R.string.directions_api_key
+                R.string.maps_api_key
             )
         )
     }
@@ -154,7 +153,7 @@ class MapsConnection private constructor() {
         val placeEncode = encodeURL(place)
         return String.format(
             MapsConstant.URL_FIND_PLACE, placeEncode, GrabApplication.getAppContext().getString(
-                R.string.directions_api_key
+                R.string.maps_api_key
             )
         )
     }

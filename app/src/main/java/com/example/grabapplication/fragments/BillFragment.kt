@@ -1,6 +1,7 @@
 package com.example.grabapplication.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,6 +35,7 @@ class BillFragment : Fragment() {
     private fun setupEvent() {
         billViewModel.onItemClickListener = object : MainViewModel.OnItemClickListener {
             override fun openFindPlaceFragment() {
+                Log.d("NamTV", "test")
                 // Do nothing
             }
 

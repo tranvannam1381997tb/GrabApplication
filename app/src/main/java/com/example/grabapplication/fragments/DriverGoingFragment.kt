@@ -84,7 +84,6 @@ class DriverGoingFragment : Fragment() {
         binding.txtNotify.visibility = View.VISIBLE
     }
 
-
     private fun updateLayoutGoing(timeDriverArrivedDestination: Int) {
         binding.description.setText(R.string.driver_start_going)
         binding.btnCancel.visibility = View.GONE

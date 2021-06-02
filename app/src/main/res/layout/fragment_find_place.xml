@@ -8,10 +8,6 @@
         <import type="android.view.View" />
 
         <variable
-            name="adapter"
-            type="com.example.grabapplication.adapters.ListPlaceAdapter" />
-
-        <variable
             name="viewModel"
             type="com.example.grabapplication.viewmodel.MainViewModel" />
     </data>
@@ -25,36 +21,41 @@
         android:focusable="true"
         android:padding="20dp">
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/edtEndAddress"
+        <TextView
+            android:id="@+id/description"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:focusableInTouchMode="true"
-            android:hint="@string/prompt_end_address"
-            android:imeOptions="actionDone"
-            android:inputType="textNoSuggestions"
-            android:maxLines="1"
-            android:singleLine="true"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/description_find_place"
+            android:textColor="@color/color_black"
+            android:textSize="@dimen/text_size_description"
+            android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.recyclerview.widget.RecyclerView
+        <LinearLayout
+            android:id="@+id/layoutPlaceSearch"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:visibility="@{viewModel.isShowingListPlace ? View.VISIBLE : View.INVISIBLE}"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/edtEndAddress"
-            app:setAdapter="@{adapter}"
-            tools:visibility="gone" />
+            android:background="@drawable/edit_text_style"
+            app:layout_constraintTop_toBottomOf="@+id/description">
+
+            <fragment
+                android:id="@+id/autocomplete_fragment"
+                android:name="com.example.grabapplication.customviews.CustomAutoCompletedSearch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_book_driver"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:visibility="@{viewModel.isShowingListPlace ? View.INVISIBLE : View.VISIBLE}"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/edtEndAddress">
+            app:layout_constraintTop_toBottomOf="@id/layoutPlaceSearch">
 
             <LinearLayout
                 android:id="@+id/layout_distance_info"
@@ -70,27 +71,27 @@
                     android:id="@+id/txtDistance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{@string/distance_length(viewModel.bookInfo.distance)}"
                     android:textColor="@color/color_child_info_driver"
-                    android:textSize="@dimen/text_size_info" />
+                    android:textSize="@dimen/text_size_info"
+                    tools:text="@{@string/distance_length(viewModel.bookInfo.distance)}" />
 
                 <TextView
                     android:id="@+id/txtDuration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="@{@string/time_to_move(viewModel.bookInfo.duration)}"
                     android:textColor="@color/color_child_info_driver"
-                    android:textSize="@dimen/text_size_info" />
+                    android:textSize="@dimen/text_size_info"
+                    tools:text="@{@string/time_to_move(viewModel.bookInfo.duration)}" />
 
                 <TextView
                     android:id="@+id/txtPrice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="@{@string/time_to_move(viewModel.bookInfo.duration)}"
                     android:textColor="@color/color_child_info_driver"
-                    android:textSize="@dimen/text_size_info" />
+                    android:textSize="@dimen/text_size_info"
+                    tools:text="@{@string/time_to_move(viewModel.bookInfo.duration)}" />
             </LinearLayout>
 
             <Button

@@ -13,7 +13,6 @@ import com.example.grabapplication.model.BookInfo
 import com.example.grabapplication.model.DriverInfo
 
 class MainViewModel: ViewModel() {
-    var isShowingListPlace = ObservableField(true)
     var isShowingLayoutBottom = ObservableField(false)
     var isShowingLayoutBill = ObservableField(false)
     var isShowingListDriverSuggest = ObservableField(false)
