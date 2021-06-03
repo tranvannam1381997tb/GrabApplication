@@ -85,4 +85,5 @@
 
     // Driver Suggest Fragment
     <string name="description_driver_suggest">Tài xế gợi ý cho bạn</string>
+    <string name="distance_to_you_driver_suggest">Khoảng cách đến chỗ bạn: %skm</string>
 </resources>

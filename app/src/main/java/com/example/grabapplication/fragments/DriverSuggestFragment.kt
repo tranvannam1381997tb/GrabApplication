@@ -17,6 +17,7 @@ import com.example.grabapplication.activities.MainActivity
 import com.example.grabapplication.adapters.DriverSuggestAdapter
 import com.example.grabapplication.common.DriverManager
 import com.example.grabapplication.common.setOnSingleClickListener
+import com.example.grabapplication.connecttion.HttpConnection
 import com.example.grabapplication.databinding.FragmentDriverSuggestBinding
 import com.example.grabapplication.model.DriverInfo
 import com.example.grabapplication.model.DriverStatus
@@ -98,6 +99,7 @@ class DriverSuggestFragment : Fragment() {
         val listDriver = ArrayList<DriverInfo>()
         for (driverInfo in mutableDriver) {
             if (driverInfo.status == DriverStatus.StatusOn.rawValue) {
+                HttpConnection
                 listDriver.add(driverInfo)
                 if (listDriver.size >= 5) {
                     break

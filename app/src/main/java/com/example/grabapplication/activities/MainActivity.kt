@@ -417,6 +417,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             callback.invoke(true)
             gotoInfoDriverFragment()
         }
+        mainViewModel.isShowingProgress.set(true)
     }
 
     fun gotoMapFragment() {
@@ -461,6 +462,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         mainViewModel.isShowingLayoutBottom.set(true)
         mainViewModel.isShowingLayoutBill.set(false)
         mainViewModel.isShowingIconBack.set(true)
+        mainViewModel.isShowingProgress.set(false)
 
         fragmentBottom = InfoDriverFragment()
         currentFragment = Constants.FRAGMENT_INFO_DRIVER
@@ -558,7 +560,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         transaction.replace(R.id.fragmentBill, fragmentBottom as BillFragment).commitAllowingStateLoss()
     }
 
-    fun updateSizeFragmentBook() {
+    private fun updateSizeFragmentBook() {
         val layoutParams = binding.fragmentBottom.layoutParams
         layoutParams.height = FrameLayout.LayoutParams.WRAP_CONTENT
         layoutParams.width = FrameLayout.LayoutParams.MATCH_PARENT

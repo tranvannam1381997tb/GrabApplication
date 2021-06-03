@@ -18,9 +18,9 @@ class MainViewModel: ViewModel() {
     var isShowingLayoutBill = ObservableField(false)
     var isShowingListDriverSuggest = ObservableField(false)
     var isShowingIconBack = ObservableField(false)
+    var isShowingProgress = ObservableField(false)
 
     var distanceDriver: Distance? = null
-    var listPlace = MutableLiveData<ArrayList<PlaceModel>>()
 
     var onItemClickListener: OnItemClickListener? = null
     var onClickDriverSuggest: OnClickDriverSuggest? = null

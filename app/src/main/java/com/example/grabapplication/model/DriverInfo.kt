@@ -1,6 +1,7 @@
 package com.example.grabapplication.model
 
 import android.os.Parcelable
+import com.example.grabapplication.googlemaps.models.Distance
 import kotlinx.android.parcel.Parcelize
 import java.util.*
 
@@ -20,6 +21,7 @@ data class DriverInfo(
     var typeDriver: String,
     var typeVehicle: String,
     var licensePlateNumber: String,
+    var distance: Float,
     var point: Float
 ) : Parcelable
 

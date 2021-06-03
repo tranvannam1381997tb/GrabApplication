@@ -16,18 +16,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:orientation="vertical"
-        android:paddingBottom="0dp">
+        android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/layout_name_driver"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
             android:gravity="start"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingStart="20dp"
+            android:paddingEnd="10dp">
 
             <TextView
                 android:id="@+id/name"
@@ -70,11 +70,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
             android:gravity="start"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingStart="20dp"
+            android:paddingEnd="10dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -117,12 +117,25 @@
                 tools:text="GrabBike" />
         </LinearLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="10dp"
+            android:text="@{@string/distance_to_you_driver_suggest(driverInfo.distance)}"
+            android:textColor="@color/color_child_info_driver"
+            android:textSize="@dimen/text_size_info"
+            tools:text="@string/distance_to_you" />
+
         <View
             android:id="@+id/line_end_item_driver"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-	        android:layout_marginStart="20dp"
-            android:background="@color/color_line_end_item_place" />
+            android:layout_marginTop="10dp"
+            android:background="@color/color_line_end_item_place"
+            android:paddingStart="20dp"
+            android:paddingEnd="0dp" />
 
         <View
             android:id="@+id/line_end_list_driver"

@@ -22,6 +22,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import org.json.JSONObject
 import java.util.*
+import kotlin.math.abs
 
 class DriverManager private constructor() {
     var listDriverHashMap: LinkedHashMap<String, DriverInfo> = LinkedHashMap()
@@ -85,13 +86,12 @@ class DriverManager private constructor() {
     private fun getInfoDriver() {
         for (driver in listDriverHashMap) {
             val driverInfo = driver.value
-            val listener = databaseDrivers.child(driverInfo.driverId).addValueEventListener(object : ValueEventListener {
+            val listener = FirebaseManager.getInstance().databaseDrivers.child(driverInfo.driverId).addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
+                    Log.d("NamTV", "onDataChange $snapshot")
                     val driverId = getDriverInfoFromDataSnapshot(snapshot)
                     val itemDriverInfo = listDriverHashMap[driverId]
                     if (itemDriverInfo != null) {
-
-                        Log.d("NamTV", "onDataChange $driverId ${listDriverHashMap[driverId]!!.latitude} ${listDriverHashMap[driverId]!!.longitude}")
                         if (itemDriverInfo.status != DriverStatus.StatusOn.rawValue) {
                             MainActivity.removeMarkerDriver(driverId)
                             listDriverHashMap.remove(driverId)
@@ -106,12 +106,13 @@ class DriverManager private constructor() {
                 }
             })
             listEventListener[driverInfo.driverId] = listener
+            Log.d("NamTV", "getInfoDriver listener driver ${driverInfo.driverId}")
         }
     }
 
     private fun clearAllEventListener() {
         for (eventListener in listEventListener) {
-            databaseDrivers.removeEventListener(eventListener.value)
+//            databaseDrivers.removeEventListener(eventListener.value)
         }
     }
 
@@ -128,6 +129,7 @@ class DriverManager private constructor() {
                 Log.d("NamTV", "onCancelled")
             }
         })
+        Log.d("NamTV", "getStatusHistoryBookInfo listener driver ${driverInfo.driverId}")
     }
 
     private fun removeEventListenerStatusHistory() {
@@ -169,7 +171,7 @@ class DriverManager private constructor() {
             val typeDriver = CommonUtils.getTypeDriver(driverJsonObject, DriverInfoKey.KeyTypeDriver.rawValue)
             val typeVehicle = CommonUtils.getStringFromJsonObject(driverJsonObject, DriverInfoKey.KeyTypeVehicle.rawValue)
             val licensePlateNumber = CommonUtils.getStringFromJsonObject(driverJsonObject, DriverInfoKey.KeyLicensePlateNumber.rawValue)
-            val distance = CommonUtils.getIntFromJsonObject(driverJsonObject, DriverInfoKey.KeyDistance.rawValue)
+            val distance = CommonUtils.getFloatFromJsonObject(driverJsonObject, DriverInfoKey.KeyDistance.rawValue)
             val point = scoreDriver(rate, distance, age)
 
             val driverInfo = DriverInfo(
@@ -187,6 +189,7 @@ class DriverManager private constructor() {
                 typeDriver = typeDriver,
                 typeVehicle = typeVehicle,
                 licensePlateNumber = licensePlateNumber,
+                distance = distance,
                 point = point
             )
             newListDriver[driverInfo.driverId] = driverInfo
@@ -200,15 +203,15 @@ class DriverManager private constructor() {
     }
 
     private fun sortListDriver(newListDriver: HashMap<String, DriverInfo>) {
-        val result = newListDriver.toList().sortedBy { (_, value) -> value.point}.toMap()
+        val result = newListDriver.toList().sortedBy { (_, value) -> value.distance}.toMap()
         listDriverHashMap.clear()
         for (entry in result) {
             listDriverHashMap[entry.key] = entry.value
-            Log.d("NamTV", "rate = ${entry.value.rate}")
         }
+        Log.d("NamTV", "listDriverHashMap size = ${listDriverHashMap.size}")
     }
 
-    private fun scoreDriver(rate: Float, distance: Int, age: Int): Float {
-        return (rate * appPreferences.ratePoint - distance * appPreferences.distancePoint + age * appPreferences.agePoint)
+    private fun scoreDriver(rate: Float, distance: Float, age: Int): Float {
+        return (rate * appPreferences.ratePoint - distance * 1000 * appPreferences.distancePoint - abs(AccountManager.getInstance().getAge() - age) * appPreferences.agePoint)
     }
 }
