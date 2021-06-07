@@ -282,7 +282,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     }
 
     override fun onBackPressed() {
-        if (currentFragment == Constants.FRAGMENT_INFO_DRIVER) {
+        if (currentFragment == Constants.FRAGMENT_INFO_DRIVER || currentFragment == Constants.FRAGMENT_DRIVER_SUGGEST) {
             currentFragment = Constants.FRAGMENT_MAP
             gotoMapFragment()
             return

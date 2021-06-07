@@ -28,7 +28,7 @@ class FirebaseConnection private constructor() {
     }
 
     fun pushNotifyToDriver(bookInfo: BookInfo, callback: (Boolean) -> Unit) {
-        FirebaseMessaging.getInstance().subscribeToTopic(bookInfo.driverInfo!!.driverId)
+        FirebaseMessaging.getInstance().subscribeToTopic(bookInfo.driverInfo!!.tokenId)
         val notification = createBodyRequestPush(bookInfo)
         val jsonObjectRequest = object : JsonObjectRequest(FirebaseConstants.FCM_API, notification,
             Response.Listener<JSONObject> {

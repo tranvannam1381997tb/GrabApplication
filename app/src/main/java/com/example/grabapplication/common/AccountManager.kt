@@ -10,8 +10,10 @@ import com.example.grabapplication.connecttion.HttpConnection
 import com.example.grabapplication.firebase.FirebaseManager
 import com.example.grabapplication.services.GetPolicyReceiver
 import com.google.android.gms.maps.model.LatLng
-import com.google.firebase.iid.FirebaseInstanceId
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import java.util.*
+
 
 class AccountManager private constructor() {
 
@@ -63,15 +65,17 @@ class AccountManager private constructor() {
             FirebaseManager.getInstance().updateTokenIdToFirebase(tokenId!!)
             return
         }
-        FirebaseInstanceId.getInstance().instanceId.addOnCompleteListener {
-            if(!it.isSuccessful){
-                Log.e("NamTV", "getInstanceId failed", it.exception)
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener {
+            if (!it.isSuccessful) {
                 return@addOnCompleteListener
             }
-            val token =  it.result?.token
-            Log.d("NamTV", "$token")
-            callback.invoke(token)
-            FirebaseManager.getInstance().updateTokenIdToFirebase(token!!)
+            val token = it.result
+            if (token != null) {
+                Log.d("NamTV", "$token")
+                callback.invoke(token)
+                FirebaseManager.getInstance().updateTokenIdToFirebase(token)
+            }
         }
     }
 
