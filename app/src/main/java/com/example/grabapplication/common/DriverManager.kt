@@ -112,7 +112,7 @@ class DriverManager private constructor() {
 
     private fun clearAllEventListener() {
         for (eventListener in listEventListener) {
-//            databaseDrivers.removeEventListener(eventListener.value)
+            databaseDrivers.removeEventListener(eventListener.value)
         }
     }
 
@@ -194,6 +194,9 @@ class DriverManager private constructor() {
             )
             newListDriver[driverInfo.driverId] = driverInfo
         }
+
+
+        newListDriver[Constants.driverInfoDefault.driverId] = Constants.driverInfoDefault
 
         if (newListDriver.isNotEmpty()) {
             sortListDriver(newListDriver)
