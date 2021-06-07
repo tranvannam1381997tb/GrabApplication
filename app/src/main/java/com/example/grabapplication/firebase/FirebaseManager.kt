@@ -24,12 +24,12 @@ class FirebaseManager private constructor() {
 
     val databaseDrivers: DatabaseReference
             by lazy {
-                FirebaseDatabase.getInstance().getReference("/drivers").child(FirebaseConstants.KEY_DRIVERS)
+                FirebaseDatabase.getInstance().reference.child(FirebaseConstants.KEY_DRIVERS)
             }
 
     private val databaseUsers: DatabaseReference
             by lazy {
-                FirebaseDatabase.getInstance().getReference("/users").child(FirebaseConstants.KEY_USERS)
+                FirebaseDatabase.getInstance().reference.child(FirebaseConstants.KEY_USERS)
             }
 
     fun updateLocationUserToFirebase(location: LatLng) {
