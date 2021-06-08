@@ -28,7 +28,7 @@ class DriverManager private constructor() {
     private val databaseDrivers = FirebaseManager.getInstance().databaseDrivers
     private var listenerStatusHistory : ValueEventListener? = null
     private val appPreferences: AppPreferences by lazy { AppPreferences.getInstance(GrabApplication.getAppContext()) }
-    private val typeDriverChooser = TypeDriverValue.GRAB_CAR
+    private var typeDriverChooser = TypeDriverValue.GRAB_BIKE
 
     companion object {
         private var instance: DriverManager? = null
@@ -58,6 +58,25 @@ class DriverManager private constructor() {
             listDriverHashMap[driverId!!] = driverInfo
         }
         return driverId!!
+    }
+
+    fun changeTypeDriverChoosing(typeDriver: TypeDriverValue) {
+        typeDriverChooser = typeDriver
+        MainActivity.clearMarkerDriver()
+        for (item in listDriverHashMap) {
+            val itemDriverInfo = item.value
+            if (itemDriverInfo.status != DriverStatus.StatusOn.rawValue) {
+                listDriverHashMap.remove(itemDriverInfo.driverId)
+                if (itemDriverInfo.typeDriver == typeDriver.rawValue) {
+                    MainActivity.removeMarkerDriver(itemDriverInfo.driverId)
+                }
+            } else {
+                if (itemDriverInfo.typeDriver == typeDriver.rawValue) {
+                    Log.d("NamTV", "addOrUpdateMarkerDriver $typeDriver ${itemDriverInfo.driverId}")
+                    MainActivity.addOrUpdateMarkerDriver(itemDriverInfo, typeDriver)
+                }
+            }
+        }
     }
 
     fun getHistoryDriverInfoFromDataSnapshot(snapshot: DataSnapshot, driverInfo: DriverInfo) {
@@ -93,9 +112,7 @@ class DriverManager private constructor() {
                     if (itemDriverInfo != null) {
                         if (itemDriverInfo.status != DriverStatus.StatusOn.rawValue) {
                             listDriverHashMap.remove(driverId)
-                            if (itemDriverInfo.typeDriver == typeDriverChooser.rawValue) {
-                                MainActivity.removeMarkerDriver(driverId)
-                            }
+                            MainActivity.removeMarkerDriver(driverId)
                         } else {
                             if (itemDriverInfo.typeDriver == typeDriverChooser.rawValue) {
                                 MainActivity.addOrUpdateMarkerDriver(listDriverHashMap[driverId]!!, typeDriverChooser)

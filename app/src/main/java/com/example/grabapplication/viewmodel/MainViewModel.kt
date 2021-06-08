@@ -51,6 +51,7 @@ class MainViewModel: ViewModel() {
 
     interface OnClickDriverSuggest {
         fun clickTxtSuggestDriver()
+        fun clickIconChangeTypeDriver()
     }
 }
 

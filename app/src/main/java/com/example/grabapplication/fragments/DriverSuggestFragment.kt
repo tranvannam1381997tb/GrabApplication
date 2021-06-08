@@ -88,6 +88,19 @@ class DriverSuggestFragment : Fragment() {
                     binding.txtSuggestDriver.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.down, 0)
                 }
             }
+
+            override fun clickIconChangeTypeDriver() {
+                if (driverSuggestViewModel.isChoosingGrabBike.get()!!) {
+                    driverSuggestViewModel.isChoosingGrabBike.set(false)
+                    binding.iconTypeDriver.setImageResource(R.drawable.car)
+                    DriverManager.getInstance().changeTypeDriverChoosing(TypeDriverValue.GRAB_CAR)
+                } else {
+                    driverSuggestViewModel.isChoosingGrabBike.set(true)
+                    binding.iconTypeDriver.setImageResource(R.drawable.motocross)
+                    DriverManager.getInstance().changeTypeDriverChoosing(TypeDriverValue.GRAB_BIKE)
+                }
+                getListDriverSuggest()
+            }
         }
 
         binding.iconRefresh.setOnSingleClickListener(View.OnClickListener {
