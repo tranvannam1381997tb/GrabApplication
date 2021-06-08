@@ -11,16 +11,20 @@ import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import com.example.grabapplication.GrabApplication
 import com.example.grabapplication.R
 import com.example.grabapplication.common.*
+import com.example.grabapplication.connecttion.HttpConnection
 import com.example.grabapplication.customviews.ConfirmDialog
 import com.example.grabapplication.databinding.ActivityMainBinding
 import com.example.grabapplication.firebase.FirebaseConnection
@@ -29,6 +33,7 @@ import com.example.grabapplication.fragments.*
 import com.example.grabapplication.googlemaps.MapsUtils
 import com.example.grabapplication.model.DriverInfo
 import com.example.grabapplication.model.DriverStatus
+import com.example.grabapplication.model.TypeDriverValue
 import com.example.grabapplication.services.BookListener
 import com.example.grabapplication.services.GrabFirebaseMessagingService
 import com.example.grabapplication.viewmodel.BaseViewModelFactory
@@ -61,11 +66,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 DriverManager.getInstance()
             }
 
-    private val accountManager: AccountManager
-            by lazy {
-                AccountManager.getInstance()
-            }
-
     private lateinit var transaction: FragmentTransaction
 
     // The entry point to the Fused Location Provider.
@@ -91,7 +91,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         initDataMap()
         initView()
         setupEvent()
-        accountManager.getTokenIdDevice {  }
+        setupDrawerLayout()
+        mainViewModel.accountManager.getTokenIdDevice {  }
         getDataBook()
     }
 
@@ -115,6 +116,24 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         mapFragment?.getMapAsync(this)
 
         transaction = supportFragmentManager.beginTransaction()
+    }
+
+    private fun setupDrawerLayout() {
+        findViewById<TextView>(R.id.layoutLeftTxtName).text = mainViewModel.accountManager.getName()
+        findViewById<TextView>(R.id.layoutLeftTxtAge).text = getString(R.string.age, mainViewModel.accountManager.getAge().toString())
+        findViewById<TextView>(R.id.layoutLeftTxtSex).text = getString(R.string.sex_info, mainViewModel.accountManager.getSex())
+        findViewById<TextView>(R.id.layoutLeftTxtPhoneNumber).text = getString(R.string.phone_number_info, mainViewModel.accountManager.getPhoneNumber())
+        findViewById<ImageView>(R.id.imgLogout).setOnSingleClickListener(View.OnClickListener {
+            HttpConnection.getInstance().logout {
+                Log.d("NamTV", "logout = $it")
+                if (it) {
+                    val intent = Intent(this, LoginActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    startActivity(intent)
+                    finish()
+                }
+            }
+        })
     }
 
     private fun setupEvent() {
@@ -196,6 +215,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
         binding.iconBack.setOnSingleClickListener(View.OnClickListener {
             onBackPressed()
+        })
+        binding.imgInfo.setOnSingleClickListener(View.OnClickListener {
+            binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+            binding.drawerLayout.openDrawer(binding.menuLeft)
         })
     }
 
@@ -322,7 +345,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                         for (location in locationResult.locations) {
                             if (location != null) {
                                 val currentLocation = LatLng(location.latitude, location.longitude)
-                                accountManager.setLocationUser(currentLocation)
+                                mainViewModel.accountManager.setLocationUser(currentLocation)
                                 mainMap?.moveCamera(
                                     CameraUpdateFactory.newLatLng(currentLocation)
                                 )
@@ -341,7 +364,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 fusedLocationProviderClient?.lastLocation?.addOnSuccessListener(this) { location ->
                     if (location != null) {
                         val currentLocation = LatLng(location.latitude, location.longitude)
-                        accountManager.setLocationUser(currentLocation)
+                        mainViewModel.accountManager.setLocationUser(currentLocation)
                         mainMap?.moveCamera(
                             CameraUpdateFactory.newLatLngZoom(
                                 currentLocation, Constants.DEFAULT_ZOOM_MAPS.toFloat()
@@ -404,7 +427,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             } else {
                 mainMap?.isMyLocationEnabled = false
                 mainMap?.uiSettings?.isMyLocationButtonEnabled = false
-                accountManager.setLocationUser(Constants.DEFAULT_LOCATION)
+                mainViewModel.accountManager.setLocationUser(Constants.DEFAULT_LOCATION)
                 getLocationPermission()
             }
         } catch (e: SecurityException) {
@@ -640,7 +663,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
         private var mainMap: GoogleMap? = null
         private var driverHashMap: HashMap<String, Marker> = HashMap()
-        fun addOrUpdateMarkerDriver(driverInfo: DriverInfo) {
+        fun addOrUpdateMarkerDriver(driverInfo: DriverInfo, typeDriverChooser: TypeDriverValue) {
             if (driverHashMap.containsKey(driverInfo.driverId)) {
                 // Update marker
                 val marker = driverHashMap[driverInfo.driverId]
@@ -650,7 +673,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 // Add new marker
                 val markerOption = MarkerOptions().apply {
                     position(LatLng(driverInfo.latitude, driverInfo.longitude))
-                    icon(MapsUtils.bitmapFromVector(R.drawable.motocross))
+                    icon(MapsUtils.bitmapFromVector(if (typeDriverChooser == TypeDriverValue.GRAB_BIKE) R.drawable.motocross else R.drawable.car))
                     title(driverInfo.name)
                     snippet(driverInfo.rate.toString())
                 }

@@ -86,4 +86,8 @@
     // Driver Suggest Fragment
     <string name="description_driver_suggest">Tài xế gợi ý cho bạn</string>
     <string name="distance_to_you_driver_suggest">Khoảng cách đến chỗ bạn: %skm</string>
+
+    // Account Info Fragment
+    <string name="sex_info">Giới tính: %s</string>
+    <string name="phone_number_info">Số điện thoại: %s</string>
 </resources>

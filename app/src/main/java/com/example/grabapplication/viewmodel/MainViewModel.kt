@@ -6,12 +6,14 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.grabapplication.common.AccountManager
 import com.example.grabapplication.googlemaps.MapsConnection
 import com.example.grabapplication.googlemaps.MapsConstant
 import com.example.grabapplication.googlemaps.models.Distance
 import com.example.grabapplication.googlemaps.models.PlaceModel
 import com.example.grabapplication.model.BookInfo
 import com.example.grabapplication.model.DriverInfo
+import com.example.grabapplication.model.TypeDriverValue
 
 class MainViewModel: ViewModel() {
     var isShowingLayoutBottom = ObservableField(false)
@@ -19,6 +21,9 @@ class MainViewModel: ViewModel() {
     var isShowingListDriverSuggest = ObservableField(false)
     var isShowingIconBack = ObservableField(false)
     var isShowingProgress = ObservableField(false)
+    var isChoosingGrabBike = ObservableField(true)
+
+    val accountManager = AccountManager.getInstance()
 
     var distanceDriver: Distance? = null
 

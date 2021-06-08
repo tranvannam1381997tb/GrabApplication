@@ -51,6 +51,18 @@
             app:layout_constraintTop_toTopOf="parent"
             android:onClick="@{() -> viewModel.onClickDriverSuggest.clickTxtSuggestDriver()}" />
 
+        <ImageView
+            android:id="@+id/iconTypeDriver"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:padding="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/txtSuggestDriver"
+            app:layout_constraintBottom_toBottomOf="@id/txtSuggestDriver"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/motocross"
+            android:visibility="@{viewModel.isShowingListDriverSuggest ? View.VISIBLE : View.GONE}" />
+
         <View
             android:id="@+id/line_start_list_driver"
             android:layout_width="match_parent"

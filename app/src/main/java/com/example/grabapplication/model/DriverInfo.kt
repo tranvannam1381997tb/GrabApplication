@@ -54,6 +54,6 @@ enum class DriverStatus(val rawValue: Int) {
 }
 
 enum class TypeDriverValue(val rawValue: String) {
-    GRAB_BIKE("GrabBike"),
-    GRAB_CAR("GrabCar")
+    GRAB_BIKE("bikes"),
+    GRAB_CAR("cars")
 }

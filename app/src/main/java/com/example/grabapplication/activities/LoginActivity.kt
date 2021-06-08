@@ -11,6 +11,7 @@ import com.example.grabapplication.common.*
 import com.example.grabapplication.connecttion.HttpConnection
 import com.example.grabapplication.customviews.ConfirmDialog
 import com.example.grabapplication.databinding.ActivityLoginBinding
+import com.example.grabapplication.model.SexValue
 import com.example.grabapplication.model.UserInfoKey
 import com.example.grabapplication.viewmodel.BaseViewModelFactory
 import com.example.grabapplication.viewmodel.LoginViewModel
@@ -124,9 +125,20 @@ class LoginActivity : AppCompatActivity() {
         val name = CommonUtils.getStringFromJsonObject(userInfo, UserInfoKey.KeyName.rawValue)
         val age = CommonUtils.getIntFromJsonObject(userInfo, UserInfoKey.KeyAge.rawValue)
         val sex = CommonUtils.getIntFromJsonObject(userInfo, UserInfoKey.KeySex.rawValue)
+        val sexValue = if (sex == 0) {
+            SexValue.MALE.rawValue
+        } else {
+            SexValue.FEMALE.rawValue
+        }
         val phoneNumber = CommonUtils.getStringFromJsonObject(userInfo, UserInfoKey.KeyPhoneNumber.rawValue)
+        val phoneNumberValue = if (phoneNumber.startsWith("+84")) {
+            "0" + phoneNumber.substring(3, phoneNumber.length)
+        } else {
+            phoneNumber
+        }
         val status = CommonUtils.getIntFromJsonObject(userInfo, UserInfoKey.KeyStatus.rawValue)
-        accountManager.setUserInfo(name, age, sex, phoneNumber, status)
+        accountManager.setUserInfo(name, age, sexValue, phoneNumberValue, status)
+
         return true
     }
 

@@ -3,6 +3,8 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
+    <dimen name="width_left_menu">300dp</dimen>
+
     // Text size dialog confirm
     <dimen name="text_size_title_dialog_confirm">20sp</dimen>
     <dimen name="text_size_message_dialog_confirm">14sp</dimen>

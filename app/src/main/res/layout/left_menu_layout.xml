@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:clickable="true"
+    android:paddingStart="20dp"
+    android:paddingEnd="0dp">
+
+    <ImageView
+        android:id="@+id/imgLogout"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@color/white"
+        android:padding="8dp"
+        android:src="@drawable/logout"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/layoutLeftTxtName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/color_black"
+        android:textSize="@dimen/text_size_name"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgLogout"
+        android:layout_marginTop="40dp"
+        tools:text="Tran Van Nam" />
+
+    <TextView
+        android:id="@+id/layoutLeftTxtAge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/color_black"
+        android:textSize="@dimen/text_size_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layoutLeftTxtName"
+        tools:text="Tuổi: 18" />
+
+    <TextView
+        android:id="@+id/layoutLeftTxtSex"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/color_black"
+        android:textSize="@dimen/text_size_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layoutLeftTxtAge"
+        tools:text="Giới tính: Nam" />
+
+    <TextView
+        android:id="@+id/layoutLeftTxtPhoneNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/color_black"
+        android:textSize="@dimen/text_size_name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layoutLeftTxtSex"
+        tools:text="Số điện thoại: 123123123" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

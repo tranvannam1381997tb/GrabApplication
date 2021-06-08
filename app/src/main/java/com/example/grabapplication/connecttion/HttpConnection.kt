@@ -190,11 +190,38 @@ class HttpConnection private constructor() {
         requestQueue.add(jsonObjectRequest)
     }
 
+    fun logout(callback:(Boolean) -> Unit) {
+        val url = String.format(URL_LOGOUT, HOST)
+        val jsonBody = JSONObject()
+        jsonBody.put(UserInfoKey.KeyUserId.rawValue, AccountManager.getInstance().getUserId())
+        val jsonObjectRequest = object : JsonObjectRequest(Method.POST, url, jsonBody, Response.Listener<JSONObject> {
+            Log.d("NamTV", "logout $it + $jsonBody")
+            callback.invoke(true)
+        }, Response.ErrorListener {
+            Log.d("NamTV", "logout ErrorListener $it")
+            callback.invoke(false)
+        }) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val params = HashMap<String, String>()
+                params["Content-Type"] = "application/json; charset=utf-8"
+                params["Accept"] = "application/json"
+                return params
+            }
+        }
+        jsonObjectRequest.retryPolicy = DefaultRetryPolicy(
+                CONNECTION_TIMEOUT,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        val requestQueue = Volley.newRequestQueue(GrabApplication.getAppContext())
+        requestQueue.add(jsonObjectRequest)
+    }
+
     companion object {
         private const val URL_LOGIN_FORMAT = "http://%s/api/user/login"
         private const val URL_SIGN_UP = "http://%s/api/user/create"
         private const val URL_GET_LIST_DRIVER = "http://%s/api/user/find-drivers"
         private const val URL_RATING = "http://%s/api/user/rating"
+        private const val URL_LOGOUT = "http://%s/api/user/logout"
         private const val URL_GET_POLICY = "http://%s/api/policy/get"
         private const val HOST = "192.168.1.215:3000"
         private const val CONNECTION_TIMEOUT = 30000

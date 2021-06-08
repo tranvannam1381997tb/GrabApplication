@@ -21,7 +21,7 @@ class AccountManager private constructor() {
     private var tokenId: String? = null
     private var name: String? = null
     private var age: Int? = null
-    private var sex: Int? = null
+    private var sex: String? = null
     private var phoneNumber: String? = null
     private var currentLocation: LatLng? = null
     private var status: Int? = null
@@ -88,7 +88,7 @@ class AccountManager private constructor() {
         return currentLocation ?: Constants.DEFAULT_LOCATION
     }
 
-    fun setUserInfo(name: String, age: Int, sex: Int, phoneNumber: String, status: Int) {
+    fun setUserInfo(name: String, age: Int, sex: String, phoneNumber: String, status: Int) {
         this.name = name
         this.age = age
         this.sex = sex
@@ -108,7 +108,7 @@ class AccountManager private constructor() {
         return name!!
     }
 
-    fun getSex(): Int {
+    fun getSex(): String {
         return sex!!
     }
 

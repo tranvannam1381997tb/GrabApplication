@@ -21,6 +21,7 @@ import com.example.grabapplication.connecttion.HttpConnection
 import com.example.grabapplication.databinding.FragmentDriverSuggestBinding
 import com.example.grabapplication.model.DriverInfo
 import com.example.grabapplication.model.DriverStatus
+import com.example.grabapplication.model.TypeDriverValue
 import com.example.grabapplication.viewmodel.BaseViewModelFactory
 import com.example.grabapplication.viewmodel.MainViewModel
 
@@ -97,9 +98,9 @@ class DriverSuggestFragment : Fragment() {
     private fun getListDriverSuggest() {
         val mutableDriver = DriverManager.getInstance().listDriverHashMap.values
         val listDriver = ArrayList<DriverInfo>()
+        val typeDriverChooser = if(driverSuggestViewModel.isChoosingGrabBike.get()!!) TypeDriverValue.GRAB_BIKE.rawValue else TypeDriverValue.GRAB_CAR.rawValue
         for (driverInfo in mutableDriver) {
-            if (driverInfo.status == DriverStatus.StatusOn.rawValue) {
-                HttpConnection
+            if (driverInfo.typeDriver == typeDriverChooser && driverInfo.status == DriverStatus.StatusOn.rawValue) {
                 listDriver.add(driverInfo)
                 if (listDriver.size >= 5) {
                     break
