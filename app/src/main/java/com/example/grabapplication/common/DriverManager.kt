@@ -169,7 +169,6 @@ class DriverManager private constructor() {
 
     private fun getListDriverFromJsonObject(jsonObject: JSONObject) {
         val newListDriver = HashMap<String, DriverInfo>()
-
         val listDriver = CommonUtils.getJsonObjectFromJsonObject(jsonObject, FirebaseConstants.KEY_DRIVERS)
         val listGrabBike = CommonUtils.getJsonArrayFromJsonObject(listDriver, TypeDriverValue.GRAB_BIKE.rawValue)
         val listGrabCar = CommonUtils.getJsonArrayFromJsonObject(listDriver, TypeDriverValue.GRAB_CAR.rawValue)

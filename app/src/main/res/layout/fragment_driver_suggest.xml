@@ -51,20 +51,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:onSingleClick="@{() -> viewModel.onClickDriverSuggest.clickTxtSuggestDriver()}" />
 
-        <ImageView
-            android:id="@+id/iconTypeDriver"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:padding="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/txtSuggestDriver"
-            app:layout_constraintBottom_toBottomOf="@id/txtSuggestDriver"
-            android:layout_marginEnd="16dp"
-            android:background="@drawable/border_icon_type_driver"
-            android:src="@drawable/motocross"
-            android:scaleType="fitXY"
-            app:onSingleClick="@{() -> viewModel.onClickDriverSuggest.clickIconChangeTypeDriver()}" />
-
         <View
             android:id="@+id/line_start_list_driver"
             android:layout_width="match_parent"

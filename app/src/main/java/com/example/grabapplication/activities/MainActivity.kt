@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Paint
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -17,13 +18,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.Observable
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import com.example.grabapplication.GrabApplication
 import com.example.grabapplication.R
-import com.example.grabapplication.common.*
+import com.example.grabapplication.common.AppPreferences
+import com.example.grabapplication.common.Constants
+import com.example.grabapplication.common.DriverManager
+import com.example.grabapplication.common.setOnSingleClickListener
 import com.example.grabapplication.connecttion.HttpConnection
 import com.example.grabapplication.customviews.ConfirmDialog
 import com.example.grabapplication.databinding.ActivityMainBinding
@@ -220,6 +225,28 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
             binding.drawerLayout.openDrawer(binding.menuLeft)
         })
+
+        mainViewModel.isChoosingGrabBike.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
+            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
+                updateLayoutChooseTypeDriver()
+            }
+        })
+
+        binding.txtGrabBike.paintFlags = binding.txtGrabBike.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+    }
+
+    private fun updateLayoutChooseTypeDriver() {
+        if (mainViewModel.isChoosingGrabBike.get()!!) {
+            binding.txtGrabBike.setTextColor(ContextCompat.getColor(this, R.color.color_sign_up))
+            binding.txtGrabCar.setTextColor(ContextCompat.getColor(this, R.color.text_color_button_back_header_disable))
+            binding.txtGrabBike.paintFlags = binding.txtGrabBike.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+            binding.txtGrabCar.paintFlags = 0
+        } else {
+            binding.txtGrabBike.setTextColor(ContextCompat.getColor(this, R.color.text_color_button_back_header_disable))
+            binding.txtGrabCar.setTextColor(ContextCompat.getColor(this, R.color.color_sign_up))
+            binding.txtGrabBike.paintFlags = 0
+            binding.txtGrabCar.paintFlags = binding.txtGrabBike.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+        }
     }
 
     private fun getDataBook() {

@@ -36,7 +36,6 @@ class HttpConnection private constructor() {
                 Log.d("NamTV", "HttpConnection::startLogin: exception = $e")
             }
 
-
             callback.invoke(false, GrabApplication.getAppContext().getString(R.string.connect_server_error))
         }) {
             override fun getHeaders(): MutableMap<String, String> {
@@ -223,7 +222,7 @@ class HttpConnection private constructor() {
         private const val URL_RATING = "http://%s/api/user/rating"
         private const val URL_LOGOUT = "http://%s/api/user/logout"
         private const val URL_GET_POLICY = "http://%s/api/policy/get"
-        private const val HOST = "192.168.1.215:3000"
+        private const val HOST = "10.0.40.65:3000"
         private const val CONNECTION_TIMEOUT = 30000
 
         private const val KEY_VOTE = "vote"

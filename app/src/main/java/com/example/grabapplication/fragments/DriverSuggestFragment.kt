@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.TranslateAnimation
 import androidx.databinding.DataBindingUtil
+import androidx.databinding.Observable
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -88,20 +89,13 @@ class DriverSuggestFragment : Fragment() {
                     binding.txtSuggestDriver.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.down, 0)
                 }
             }
+        }
 
-            override fun clickIconChangeTypeDriver() {
-                if (driverSuggestViewModel.isChoosingGrabBike.get()!!) {
-                    driverSuggestViewModel.isChoosingGrabBike.set(false)
-                    binding.iconTypeDriver.setImageResource(R.drawable.car)
-                    DriverManager.getInstance().changeTypeDriverChoosing(TypeDriverValue.GRAB_CAR)
-                } else {
-                    driverSuggestViewModel.isChoosingGrabBike.set(true)
-                    binding.iconTypeDriver.setImageResource(R.drawable.motocross)
-                    DriverManager.getInstance().changeTypeDriverChoosing(TypeDriverValue.GRAB_BIKE)
-                }
+        driverSuggestViewModel.isChoosingGrabBike.addOnPropertyChangedCallback(object : Observable.OnPropertyChangedCallback() {
+            override fun onPropertyChanged(sender: Observable?, propertyId: Int) {
                 getListDriverSuggest()
             }
-        }
+        })
 
         binding.iconRefresh.setOnSingleClickListener(View.OnClickListener {
             getListDriverSuggest()

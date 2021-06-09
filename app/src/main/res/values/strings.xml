@@ -21,7 +21,7 @@
     <string name="start_date">Ngày gia nhập: %s</string>
     <string name="grab_bike">GrabBike</string>
     <string name="grab_car">GrabCar</string>
-    <string name="book_vehicle">Đặt xe</string>
+    <string name="choose_driver">Chọn tài xế</string>
     <string name="distance_to_you">Khoảng cách đến chỗ bạn: %s</string>
     <string name="time_to_you">Thời gian đến chỗ bạn: %s</string>
 
@@ -34,6 +34,7 @@
     <string name="back">Thoát</string>
     <string name="error_connect_to_driver">Lỗi kết nối đến tài xế</string>
     <string name="price">%s VNĐ</string>
+	<string name="book_vehicle">Đặt xe</string>
 
     //Wait driver fragment
     <string name="description_wait_driver">Đang chờ tài xế</string>

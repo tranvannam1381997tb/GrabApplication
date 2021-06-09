@@ -7,6 +7,7 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.grabapplication.common.AccountManager
+import com.example.grabapplication.common.DriverManager
 import com.example.grabapplication.googlemaps.MapsConnection
 import com.example.grabapplication.googlemaps.MapsConstant
 import com.example.grabapplication.googlemaps.models.Distance
@@ -42,6 +43,16 @@ class MainViewModel: ViewModel() {
         }
     }
 
+    fun chooseGrabBike() {
+        isChoosingGrabBike.set(true)
+        DriverManager.getInstance().changeTypeDriverChoosing(TypeDriverValue.GRAB_BIKE)
+    }
+
+    fun chooseGrabCar() {
+        isChoosingGrabBike.set(false)
+        DriverManager.getInstance().changeTypeDriverChoosing(TypeDriverValue.GRAB_CAR)
+    }
+
     interface OnItemClickListener {
         fun openFindPlaceFragment()
         fun bookDriver()
@@ -51,7 +62,6 @@ class MainViewModel: ViewModel() {
 
     interface OnClickDriverSuggest {
         fun clickTxtSuggestDriver()
-        fun clickIconChangeTypeDriver()
     }
 }
 
