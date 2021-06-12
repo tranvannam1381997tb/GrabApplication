@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import com.example.grabapplication.common.DriverManager
+import com.example.grabapplication.manager.DriverManager
 
 class GetListDriverReceiver : BroadcastReceiver() {
 

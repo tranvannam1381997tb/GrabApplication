@@ -1,4 +1,4 @@
-package com.example.grabapplication.common
+package com.example.grabapplication.manager
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -8,6 +8,9 @@ import android.util.Log
 import android.widget.Toast
 import com.example.grabapplication.GrabApplication
 import com.example.grabapplication.activities.MainActivity
+import com.example.grabapplication.common.AppPreferences
+import com.example.grabapplication.common.CommonUtils
+import com.example.grabapplication.common.Constants
 import com.example.grabapplication.connecttion.HttpConnection
 import com.example.grabapplication.firebase.FirebaseConstants
 import com.example.grabapplication.firebase.FirebaseManager
@@ -213,7 +216,7 @@ class DriverManager private constructor() {
             val driverJsonObject = listDriver.getJSONObject(i)
             val driverId = CommonUtils.getStringFromJsonObject(driverJsonObject, DriverInfoKey.KeyDriverId.rawValue)
             val tokenId = CommonUtils.getStringFromJsonObject(driverJsonObject, DriverInfoKey.KeyTokenId.rawValue)
-            val name =  CommonUtils.getStringFromJsonObject(driverJsonObject, DriverInfoKey.KeyName.rawValue)
+            val name = CommonUtils.getStringFromJsonObject(driverJsonObject, DriverInfoKey.KeyName.rawValue)
             val age = CommonUtils.getIntFromJsonObject(driverJsonObject, DriverInfoKey.KeyAge.rawValue)
             val sex = CommonUtils.getIntFromJsonObject(driverJsonObject, DriverInfoKey.KeySex.rawValue)
             val sexValue = if (sex == 0) {

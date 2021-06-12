@@ -5,7 +5,7 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.grabapplication.GrabApplication
 import com.example.grabapplication.R
-import com.example.grabapplication.common.AccountManager
+import com.example.grabapplication.manager.AccountManager
 import com.example.grabapplication.common.CommonUtils
 import com.example.grabapplication.googlemaps.models.Distance
 import com.example.grabapplication.googlemaps.models.PlaceModel

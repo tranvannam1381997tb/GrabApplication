@@ -1,4 +1,4 @@
-package com.example.grabapplication.common
+package com.example.grabapplication.manager
 
 import android.app.AlarmManager
 import android.app.PendingIntent
@@ -6,11 +6,13 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.example.grabapplication.GrabApplication
+import com.example.grabapplication.common.AppPreferences
+import com.example.grabapplication.common.CommonUtils
+import com.example.grabapplication.common.Constants
 import com.example.grabapplication.connecttion.HttpConnection
 import com.example.grabapplication.firebase.FirebaseManager
 import com.example.grabapplication.services.GetPolicyReceiver
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import java.util.*
 

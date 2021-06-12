@@ -1,17 +1,12 @@
 package com.example.grabapplication.viewmodel
 
-import android.content.Intent
-import android.net.Uri
-import androidx.core.content.ContextCompat.startActivity
 import androidx.databinding.ObservableField
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.grabapplication.common.AccountManager
-import com.example.grabapplication.common.DriverManager
+import com.example.grabapplication.manager.AccountManager
+import com.example.grabapplication.manager.DriverManager
 import com.example.grabapplication.googlemaps.MapsConnection
 import com.example.grabapplication.googlemaps.MapsConstant
 import com.example.grabapplication.googlemaps.models.Distance
-import com.example.grabapplication.googlemaps.models.PlaceModel
 import com.example.grabapplication.model.BookInfo
 import com.example.grabapplication.model.DriverInfo
 import com.example.grabapplication.model.TypeDriverValue

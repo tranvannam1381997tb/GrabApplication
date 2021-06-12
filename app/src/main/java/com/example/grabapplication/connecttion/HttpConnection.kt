@@ -7,7 +7,7 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.example.grabapplication.GrabApplication
 import com.example.grabapplication.R
-import com.example.grabapplication.common.AccountManager
+import com.example.grabapplication.manager.AccountManager
 import com.example.grabapplication.common.Constants
 import com.example.grabapplication.model.DriverInfoKey
 import com.example.grabapplication.model.UserInfoKey
@@ -222,7 +222,7 @@ class HttpConnection private constructor() {
         private const val URL_RATING = "http://%s/api/user/rating"
         private const val URL_LOGOUT = "http://%s/api/user/logout"
         private const val URL_GET_POLICY = "http://%s/api/policy/get"
-        private const val HOST = "10.0.40.65:3000"
+        private const val HOST = "192.168.0.102:3000"
         private const val CONNECTION_TIMEOUT = 30000
 
         private const val KEY_VOTE = "vote"

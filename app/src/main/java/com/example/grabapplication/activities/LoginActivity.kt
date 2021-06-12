@@ -11,6 +11,7 @@ import com.example.grabapplication.common.*
 import com.example.grabapplication.connecttion.HttpConnection
 import com.example.grabapplication.customviews.ConfirmDialog
 import com.example.grabapplication.databinding.ActivityLoginBinding
+import com.example.grabapplication.manager.AccountManager
 import com.example.grabapplication.model.SexValue
 import com.example.grabapplication.model.UserInfoKey
 import com.example.grabapplication.viewmodel.BaseViewModelFactory

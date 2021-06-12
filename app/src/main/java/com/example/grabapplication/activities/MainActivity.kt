@@ -28,7 +28,7 @@ import com.example.grabapplication.GrabApplication
 import com.example.grabapplication.R
 import com.example.grabapplication.common.AppPreferences
 import com.example.grabapplication.common.Constants
-import com.example.grabapplication.common.DriverManager
+import com.example.grabapplication.manager.DriverManager
 import com.example.grabapplication.common.setOnSingleClickListener
 import com.example.grabapplication.connecttion.HttpConnection
 import com.example.grabapplication.customviews.ConfirmDialog

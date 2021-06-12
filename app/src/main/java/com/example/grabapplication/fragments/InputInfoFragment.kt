@@ -14,6 +14,7 @@ import com.example.grabapplication.activities.MainActivity
 import com.example.grabapplication.common.*
 import com.example.grabapplication.connecttion.HttpConnection
 import com.example.grabapplication.databinding.FragmentInputInfoBinding
+import com.example.grabapplication.manager.AccountManager
 import com.example.grabapplication.model.SexValue
 import com.example.grabapplication.model.UserInfoKey
 import com.example.grabapplication.viewmodel.BaseViewModelFactory

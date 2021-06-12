@@ -1,12 +1,9 @@
 package com.example.grabapplication.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
-import android.view.animation.TranslateAnimation
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.Observable
 import androidx.fragment.app.Fragment
@@ -16,9 +13,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.grabapplication.R
 import com.example.grabapplication.activities.MainActivity
 import com.example.grabapplication.adapters.DriverSuggestAdapter
-import com.example.grabapplication.common.DriverManager
+import com.example.grabapplication.manager.DriverManager
 import com.example.grabapplication.common.setOnSingleClickListener
-import com.example.grabapplication.connecttion.HttpConnection
 import com.example.grabapplication.databinding.FragmentDriverSuggestBinding
 import com.example.grabapplication.model.DriverInfo
 import com.example.grabapplication.model.DriverStatus

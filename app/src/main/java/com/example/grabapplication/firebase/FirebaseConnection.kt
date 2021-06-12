@@ -5,7 +5,7 @@ import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.example.grabapplication.GrabApplication
-import com.example.grabapplication.common.AccountManager
+import com.example.grabapplication.manager.AccountManager
 import com.example.grabapplication.model.BookInfo
 import com.google.firebase.messaging.FirebaseMessaging
 import org.json.JSONException
