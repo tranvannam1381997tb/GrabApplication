@@ -268,11 +268,7 @@ class DriverManager private constructor() {
     }
 
     private fun sortListDriver(newListDriver: HashMap<String, DriverInfo>) {
-//        val result = ArrayList(newListDriver.toList()).sortedWith(compareByDescending<DriverInfo>{it.typeDriver}.thenByDescending {it.typeDriver} as Comparator<in Pair<String, DriverInfo>>)
-//        val result = ArrayList(newListDriver.toList()).sortedWith(compareByDescending<DriverInfo>{it.typeDriver}.thenByDescending {it.typeDriver})
         val result = ArrayList(newListDriver.toList()).sortedWith(compareBy({it.second.typeDriver}, {it.second.point}))
-//        val a = result.sortedWith(compareBy<DriverInfo>{it.typeDriver}.thenByDescending{it.point}.thenit.tBy { it
-//        .typeDriver })
         listDriverHashMap.clear()
         for (entry in result) {
             listDriverHashMap[entry.first] = entry.second

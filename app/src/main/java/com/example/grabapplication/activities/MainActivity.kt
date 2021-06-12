@@ -129,15 +129,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         findViewById<TextView>(R.id.layoutLeftTxtSex).text = getString(R.string.sex_info, mainViewModel.accountManager.getSex())
         findViewById<TextView>(R.id.layoutLeftTxtPhoneNumber).text = getString(R.string.phone_number_info, mainViewModel.accountManager.getPhoneNumber())
         findViewById<ImageView>(R.id.imgLogout).setOnSingleClickListener(View.OnClickListener {
-            HttpConnection.getInstance().logout {
-                Log.d("NamTV", "logout = $it")
-                if (it) {
-                    val intent = Intent(this, LoginActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    startActivity(intent)
-                    finish()
-                }
-            }
+            Log.d("NamTV", "logout")
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            startActivity(intent)
+            finish()
         })
     }
 
@@ -249,7 +245,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     }
 
     private fun setTextDisable(textView: TextView) {
-        textView.setTextColor(ContextCompat.getColor(this, R.color.color_sign_up))
+        textView.setTextColor(ContextCompat.getColor(this, R.color.text_grab_disable))
         textView.paintFlags = binding.txtGrabBike.paintFlags or Paint.UNDERLINE_TEXT_FLAG
         textView.setTypeface(textView.typeface, Typeface.NORMAL)
     }
