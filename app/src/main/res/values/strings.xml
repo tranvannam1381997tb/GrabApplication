@@ -41,7 +41,7 @@
     <string name="cancel_book">Hủy chuyến</string>
     <string name="no">Không</string>
     <string name="confirm_cancel_book">Bạn có muốn hủy chuyến chứ?</string>
-    <string name="driver_cancel">Tài xế hủy chuyến xe.\n Bạn muốn đặt chuyến mới chứ?</string>
+    <string name="driver_cancel">Tài xế không nhận cuốc xe.\n Bạn hãy đặt cuốc mới.</string>
 
     //Login Activity
     <string name="sign_up"><u>Đăng ký</u></string>

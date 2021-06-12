@@ -20,6 +20,7 @@ import com.google.firebase.database.ValueEventListener
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
+import kotlin.Comparator
 import kotlin.math.abs
 
 class DriverManager private constructor() {
@@ -29,7 +30,8 @@ class DriverManager private constructor() {
     private var listenerStatusHistory : ValueEventListener? = null
     private val appPreferences: AppPreferences by lazy { AppPreferences.getInstance(GrabApplication.getAppContext()) }
     private var typeDriverChooser = TypeDriverValue.GRAB_BIKE
-
+    private var idDriverChoosing = ""
+    
     companion object {
         private var instance: DriverManager? = null
 
@@ -73,7 +75,7 @@ class DriverManager private constructor() {
             } else {
                 if (itemDriverInfo.typeDriver == typeDriver.rawValue) {
                     Log.d("NamTV", "addOrUpdateMarkerDriver $typeDriver ${itemDriverInfo.driverId}")
-                    MainActivity.addOrUpdateMarkerDriver(itemDriverInfo, typeDriver)
+                    MainActivity.addOrUpdateMarkerDriver(itemDriverInfo, typeDriver, null)
                 }
             }
         }
@@ -110,12 +112,12 @@ class DriverManager private constructor() {
                     val driverId = getDriverInfoFromDataSnapshot(snapshot)
                     val itemDriverInfo = listDriverHashMap[driverId]
                     if (itemDriverInfo != null) {
-                        if (itemDriverInfo.status != DriverStatus.StatusOn.rawValue) {
+                        if (itemDriverInfo.status != DriverStatus.StatusOn.rawValue && driverId != idDriverChoosing) {
                             listDriverHashMap.remove(driverId)
                             MainActivity.removeMarkerDriver(driverId)
                         } else {
                             if (itemDriverInfo.typeDriver == typeDriverChooser.rawValue) {
-                                MainActivity.addOrUpdateMarkerDriver(listDriverHashMap[driverId]!!, typeDriverChooser)
+                                MainActivity.addOrUpdateMarkerDriver(listDriverHashMap[driverId]!!, typeDriverChooser, null)
                             }
                         }
                     }
@@ -137,14 +139,18 @@ class DriverManager private constructor() {
     }
 
     fun getStatusHistoryBookInfo(driverInfo: DriverInfo, callback : (Boolean) -> Unit) {
+        idDriverChoosing = driverInfo.driverId
+        var firstInvoke = true
         listenerStatusHistory = databaseDrivers.child(driverInfo.driverId).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 getHistoryDriverInfoFromDataSnapshot(snapshot, driverInfo)
                 if (driverInfo.typeDriver == typeDriverChooser.rawValue) {
-                    MainActivity.addOrUpdateMarkerDriver(driverInfo, typeDriverChooser)
+                    MainActivity.addOrUpdateMarkerDriver(driverInfo, typeDriverChooser, driverInfo.driverId)
                 }
-                removeEventListenerStatusHistory()
-                callback.invoke(true)
+                if (firstInvoke) {
+                    callback.invoke(true)
+                    firstInvoke = false
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -154,8 +160,28 @@ class DriverManager private constructor() {
         Log.d("NamTV", "getStatusHistoryBookInfo listener driver ${driverInfo.driverId}")
     }
 
-    private fun removeEventListenerStatusHistory() {
-        databaseDrivers.removeEventListener(listenerStatusHistory!!)
+    fun removeEventListenerStatusHistory() {
+        if (listenerStatusHistory != null) {
+            databaseDrivers.removeEventListener(listenerStatusHistory!!)
+            idDriverChoosing = ""
+        }
+    }
+
+    fun getInfoDriverChoosing(driverInfo: DriverInfo) {
+        idDriverChoosing = driverInfo.driverId
+        listenerStatusHistory = databaseDrivers.child(driverInfo.driverId).addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                getHistoryDriverInfoFromDataSnapshot(snapshot, driverInfo)
+                if (driverInfo.typeDriver == typeDriverChooser.rawValue) {
+                    MainActivity.addOrUpdateMarkerDriver(driverInfo, typeDriverChooser, driverInfo.driverId)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.d("NamTV", "onCancelled")
+            }
+        })
+        Log.d("NamTV", "getStatusHistoryBookInfo listener driver ${driverInfo.driverId}")
     }
 
     private fun scheduleGetListDriver() {
@@ -239,7 +265,11 @@ class DriverManager private constructor() {
     }
 
     private fun sortListDriver(newListDriver: HashMap<String, DriverInfo>) {
-        val result = newListDriver.toList().sortedWith(compareBy({it.second.typeDriver}, {it.second.point}))
+//        val result = ArrayList(newListDriver.toList()).sortedWith(compareByDescending<DriverInfo>{it.typeDriver}.thenByDescending {it.typeDriver} as Comparator<in Pair<String, DriverInfo>>)
+//        val result = ArrayList(newListDriver.toList()).sortedWith(compareByDescending<DriverInfo>{it.typeDriver}.thenByDescending {it.typeDriver})
+        val result = ArrayList(newListDriver.toList()).sortedWith(compareBy({it.second.typeDriver}, {it.second.point}))
+//        val a = result.sortedWith(compareBy<DriverInfo>{it.typeDriver}.thenByDescending{it.point}.thenit.tBy { it
+//        .typeDriver })
         listDriverHashMap.clear()
         for (entry in result) {
             listDriverHashMap[entry.first] = entry.second

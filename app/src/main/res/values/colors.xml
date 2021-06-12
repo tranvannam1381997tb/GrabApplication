@@ -20,5 +20,7 @@
     <color name="color_button">#0077F5</color>
     <color name="color_button_when_clicked">#3ECACACA</color>
 
+	<color name="text_grab_disable">#B8B6B6</color>
+
     <color name="color_yellow">#FFEA28</color>
 </resources>

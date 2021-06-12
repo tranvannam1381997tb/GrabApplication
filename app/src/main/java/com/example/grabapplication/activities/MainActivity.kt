@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Paint
+import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -80,7 +81,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     private var locationPermissionGranted = false
 
     private var fragmentBottom : Fragment? = null
-    var currentFragment = Constants.FRAGMENT_MAP
 
     private var isFirstGetDeviceLocation = true
 
@@ -155,8 +155,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
             override fun handleDriverReject() {
                 if (currentFragment == Constants.FRAGMENT_WAIT_DRIVER && fragmentBottom is WaitDriverFragment) {
-                    (fragmentBottom as WaitDriverFragment).showDialogBookNew()
-                    AppPreferences.getInstance(this@MainActivity).bookInfoPreferences = null
+                    this@MainActivity.runOnUiThread {
+                        (fragmentBottom as WaitDriverFragment).showDialogBookNew()
+                        AppPreferences.getInstance(this@MainActivity).bookInfoPreferences = null
+                    }
                 }
             }
 
@@ -193,6 +195,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                     this@MainActivity.runOnUiThread {
                         AppPreferences.getInstance(GrabApplication.getAppContext()).bookInfoPreferences = null
                         gotoBillFragment()
+                        driverManager.removeEventListenerStatusHistory()
                     }
                 }
             }
@@ -237,16 +240,24 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
     private fun updateLayoutChooseTypeDriver() {
         if (mainViewModel.isChoosingGrabBike.get()!!) {
-            binding.txtGrabBike.setTextColor(ContextCompat.getColor(this, R.color.color_sign_up))
-            binding.txtGrabCar.setTextColor(ContextCompat.getColor(this, R.color.text_color_button_back_header_disable))
-            binding.txtGrabBike.paintFlags = binding.txtGrabBike.paintFlags or Paint.UNDERLINE_TEXT_FLAG
-            binding.txtGrabCar.paintFlags = 0
+            setTextEnable(binding.txtGrabBike)
+            setTextDisable(binding.txtGrabCar)
         } else {
-            binding.txtGrabBike.setTextColor(ContextCompat.getColor(this, R.color.text_color_button_back_header_disable))
-            binding.txtGrabCar.setTextColor(ContextCompat.getColor(this, R.color.color_sign_up))
-            binding.txtGrabBike.paintFlags = 0
-            binding.txtGrabCar.paintFlags = binding.txtGrabBike.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+            setTextDisable(binding.txtGrabBike)
+            setTextEnable(binding.txtGrabCar)
         }
+    }
+
+    private fun setTextDisable(textView: TextView) {
+        textView.setTextColor(ContextCompat.getColor(this, R.color.color_sign_up))
+        textView.paintFlags = binding.txtGrabBike.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+        textView.setTypeface(textView.typeface, Typeface.NORMAL)
+    }
+
+    private fun setTextEnable(textView: TextView) {
+        textView.setTextColor(ContextCompat.getColor(this, R.color.color_sign_up))
+        textView.paintFlags = binding.txtGrabBike.paintFlags or Paint.UNDERLINE_TEXT_FLAG
+        textView.setTypeface(textView.typeface, Typeface.BOLD)
     }
 
     private fun getDataBook() {
@@ -474,6 +485,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         mainViewModel.isShowingLayoutBill.set(false)
         mainViewModel.isShowingLayoutBottom.set(false)
         mainViewModel.isShowingIconBack.set(false)
+        showingOtherDriver = true
 
         currentFragment = Constants.FRAGMENT_MAP
         fragmentBottom = null
@@ -553,6 +565,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         mainViewModel.isShowingLayoutBottom.set(true)
         mainViewModel.isShowingLayoutBill.set(false)
         mainViewModel.isShowingIconBack.set(true)
+        clearMarkerDriver()
+        showingOtherDriver = false
+        driverManager.getInfoDriverChoosing(mainViewModel.bookInfo.get()!!.driverInfo!!)
 
         fragmentBottom = WaitDriverFragment()
         currentFragment = Constants.FRAGMENT_WAIT_DRIVER
@@ -690,7 +705,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
 
         private var mainMap: GoogleMap? = null
         private var driverHashMap: HashMap<String, Marker> = HashMap()
-        fun addOrUpdateMarkerDriver(driverInfo: DriverInfo, typeDriverChooser: TypeDriverValue) {
+        var currentFragment = Constants.FRAGMENT_MAP
+        var showingOtherDriver = true
+
+        fun addOrUpdateMarkerDriver(driverInfo: DriverInfo, typeDriverChooser: TypeDriverValue, idDriverChooser: String?) {
+            if (!showingOtherDriver && driverInfo.driverId != idDriverChooser) {
+                return
+            }
             if (driverHashMap.containsKey(driverInfo.driverId)) {
                 // Update marker
                 val marker = driverHashMap[driverInfo.driverId]
@@ -709,11 +730,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 driverHashMap[driverInfo.driverId] = marker
                 Log.d("NamTV", "Add new marker")
             }
+
         }
 
         fun clearMarkerDriver() {
-            mainMap?.clear()
-            driverHashMap.clear()
+            if (showingOtherDriver) {
+                mainMap?.clear()
+                driverHashMap.clear()
+            }
         }
 
         fun removeMarkerDriver(driverId: String) {
