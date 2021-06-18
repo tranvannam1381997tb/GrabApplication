@@ -5,7 +5,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.grabapplication.GrabApplication
@@ -18,6 +17,7 @@ import com.example.grabapplication.firebase.FirebaseManager
 import com.google.firebase.messaging.FirebaseMessagingService
 import org.json.JSONException
 import org.json.JSONObject
+import java.util.*
 
 class GrabFirebaseMessagingService : FirebaseMessagingService() {
 
@@ -32,10 +32,16 @@ class GrabFirebaseMessagingService : FirebaseMessagingService() {
                 try {
                     val jsonData = JSONObject(intent.getStringExtra(FirebaseConstants.KEY_DRIVER_RESPONSE)!!)
                     Log.d("NamTV", "jsonData = $jsonData")
+                    var message = ""
                     when {
                         CommonUtils.getBooleanFromJsonObject(jsonData, FirebaseConstants.KEY_DRIVER_GOING_BOOK) -> {
                             // Driver going to pick you up
                             bookListener?.handleDriverGoingBook(jsonData)
+                            val timeArrivedOrigin = jsonData.getInt(FirebaseConstants.KEY_TIME_ARRIVED_ORIGIN)
+                            val currentTime = Calendar.getInstance()
+                            currentTime.add(Calendar.SECOND, timeArrivedOrigin)
+                            val timeDriverArrived = CommonUtils.getTimeArrived(currentTime)
+                            message = getString(R.string.notify_time_driver_arrived_origin, timeDriverArrived)
                         }
                         CommonUtils.getBooleanFromJsonObject(jsonData, FirebaseConstants.KEY_DRIVER_REJECT) -> {
                             // Driver reject book
@@ -44,18 +50,22 @@ class GrabFirebaseMessagingService : FirebaseMessagingService() {
                         CommonUtils.getBooleanFromJsonObject(jsonData, FirebaseConstants.KEY_DRIVER_ARRIVED_ORIGIN) -> {
                             // Driver arrived
                             bookListener?.handleDriverArrivedOrigin(jsonData)
+                            message = getString(R.string.driver_arrived_origin)
                         }
                         CommonUtils.getBooleanFromJsonObject(jsonData, FirebaseConstants.KEY_DRIVER_GOING) -> {
                             bookListener?.handleDriverGoing(jsonData)
+                            message = getString(R.string.notify_driver_start_arriving_destination)
                         }
                         CommonUtils.getBooleanFromJsonObject(jsonData, FirebaseConstants.KEY_DRIVER_ARRIVED_DESTINATION) -> {
                             bookListener?.handleDriverArrivedDestination(jsonData)
+                            message = getString(R.string.notify_driver_arrived_destination)
                         }
                         CommonUtils.getBooleanFromJsonObject(jsonData, FirebaseConstants.KEY_DRIVER_BILL) -> {
                             bookListener?.handleDriverBill()
+                            message = getString(R.string.notify_bill)
                         }
                     }
-                    showNotification(GrabApplication.getAppContext(), jsonData.toString())
+                    showNotification(GrabApplication.getAppContext(), message)
                 } catch (e: JSONException) {
                     // Do nothing
                 }
@@ -72,6 +82,9 @@ class GrabFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     private fun showNotification(context: Context, message: String) {
+        if (message.isEmpty()) {
+            return
+        }
         val mNotificationManager =
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val channel = NotificationChannel(

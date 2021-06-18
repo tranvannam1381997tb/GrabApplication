@@ -91,4 +91,9 @@
     // Account Info Fragment
     <string name="sex_info">Giới tính: %s</string>
     <string name="phone_number_info">Số điện thoại: %s</string>
+
+	//Notify
+	<string name="notify_driver_start_arriving_destination">Bắt đầu thực hiện cuốc xe</string>
+	<string name="notify_driver_arrived_destination">Tài xế đã đến điểm đến</string>
+	<string name="notify_bill">Chuyến đi đã hoàn thành. Hãy thanh toán cuốc xe</string>
 </resources>
