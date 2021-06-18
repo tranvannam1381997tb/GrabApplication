@@ -9,7 +9,7 @@ import com.example.grabapplication.GrabApplication
 import com.example.grabapplication.common.AppPreferences
 import com.example.grabapplication.common.CommonUtils
 import com.example.grabapplication.common.Constants
-import com.example.grabapplication.connecttion.HttpConnection
+import com.example.grabapplication.connection.HttpConnection
 import com.example.grabapplication.firebase.FirebaseManager
 import com.example.grabapplication.services.GetPolicyReceiver
 import com.google.android.gms.maps.model.LatLng

@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.grabapplication.R
 import com.example.grabapplication.activities.MainActivity
 import com.example.grabapplication.common.*
-import com.example.grabapplication.connecttion.HttpConnection
+import com.example.grabapplication.connection.HttpConnection
 import com.example.grabapplication.databinding.FragmentInputInfoBinding
 import com.example.grabapplication.manager.AccountManager
 import com.example.grabapplication.model.SexValue

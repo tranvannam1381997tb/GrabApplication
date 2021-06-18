@@ -26,5 +26,7 @@ class Constants {
         const val REQUEST_GET_LIST_DRIVER = 100
         const val REQUEST_GET_POLICY = 101
         const val TIME_SCHEDULE_GET_LIST_DRIVER = 60*1000
+
+        const val NOTIFICATION_CONTENT = "NotificationContent"
     }
 }

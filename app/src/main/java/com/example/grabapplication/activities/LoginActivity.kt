@@ -8,7 +8,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.example.grabapplication.R
 import com.example.grabapplication.common.*
-import com.example.grabapplication.connecttion.HttpConnection
+import com.example.grabapplication.connection.HttpConnection
 import com.example.grabapplication.customviews.ConfirmDialog
 import com.example.grabapplication.databinding.ActivityLoginBinding
 import com.example.grabapplication.manager.AccountManager

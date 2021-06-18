@@ -30,7 +30,6 @@ import com.example.grabapplication.common.AppPreferences
 import com.example.grabapplication.common.Constants
 import com.example.grabapplication.manager.DriverManager
 import com.example.grabapplication.common.setOnSingleClickListener
-import com.example.grabapplication.connecttion.HttpConnection
 import com.example.grabapplication.customviews.ConfirmDialog
 import com.example.grabapplication.databinding.ActivityMainBinding
 import com.example.grabapplication.firebase.FirebaseConnection
@@ -101,6 +100,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         getDataBook()
     }
 
+    override fun onResume() {
+        super.onResume()
+        GrabApplication.isActive = true
+    }
+
+    override fun onPause() {
+        super.onPause()
+        GrabApplication.isActive = false
+    }
+
+
     private fun initDataMap() {
         // Construct a FusedLocationProviderClient.
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
@@ -121,6 +131,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         mapFragment?.getMapAsync(this)
 
         transaction = supportFragmentManager.beginTransaction()
+        GrabApplication.isActive = true
     }
 
     private fun setupDrawerLayout() {

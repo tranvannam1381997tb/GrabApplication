@@ -11,7 +11,7 @@ import com.example.grabapplication.activities.MainActivity
 import com.example.grabapplication.common.AppPreferences
 import com.example.grabapplication.common.CommonUtils
 import com.example.grabapplication.common.Constants
-import com.example.grabapplication.connecttion.HttpConnection
+import com.example.grabapplication.connection.HttpConnection
 import com.example.grabapplication.firebase.FirebaseConstants
 import com.example.grabapplication.firebase.FirebaseManager
 import com.example.grabapplication.firebase.FirebaseUtils
@@ -23,7 +23,6 @@ import com.google.firebase.database.ValueEventListener
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
-import kotlin.Comparator
 import kotlin.math.abs
 
 class DriverManager private constructor() {
