@@ -206,7 +206,10 @@ class DriverManager private constructor() {
         if (newListDriver.isNotEmpty()) {
             sortListDriver(newListDriver)
         }
-        Toast.makeText(GrabApplication.getAppContext(), "listDriverHashMap = ${listDriverHashMap.size} ", Toast.LENGTH_LONG).show()
+        Toast.makeText(GrabApplication.getAppContext(), "listDriverHashMap = ${listGrabBike.length() + listGrabCar.length()} ",
+                Toast
+                .LENGTH_LONG)
+                .show()
         Log.d("NamTV", "listDriverHashMap = ${listDriverHashMap.size} $listDriver")
     }
 

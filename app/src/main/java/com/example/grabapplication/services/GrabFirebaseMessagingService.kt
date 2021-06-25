@@ -22,6 +22,8 @@ import java.util.*
 class GrabFirebaseMessagingService : FirebaseMessagingService() {
 
     private var notificationChannelId: String = "Grab Application"
+    private val mNotificationManager = GrabApplication.getAppContext().getSystemService(Context.NOTIFICATION_SERVICE) as
+            NotificationManager
 
     override fun handleIntent(intent: Intent) {
         val action = intent.action
@@ -85,14 +87,13 @@ class GrabFirebaseMessagingService : FirebaseMessagingService() {
         if (message.isEmpty()) {
             return
         }
-        val mNotificationManager =
-                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
         val channel = NotificationChannel(
                 notificationChannelId,
-                "DNS Guard",
-                NotificationManager.IMPORTANCE_HIGH
+                notificationChannelId,
+                NotificationManager.IMPORTANCE_DEFAULT
         )
-        channel.description = "DNS Guard"
+        channel.description = notificationChannelId
         mNotificationManager.createNotificationChannel(channel)
 
         val notifyIntent = Intent(context, MainActivity::class.java).apply {
@@ -110,23 +111,17 @@ class GrabFirebaseMessagingService : FirebaseMessagingService() {
                 .setSmallIcon(R.drawable.notification) // notification icon
                 .setContentText(message)
                 .setStyle(NotificationCompat.BigTextStyle().bigText(message))// message for notification
-                .setAutoCancel(true) // clear notification after click
-                .setGroup("sdg_group")
-                .setGroupSummary(false)
-                .setPriority(NotificationManager.IMPORTANCE_MAX)
                 .setContentIntent(pendingIntent)
 
-        val mBuilderSummary = NotificationCompat.Builder(context, notificationChannelId)
-                .setSmallIcon(R.drawable.notification)
-                .setPriority(NotificationManager.IMPORTANCE_MAX)
-                .setAutoCancel(true)
-                .setGroup("sdg_group")
-                .setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_CHILDREN)
-                .setGroupSummary(true)
-                .setContentIntent(pendingIntent)
 
-        mNotificationManager.notify(System.currentTimeMillis().toInt(), mBuilder.build())
-        mNotificationManager.notify(0, mBuilderSummary.build())
+
+        mNotificationManager.cancel(0)
+        if (message == getString(R.string.notify_bill)) {
+            mBuilder.setAutoCancel(true)
+            mNotificationManager.notify(1, mBuilder.build())
+        } else {
+            mNotificationManager.notify(0, mBuilder.build())
+        }
     }
 
     companion object {
