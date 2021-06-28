@@ -23,6 +23,7 @@ import com.google.firebase.database.ValueEventListener
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.math.abs
 
 class DriverManager private constructor() {
@@ -203,9 +204,6 @@ class DriverManager private constructor() {
         getListDriver(listGrabBike, TypeDriverValue.GRAB_BIKE, newListDriver)
         getListDriver(listGrabCar, TypeDriverValue.GRAB_CAR, newListDriver)
 
-        if (newListDriver.isNotEmpty()) {
-            sortListDriver(newListDriver)
-        }
         Toast.makeText(GrabApplication.getAppContext(), "listDriverHashMap = ${listGrabBike.length() + listGrabCar.length()} ",
                 Toast
                 .LENGTH_LONG)
@@ -214,6 +212,7 @@ class DriverManager private constructor() {
     }
 
     private fun getListDriver(listDriver: JSONArray, typeDriverValue: TypeDriverValue, newListDriver: HashMap<String, DriverInfo>) {
+        val drivers = ArrayList<DriverInfo>()
         for (i in 0 until listDriver.length()) {
             val driverJsonObject = listDriver.getJSONObject(i)
             val driverId = CommonUtils.getStringFromJsonObject(driverJsonObject, DriverInfoKey.KeyDriverId.rawValue)
@@ -265,17 +264,13 @@ class DriverManager private constructor() {
                     distance = distance,
                     point = point
             )
-            newListDriver[driverInfo.driverId] = driverInfo
+            drivers.add(driverInfo)
         }
+        newListDriver.putAll(sortListDriver(drivers).associateBy({it.driverId}, {it}))
     }
 
-    private fun sortListDriver(newListDriver: HashMap<String, DriverInfo>) {
-        val result = ArrayList(newListDriver.toList()).sortedWith(compareBy({it.second.typeDriver}, {it.second.point}))
-        listDriverHashMap.clear()
-        for (entry in result) {
-            listDriverHashMap[entry.first] = entry.second
-        }
-        Log.d("NamTV", "listDriverHashMap size = ${listDriverHashMap.size}")
+    private fun sortListDriver(listDriver: ArrayList<DriverInfo>): List<DriverInfo> {
+        return listDriver.sortedWith(compareByDescending { it.point })
     }
 
     private fun scoreDriver(rate: Float, distance: Float, age: Int): Float {
