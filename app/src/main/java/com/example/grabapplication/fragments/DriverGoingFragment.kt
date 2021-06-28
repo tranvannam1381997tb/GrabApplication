@@ -73,6 +73,7 @@ class DriverGoingFragment : Fragment() {
     }
 
     private fun updateLayoutArrivingOrigin(timeArrivedOrigin: Int) {
+        driverGoingViewModel.isShowingIconBack.set(false)
         binding.description.setText(R.string.driver_arriving_origin)
         binding.btnCancel.visibility = View.VISIBLE
         binding.btnCancel.setText(R.string.cancel_book)
@@ -83,16 +84,20 @@ class DriverGoingFragment : Fragment() {
         binding.txtNotify.text = strNotify
         binding.txtNotify.visibility = View.VISIBLE
         binding.btnCancel.visibility = View.VISIBLE
+        isArrivingOrigin = true
     }
 
     private fun updateLayoutArrivedOrigin(startAddress: String) {
+        driverGoingViewModel.isShowingIconBack.set(false)
         binding.description.setText(R.string.driver_arrived_origin)
         val strNotify = getString(R.string.notify_start_address, startAddress)
         binding.txtNotify.text = strNotify
         binding.txtNotify.visibility = View.VISIBLE
+        isArrivingOrigin = false
     }
 
     private fun updateLayoutArrivingDestination(timeDriverArrivedDestination: Int) {
+        driverGoingViewModel.isShowingIconBack.set(false)
         binding.description.setText(R.string.driver_start_going)
         binding.btnCancel.visibility = View.GONE
         val currentTime = Calendar.getInstance()
@@ -104,11 +109,14 @@ class DriverGoingFragment : Fragment() {
         binding.txtTime.text = timeDriverArrivedDestination
         binding.txtNotify.visibility = View.VISIBLE
         binding.txtTime.visibility = View.VISIBLE
+        isArrivingOrigin = false
     }
 
     private fun updateLayoutArrivedDestination() {
+        driverGoingViewModel.isShowingIconBack.set(false)
         binding.description.setText(R.string.driver_arrived_destination)
         binding.btnCancel.visibility = View.GONE
+        isArrivingOrigin = false
     }
 
     private fun handleClickBtnCancel() {
@@ -124,5 +132,7 @@ class DriverGoingFragment : Fragment() {
         const val STATUS_ARRIVED_ORIGIN = 1
         const val STATUS_ARRIVING_DESTINATION = 2
         const val STATUS_ARRIVED_DESTINATION = 3
+
+        var isArrivingOrigin = false
     }
 }

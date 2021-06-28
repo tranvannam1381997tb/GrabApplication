@@ -359,15 +359,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             (fragmentBottom as WaitDriverFragment).showDialogConfirmCancelBook()
             return
         }
-        if (currentFragment == Constants.FRAGMENT_DRIVER_GOING && fragmentBottom is DriverGoingFragment) {
+        if (currentFragment == Constants.FRAGMENT_DRIVER_GOING && fragmentBottom is DriverGoingFragment && DriverGoingFragment.isArrivingOrigin) {
             showDialogConfirmCancelBook()
             return
         }
         if (currentFragment == Constants.FRAGMENT_FIND_PLACE) {
             currentFragment = Constants.FRAGMENT_INFO_DRIVER
+            return
         }
-
-        super.onBackPressed()
     }
 
     /**
@@ -592,7 +591,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     fun gotoDriverGoingFragment(statusDriverGoingFragment: Int, jsonData: JSONObject) {
         mainViewModel.isShowingLayoutBottom.set(true)
         mainViewModel.isShowingLayoutBill.set(false)
-        mainViewModel.isShowingIconBack.set(true)
 
         fragmentBottom = DriverGoingFragment()
         currentFragment = Constants.FRAGMENT_DRIVER_GOING
