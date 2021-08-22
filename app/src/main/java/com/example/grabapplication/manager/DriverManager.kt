@@ -203,6 +203,7 @@ class DriverManager private constructor() {
         val listGrabCar = CommonUtils.getJsonArrayFromJsonObject(listDriver, TypeDriverValue.GRAB_CAR.rawValue)
         getListDriver(listGrabBike, TypeDriverValue.GRAB_BIKE, newListDriver)
         getListDriver(listGrabCar, TypeDriverValue.GRAB_CAR, newListDriver)
+        listDriverHashMap = newListDriver
 
         Toast.makeText(GrabApplication.getAppContext(), "listDriverHashMap = ${listGrabBike.length() + listGrabCar.length()} ",
                 Toast
