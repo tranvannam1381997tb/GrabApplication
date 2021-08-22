@@ -5,9 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import com.example.grabapplication.model.BookInfo
-import com.example.grabapplication.model.DriverInfo
 import com.google.gson.Gson
-import org.json.JSONException
 import org.json.JSONObject
 
 /**

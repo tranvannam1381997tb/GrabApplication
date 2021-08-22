@@ -2,16 +2,17 @@ package com.example.grabapplication.fragments
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.grabapplication.R
 import com.example.grabapplication.activities.MainActivity
-import com.example.grabapplication.common.*
+import com.example.grabapplication.common.CommonUtils
+import com.example.grabapplication.common.setOnSingleClickListener
 import com.example.grabapplication.connection.HttpConnection
 import com.example.grabapplication.databinding.FragmentInputInfoBinding
 import com.example.grabapplication.manager.AccountManager

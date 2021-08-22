@@ -9,7 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.grabapplication.R
-import com.example.grabapplication.common.*
+import com.example.grabapplication.common.AppPreferences
 import com.example.grabapplication.customviews.CustomAutoCompletedSearch
 import com.example.grabapplication.databinding.FragmentFindPlaceBinding
 import com.example.grabapplication.googlemaps.MapsConnection

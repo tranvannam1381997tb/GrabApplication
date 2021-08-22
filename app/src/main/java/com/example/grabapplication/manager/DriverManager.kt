@@ -5,7 +5,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import android.widget.Toast
 import com.example.grabapplication.GrabApplication
 import com.example.grabapplication.activities.MainActivity
 import com.example.grabapplication.common.AppPreferences

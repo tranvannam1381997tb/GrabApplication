@@ -7,7 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.example.grabapplication.R
-import com.example.grabapplication.common.*
+import com.example.grabapplication.common.CommonUtils
+import com.example.grabapplication.common.afterTextChanged
+import com.example.grabapplication.common.onEditorActionDone
+import com.example.grabapplication.common.onEditorActionNext
 import com.example.grabapplication.connection.HttpConnection
 import com.example.grabapplication.customviews.ConfirmDialog
 import com.example.grabapplication.databinding.ActivityLoginBinding
@@ -16,7 +19,6 @@ import com.example.grabapplication.model.SexValue
 import com.example.grabapplication.model.UserInfoKey
 import com.example.grabapplication.viewmodel.BaseViewModelFactory
 import com.example.grabapplication.viewmodel.LoginViewModel
-import kotlinx.coroutines.*
 import org.json.JSONObject
 
 class LoginActivity : AppCompatActivity() {
@@ -27,8 +29,6 @@ class LoginActivity : AppCompatActivity() {
         }
 
     private lateinit var binding: ActivityLoginBinding
-
-    private var jobStartLogin: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,10 +71,6 @@ class LoginActivity : AppCompatActivity() {
             binding.loading.visibility = View.VISIBLE
             startLogin()
         }
-
-        // TODO debug code
-        binding.edtPhoneNumber.setText("0976356351")
-        binding.edtPassword.setText("123456")
     }
 
     private fun startLogin() {

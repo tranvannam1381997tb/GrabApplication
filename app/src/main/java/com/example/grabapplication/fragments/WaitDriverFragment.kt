@@ -92,7 +92,7 @@ class WaitDriverFragment : Fragment() {
         dialog!!.show()
     }
 
-    fun gotoMapFragment() {
+    private fun gotoMapFragment() {
         countDownTimer?.cancel()
         if (activity is MainActivity) {
             (activity as MainActivity).gotoMapFragment()

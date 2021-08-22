@@ -7,8 +7,8 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.example.grabapplication.GrabApplication
 import com.example.grabapplication.R
-import com.example.grabapplication.manager.AccountManager
 import com.example.grabapplication.common.Constants
+import com.example.grabapplication.manager.AccountManager
 import com.example.grabapplication.model.DriverInfoKey
 import com.example.grabapplication.model.UserInfoKey
 import org.json.JSONException

@@ -1,18 +1,16 @@
 package com.example.grabapplication.activities
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.grabapplication.R
-import com.example.grabapplication.databinding.ActivityLoginBinding
 import com.example.grabapplication.databinding.ActivitySignUpBinding
 import com.example.grabapplication.fragments.InputInfoFragment
 import com.example.grabapplication.fragments.InputPasswordFragment
 import com.example.grabapplication.fragments.InputPhoneNumberFragment
 import com.example.grabapplication.viewmodel.BaseViewModelFactory
-import com.example.grabapplication.viewmodel.LoginViewModel
 import com.example.grabapplication.viewmodel.OnClickSignUpScreenListener
 import com.example.grabapplication.viewmodel.SignUpViewModel
 

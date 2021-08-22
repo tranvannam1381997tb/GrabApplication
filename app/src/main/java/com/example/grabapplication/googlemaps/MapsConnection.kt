@@ -5,13 +5,11 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.grabapplication.GrabApplication
 import com.example.grabapplication.R
-import com.example.grabapplication.manager.AccountManager
 import com.example.grabapplication.common.CommonUtils
 import com.example.grabapplication.googlemaps.models.Distance
-import com.example.grabapplication.googlemaps.models.PlaceModel
+import com.example.grabapplication.manager.AccountManager
 import org.json.JSONObject
 import java.net.URLEncoder
-import kotlin.collections.ArrayList
 
 class MapsConnection private constructor() {
 
@@ -94,59 +92,6 @@ class MapsConnection private constructor() {
                 R.string.maps_api_key
             )
         )
-    }
-
-    fun findPlace(place: String, callback: (ArrayList<PlaceModel>) -> Unit) {
-        val listPlace = ArrayList<PlaceModel>()
-        val urlString = getMapsApiPlaceUrl(place)
-        val placeRequest =
-            object : StringRequest(Method.GET, urlString, Response.Listener<String> { response ->
-                val jsonResponse = JSONObject(response)
-                val status =
-                    CommonUtils.getStringFromJsonObject(jsonResponse, MapsConstant.PLACE_STATUS)
-                if (status == MapsConstant.STATUS_OK) {
-                    val result = CommonUtils.getJsonArrayFromJsonObject(
-                        jsonResponse,
-                        MapsConstant.PLACE_RESULTS
-                    )
-                    for (i in 0 until result.length()) {
-                        val geometry = CommonUtils.getJsonObjectFromJsonObject(
-                            result.getJSONObject(i),
-                            MapsConstant.PLACE_GEOMETRY
-                        )
-                        val location = CommonUtils.getJsonObjectFromJsonObject(
-                            geometry,
-                            MapsConstant.PLACE_LOCATION
-                        )
-                        val lat =
-                            CommonUtils.getDoubleFromJsonObject(
-                                location,
-                                MapsConstant.PLACE_LAT
-                            )
-                        val lng =
-                            CommonUtils.getDoubleFromJsonObject(
-                                location,
-                                MapsConstant.PLACE_LNG
-                            )
-                        val formattedAddress = CommonUtils.getStringFromJsonObject(
-                            result.getJSONObject(i),
-                            MapsConstant.PLACE_FORMATTED_ADDRESS
-                        )
-                        val name = CommonUtils.getStringFromJsonObject(
-                            result.getJSONObject(i),
-                            MapsConstant.PLACE_NAME
-                        )
-                        val placeModel = PlaceModel(lat, lng, formattedAddress, name)
-                        listPlace.add(placeModel)
-                    }
-                }
-                callback.invoke(listPlace)
-            },
-        Response.ErrorListener {
-        }) {}
-
-        val requestQueue = Volley.newRequestQueue(GrabApplication.getAppContext())
-        requestQueue.add(placeRequest)
     }
 
     private fun getMapsApiPlaceUrl(place: String): String {

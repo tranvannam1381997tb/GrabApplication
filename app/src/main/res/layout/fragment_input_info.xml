@@ -55,8 +55,7 @@
                 android:paddingTop="8dp"
                 android:paddingBottom="16dp"
                 android:singleLine="true"
-                android:textSize="@dimen/text_size_name"
-                android:text="Tran Van Nam"/>
+                android:textSize="@dimen/text_size_name" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -113,8 +112,7 @@
                 android:paddingTop="8dp"
                 android:paddingBottom="16dp"
                 android:singleLine="true"
-                android:textSize="@dimen/text_size_name"
-                android:text="24"/>
+                android:textSize="@dimen/text_size_name" />
         </LinearLayout>
 
         <Button

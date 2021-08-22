@@ -2,14 +2,9 @@ package com.example.grabapplication.common
 
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
-import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
-import android.widget.TextView
-import androidx.appcompat.widget.AppCompatEditText
-import com.example.grabapplication.googlemaps.MapsConnection
 
 /**
  * Extension function to simplify setting an afterTextChanged action to EditText components.

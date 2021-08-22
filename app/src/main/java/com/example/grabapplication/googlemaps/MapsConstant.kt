@@ -2,7 +2,6 @@ package com.example.grabapplication.googlemaps
 
 import com.example.grabapplication.googlemaps.models.Distance
 import com.example.grabapplication.model.BookInfo
-import com.google.android.gms.maps.model.LatLng
 
 class MapsConstant {
     companion object {
@@ -24,21 +23,6 @@ class MapsConstant {
         const val DIRECTION_END_LOCATION = "end_location"
         const val DIRECTION_LAT = "lat"
         const val DIRECTION_LNG = "lng"
-
-        // google geocoding api key
-        const val GEOCODE_STATUS = "status"
-        const val GEOCODE_RESULTS = "results"
-        const val GEOCODE_FORMATTED_ADDRESS = "formatted_address"
-
-        // google place api key
-        const val PLACE_STATUS = "status"
-        const val PLACE_RESULTS = "results"
-        const val PLACE_GEOMETRY = "geometry"
-        const val PLACE_LOCATION = "location"
-        const val PLACE_LAT = "lat"
-        const val PLACE_LNG = "lng"
-        const val PLACE_FORMATTED_ADDRESS = "formatted_address"
-        const val PLACE_NAME = "name"
 
         val DEFAULT_DISTANCE = Distance("1,5 km", 1506, "5 phút", 322, "Ng. 106 - Hoàng Quốc Việt, Hà Nội, Việt Nam", "Ng. 10 Nguyễn Văn Huyên, Cầu Giấy, Hà Nội, Việt Nam", 21.0477757, 105.794652, 21.0376798, 105.7965187)
         val DEFAULT_BOOK_INFO = BookInfo(null, null, null, null, null, null, null, null, null, null)

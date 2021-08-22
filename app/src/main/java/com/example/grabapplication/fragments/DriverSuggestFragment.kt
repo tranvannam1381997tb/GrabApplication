@@ -13,9 +13,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.grabapplication.R
 import com.example.grabapplication.activities.MainActivity
 import com.example.grabapplication.adapters.DriverSuggestAdapter
-import com.example.grabapplication.manager.DriverManager
 import com.example.grabapplication.common.setOnSingleClickListener
 import com.example.grabapplication.databinding.FragmentDriverSuggestBinding
+import com.example.grabapplication.manager.DriverManager
 import com.example.grabapplication.model.DriverInfo
 import com.example.grabapplication.model.DriverStatus
 import com.example.grabapplication.model.TypeDriverValue

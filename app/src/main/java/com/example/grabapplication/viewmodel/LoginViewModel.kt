@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModel
-import com.example.grabapplication.activities.MainActivity
 import com.example.grabapplication.activities.SignUpActivity
 
 class LoginViewModel(var context: Context): ViewModel() {

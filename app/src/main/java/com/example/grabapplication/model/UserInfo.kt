@@ -2,7 +2,6 @@ package com.example.grabapplication.model
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
-import kotlin.properties.Delegates
 
 @Parcelize
 data class UserInfo(

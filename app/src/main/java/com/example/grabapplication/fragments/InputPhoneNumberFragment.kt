@@ -1,20 +1,17 @@
 package com.example.grabapplication.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.grabapplication.R
-import com.example.grabapplication.common.afterTextChanged
 import com.example.grabapplication.common.setOnSingleClickListener
-import com.example.grabapplication.databinding.FragmentFindPlaceBinding
 import com.example.grabapplication.databinding.FragmentInputPhoneNumberBinding
 import com.example.grabapplication.viewmodel.BaseViewModelFactory
-import com.example.grabapplication.viewmodel.MainViewModel
 import com.example.grabapplication.viewmodel.SignUpViewModel
 
 class InputPhoneNumberFragment : Fragment() {

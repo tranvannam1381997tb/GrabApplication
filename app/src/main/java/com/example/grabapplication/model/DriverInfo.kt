@@ -1,9 +1,7 @@
 package com.example.grabapplication.model
 
 import android.os.Parcelable
-import com.example.grabapplication.googlemaps.models.Distance
 import kotlinx.android.parcel.Parcelize
-import java.util.*
 
 @Parcelize
 data class DriverInfo(

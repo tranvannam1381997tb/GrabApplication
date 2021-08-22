@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.util.Log
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import com.example.grabapplication.model.SexValue
 import com.example.grabapplication.model.TypeDriverValue
 import org.json.JSONArray
@@ -113,17 +112,6 @@ class CommonUtils {
                 return TypeDriverValue.GRAB_CAR.rawValue
             }
             return ""
-        }
-
-        fun clearFocusEditText(activity: Activity) {
-            val view = activity.currentFocus
-            if (view != null && view is EditText) {
-                hideKeyboard(activity)
-                // Resign focus EditText
-                view.isFocusable = false
-                view.isFocusable = true
-                view.isFocusableInTouchMode = true
-            }
         }
 
         private fun hideKeyboard(activity: Activity){

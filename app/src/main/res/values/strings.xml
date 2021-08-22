@@ -3,18 +3,12 @@
     <string name="prompt_phone_number">Nhập số điện thoại</string>
     <string name="prompt_password">Nhâp mật khẩu</string>
     <string name="action_sign_in">Đăng nhập</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
-    <string name="login_failed">"Login failed"</string>
 
     <string name="label_ok">OK</string>
     <string name="label_cancel">Hủy</string>
     <string name="error">Lỗi</string>
 
     <string name="channel_id">channel1</string>
-
-    <string name="description_map_screen">Đặt xe</string>
-    <string name="prompt_end_address">Bạn đến đâu?</string>
 
     //Info driver fragment
     <string name="age">Tuổi: %s</string>
@@ -48,7 +42,6 @@
     <string name="login_false">Lỗi đăng nhập</string>
 
     //SignUp Activity
-    <string name="country_code_default">+84</string>
     <string name="hint_phone_number">87654321</string>
     <string name="next">Tiếp</string>
     <string name="description_input_phone_number">Nhập số di động của bạn</string>
