@@ -106,7 +106,7 @@ class DriverManager private constructor() {
         scheduleGetListDriver()
     }
 
-    private fun getInfoDriver() {
+    fun getInfoDriver() {
         for (driver in listDriverHashMap) {
             val driverInfo = driver.value
             val listener = FirebaseManager.getInstance().databaseDrivers.child(driverInfo.driverId).addValueEventListener(object : ValueEventListener {

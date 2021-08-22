@@ -1,12 +1,13 @@
 package com.example.grabapplication.viewmodel
 
+import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.ViewModel
-import com.example.grabapplication.manager.AccountManager
-import com.example.grabapplication.manager.DriverManager
 import com.example.grabapplication.googlemaps.MapsConnection
 import com.example.grabapplication.googlemaps.MapsConstant
 import com.example.grabapplication.googlemaps.models.Distance
+import com.example.grabapplication.manager.AccountManager
+import com.example.grabapplication.manager.DriverManager
 import com.example.grabapplication.model.BookInfo
 import com.example.grabapplication.model.DriverInfo
 import com.example.grabapplication.model.TypeDriverValue
@@ -19,7 +20,12 @@ class MainViewModel: ViewModel() {
     var isShowingProgress = ObservableField(false)
     var isChoosingGrabBike = ObservableField(true)
 
-    val accountManager = AccountManager.getInstance()
+    val accountManager by lazy {
+        AccountManager.getInstance()
+    }
+    val driverManager by lazy {
+        DriverManager.getInstance()
+    }
 
     var distanceDriver: Distance? = null
 
@@ -32,6 +38,7 @@ class MainViewModel: ViewModel() {
     fun selectDriver(driverInfo: DriverInfo, callback: (Boolean) -> Unit) {
         bookInfo.get()!!.driverInfo = driverInfo
 
+        Log.d("NamTV", "MainViewModel::selectDriver: driver: ${driverInfo.driverId} ${driverInfo.name}")
         MapsConnection.getInstance().getShortestWay(driverInfo.latitude, driverInfo.longitude) {
             distanceDriver = it
             callback.invoke(true)

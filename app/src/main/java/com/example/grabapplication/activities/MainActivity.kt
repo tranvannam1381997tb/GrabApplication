@@ -28,7 +28,6 @@ import com.example.grabapplication.GrabApplication
 import com.example.grabapplication.R
 import com.example.grabapplication.common.AppPreferences
 import com.example.grabapplication.common.Constants
-import com.example.grabapplication.manager.DriverManager
 import com.example.grabapplication.common.setOnSingleClickListener
 import com.example.grabapplication.customviews.ConfirmDialog
 import com.example.grabapplication.databinding.ActivityMainBinding
@@ -64,11 +63,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 ViewModelProvider(this, BaseViewModelFactory(this)).get(
                     MainViewModel::class.java
                 )
-            }
-
-    private val driverManager: DriverManager
-            by lazy {
-                DriverManager.getInstance()
             }
 
     private lateinit var transaction: FragmentTransaction
@@ -109,7 +103,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         super.onPause()
         GrabApplication.isActive = false
     }
-
 
     private fun initDataMap() {
         // Construct a FusedLocationProviderClient.
@@ -202,7 +195,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                     this@MainActivity.runOnUiThread {
                         AppPreferences.getInstance(GrabApplication.getAppContext()).bookInfoPreferences = null
                         gotoBillFragment()
-                        driverManager.removeEventListenerStatusHistory()
+                        mainViewModel.driverManager.removeEventListenerStatusHistory()
                     }
                 }
             }
@@ -274,7 +267,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         if (bookInfoPreferences != null) {
             mainViewModel.bookInfo.set(bookInfoPreferences)
             val driverInfo = bookInfoPreferences.driverInfo!!
-            driverManager.getStatusHistoryBookInfo(driverInfo) {
+            mainViewModel.driverManager.getStatusHistoryBookInfo(driverInfo) {
                 if (it) {
                     when(driverInfo.status) {
                         DriverStatus.StatusArrivingOrigin.rawValue -> {
@@ -316,9 +309,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         if (currentFragment == Constants.FRAGMENT_MAP || currentFragment == Constants.FRAGMENT_DRIVER_SUGGEST ||
             currentFragment == Constants.FRAGMENT_INFO_DRIVER) {
             val idDriver = marker?.tag
-            if (idDriver != null && driverManager.listDriverHashMap.containsKey(idDriver) && !isChoosingDriver) {
+            if (idDriver != null && mainViewModel.driverManager.listDriverHashMap.containsKey(idDriver) && !isChoosingDriver) {
                 isChoosingDriver = true
-                val driverInfo = driverManager.listDriverHashMap[idDriver]
+                val driverInfo = mainViewModel.driverManager.listDriverHashMap[idDriver]
                 selectDriver(driverInfo!!) {
                     isChoosingDriver = false
                 }
@@ -395,7 +388,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                                 )
                                 if (isFirstGetDeviceLocation) {
                                     isFirstGetDeviceLocation = false
-                                    driverManager.getListDriverFromServer {
+                                    mainViewModel.driverManager.getListDriverFromServer {
 
                                     }
                                     Log.d("NamTV", "isFirstGetDeviceLocation")
@@ -416,7 +409,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                         )
                         if (isFirstGetDeviceLocation) {
                             isFirstGetDeviceLocation = false
-                            driverManager.getListDriverFromServer {
+                            mainViewModel.driverManager.getListDriverFromServer {
                                 if (it) {
                                     scheduleGotoDriverSuggestFragment()
                                 }
@@ -487,7 +480,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         mainViewModel.isShowingLayoutBill.set(false)
         mainViewModel.isShowingLayoutBottom.set(false)
         mainViewModel.isShowingIconBack.set(false)
-        showingOtherDriver = true
+        isShowingOtherDriver = true
 
         currentFragment = Constants.FRAGMENT_MAP
         fragmentBottom = null
@@ -568,8 +561,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         mainViewModel.isShowingLayoutBill.set(false)
         mainViewModel.isShowingIconBack.set(true)
         clearMarkerDriver()
-        showingOtherDriver = false
-        driverManager.getInfoDriverChoosing(mainViewModel.bookInfo.get()!!.driverInfo!!)
+        isShowingOtherDriver = false
+        mainViewModel.driverManager.getInfoDriverChoosing(mainViewModel.bookInfo.get()!!.driverInfo!!)
 
         fragmentBottom = WaitDriverFragment()
         currentFragment = Constants.FRAGMENT_WAIT_DRIVER
@@ -645,6 +638,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             FirebaseConnection.getInstance().pushNotifyToCancelBook(mainViewModel.bookInfo.get()!!) {
                 dialogConfirm.dismiss()
                 gotoMapFragment()
+                refreshScreen()
             }
         })
         dialogConfirm.setOnClickCancel(View.OnClickListener {
@@ -701,16 +695,31 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         appPreferences.jsonDataBookInfo = jsonData
     }
 
+    private fun clearBookInfo() {
+        val appPreferences = AppPreferences.getInstance(this)
+        appPreferences.bookInfoPreferences = null
+        appPreferences.jsonDataBookInfo = JSONObject()
+    }
+
+    private fun refreshScreen() {
+        clearMarkerDriver()
+        isChoosingDriver = false
+        isShowingOtherDriver = true
+        mainViewModel.driverManager.removeEventListenerStatusHistory()
+        mainViewModel.driverManager.getInfoDriver()
+        clearBookInfo()
+    }
+
     companion object {
         private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
 
         private var mainMap: GoogleMap? = null
         private var driverHashMap: HashMap<String, Marker> = HashMap()
         var currentFragment = Constants.FRAGMENT_MAP
-        var showingOtherDriver = true
+        var isShowingOtherDriver = true
 
         fun addOrUpdateMarkerDriver(driverInfo: DriverInfo, typeDriverChooser: TypeDriverValue, idDriverChooser: String?) {
-            if (!showingOtherDriver && driverInfo.driverId != idDriverChooser) {
+            if (!isShowingOtherDriver && driverInfo.driverId != idDriverChooser) {
                 return
             }
             if (driverHashMap.containsKey(driverInfo.driverId)) {
@@ -735,7 +744,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
         }
 
         fun clearMarkerDriver() {
-            if (showingOtherDriver) {
+            if (isShowingOtherDriver) {
                 mainMap?.clear()
                 driverHashMap.clear()
             }
