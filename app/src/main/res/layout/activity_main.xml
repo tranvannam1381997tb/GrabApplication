@@ -101,7 +101,8 @@
 				app:layout_constraintBottom_toBottomOf="@id/imgInfo"
 				app:layout_constraintEnd_toEndOf="parent"
 				app:layout_constraintStart_toStartOf="parent"
-				app:layout_constraintTop_toTopOf="@id/imgInfo">
+				app:layout_constraintTop_toTopOf="@id/imgInfo"
+				android:visibility="@{viewModel.isShowingLayoutBill ? View.GONE : View.VISIBLE}">
 
 				<TextView
 					android:id="@+id/txtGrabBike"
